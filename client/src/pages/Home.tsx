@@ -490,11 +490,13 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
       <header className="border-b" style={{ background: SESCON_BLUE, borderColor: SESCON_DARK_BLUE }}>
         <div className="px-8 py-6">
           <div className="flex items-center justify-between gap-6">
-            <div>
-              <h1 className="text-3xl font-extrabold text-white">Central de Atualização SESCON-SP</h1>
-              <p className="text-blue-100 text-base mt-1">Atualize as informações dos seus clientes representados de forma rápida e segura.</p>
+            <div className="flex items-center gap-6">
+              <img src="/logo-sescon-branco.png" alt="SESCON-SP" className="h-20 w-auto hidden md:block" />
+              <div>
+                <h1 className="text-3xl font-extrabold text-white">Central de Atualização SESCON-SP</h1>
+                <p className="text-blue-100 text-base mt-1">Atualize as informações dos seus clientes representados de forma rápida e segura.</p>
+              </div>
             </div>
-            <img src="/logo-sescon-branco.png" alt="SESCON-SP" className="h-20 w-auto hidden md:block" />
           </div>
         </div>
       </header>
