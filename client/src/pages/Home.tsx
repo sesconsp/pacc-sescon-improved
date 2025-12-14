@@ -559,19 +559,17 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                 <Building className="w-5 h-5" />
                 Dados da Empresa
               </button>
-              {atividadePrincipal === "contabilidade" && (
-                <button
-                  onClick={() => setAbaSelecionada(2)}
-                  className={`pb-4 px-4 font-bold transition-all border-b-4 text-lg flex items-center gap-3 hover:text-blue-800`}
-                  style={{
-                    color: abaSelecionada === 2 ? SESCON_BLUE : "#999",
-                    borderColor: abaSelecionada === 2 ? SESCON_BLUE : "transparent"
-                  }}
-                >
-                  <Users className="w-5 h-5" />
-                  Gestão de Clientes
-                </button>
-              )}
+              <button
+                onClick={() => setAbaSelecionada(2)}
+                className={`pb-4 px-4 font-bold transition-all border-b-4 text-lg flex items-center gap-3 hover:text-blue-800`}
+                style={{
+                  color: abaSelecionada === 2 ? SESCON_BLUE : "#999",
+                  borderColor: abaSelecionada === 2 ? SESCON_BLUE : "transparent"
+                }}
+              >
+                <Users className="w-5 h-5" />
+                Gestão de Clientes
+              </button>
             </div>
 
             {/* Aba 1: Empresa */}
@@ -635,36 +633,6 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                     <p className="text-xs mt-2 text-gray-600">Este e-mail receberá a confirmação do envio</p>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold mb-3" style={{ color: SESCON_DARK_BLUE }}>
-                      Atividade Principal *
-                    </label>
-                    <div className="flex gap-4">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="atividade"
-                          value="contabilidade"
-                          checked={atividadePrincipal === "contabilidade"}
-                          onChange={(e) => setAtividadePrincipal(e.target.value)}
-                          className="w-4 h-4 text-blue-600"
-                        />
-                        <span>Contabilidade</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="atividade"
-                          value="outros"
-                          checked={atividadePrincipal === "outros"}
-                          onChange={(e) => setAtividadePrincipal(e.target.value)}
-                          className="w-4 h-4 text-blue-600"
-                        />
-                        <span>Outros</span>
-                      </label>
-                    </div>
-                  </div>
-
                   {cnpjEscritorioValido && (
                     <div 
                       className="p-4 rounded-lg border-l-4 flex gap-3"
@@ -676,24 +644,13 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                   )}
 
                   <div className="flex gap-3 pt-4">
-                    {atividadePrincipal === "outros" ? (
-                      <Button
-                        onClick={() => window.location.href = "https://sesconsp.github.io/atualizacao-cadastral/"}
-                        className="flex-1 rounded-lg font-bold py-3 text-white text-lg hover:bg-blue-700 transition-colors"
-                        style={{ background: SESCON_BLUE }}
-                      >
-                        Ir para Atualização Cadastral
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => setAbaSelecionada(2)}
-                        className="flex-1 rounded-lg font-bold py-3 text-white text-lg hover:bg-blue-700 transition-colors"
-                        style={{ background: SESCON_BLUE }}
-                        disabled={!atividadePrincipal}
-                      >
-                        Próximo
-                      </Button>
-                    )}
+                    <Button
+                      onClick={() => setAbaSelecionada(2)}
+                      className="flex-1 rounded-lg font-bold py-3 text-white text-lg hover:bg-blue-700 transition-colors"
+                      style={{ background: SESCON_BLUE }}
+                    >
+                      Próximo
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -738,8 +695,57 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                 </h2>
 
                 <div className="space-y-6">
-                  {/* Importação - Redesenhada */}
-                  <div className="p-8 rounded-xl border-2 border-dashed bg-blue-50/30 transition-colors hover:bg-blue-50/60" style={{ borderColor: SESCON_BLUE }}>
+                  {/* Seleção de Atividade */}
+                  <div className="p-6 rounded-lg border bg-blue-50/30" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+                    <label className="block text-sm font-semibold mb-3" style={{ color: SESCON_DARK_BLUE }}>
+                      Atividade Principal *
+                    </label>
+                    <div className="flex gap-4">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="atividade"
+                          value="contabilidade"
+                          checked={atividadePrincipal === "contabilidade"}
+                          onChange={(e) => setAtividadePrincipal(e.target.value)}
+                          className="w-4 h-4 text-blue-600"
+                        />
+                        <span>Contabilidade</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="atividade"
+                          value="outros"
+                          checked={atividadePrincipal === "outros"}
+                          onChange={(e) => setAtividadePrincipal(e.target.value)}
+                          className="w-4 h-4 text-blue-600"
+                        />
+                        <span>Outros</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {atividadePrincipal === "outros" ? (
+                    <div className="p-8 rounded-xl border-2 border-dashed bg-blue-50/30 text-center" style={{ borderColor: SESCON_BLUE }}>
+                      <h3 className="text-xl font-bold mb-4" style={{ color: SESCON_DARK_BLUE }}>
+                        Atualização Cadastral
+                      </h3>
+                      <p className="text-gray-600 mb-6">
+                        Para outras atividades, por favor utilize o formulário específico de atualização cadastral.
+                      </p>
+                      <Button
+                        onClick={() => window.location.href = "https://sesconsp.github.io/atualizacao-cadastral/"}
+                        className="rounded-lg font-bold py-3 px-6 text-white text-lg hover:bg-blue-700 transition-colors"
+                        style={{ background: SESCON_BLUE }}
+                      >
+                        Ir para Atualização Cadastral
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Importação - Redesenhada */}
+                      <div className="p-8 rounded-xl border-2 border-dashed bg-blue-50/30 transition-colors hover:bg-blue-50/60" style={{ borderColor: SESCON_BLUE }}>
                     <div className="flex flex-col items-center text-center mb-8">
                       <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4 shadow-sm">
                         <Upload className="w-8 h-8" style={{ color: SESCON_BLUE }} />
@@ -1017,6 +1023,8 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                       {isLoading ? "Enviando..." : "Enviar Dados"}
                     </Button>
                   </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}
