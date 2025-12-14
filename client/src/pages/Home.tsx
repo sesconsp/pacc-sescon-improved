@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 // @ts-ignore
 import * as XLSX from 'xlsx';
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Cliente {
   id: string;
@@ -414,12 +415,18 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
     }
   };
 
-  // Salvar rascunho
+  // Salvar rascunho vinculado ao CNPJ
   const salvarRascunho = () => {
-    if (!cnpjEscritorio || !razaoSocialEscritorio || !emailEscritorio) {
-      toast.error("Por favor, preencha os dados do escritório", { duration: 3000 });
+    if (!cnpjEscritorio) {
+      toast.error("Preencha o CNPJ do escritório para salvar o rascunho", { duration: 3000 });
       return;
     }
+    const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
+    if (cnpjLimpo.length !== 14) {
+      toast.error("CNPJ inválido para salvar rascunho", { duration: 3000 });
+      return;
+    }
+
     const rascunho: Rascunho = {
       nomeEscritorio: razaoSocialEscritorio,
       cnpjEscritorio: cnpjEscritorio,
@@ -427,33 +434,45 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
       clientes: clientes.map(({ contratosocial, ...rest }) => rest),
       dataSalva: new Date().toLocaleString("pt-BR")
     };
-    localStorage.setItem("rascunho_pacc", JSON.stringify(rascunho));
+    
+    // Salva usando o CNPJ como chave
+    localStorage.setItem(`rascunho_pacc_${cnpjLimpo}`, JSON.stringify(rascunho));
     setTemRascunho(true);
-    toast.success(`Rascunho salvo em ${new Date().toLocaleTimeString("pt-BR")}`, { duration: 3000 });
+    toast.success(`Rascunho salvo para o CNPJ ${cnpjEscritorio}`, { duration: 3000 });
   };
 
-  // Carregar rascunho
+  // Tentar carregar rascunho quando o CNPJ é preenchido
   useEffect(() => {
-    const rascunho = localStorage.getItem("rascunho_pacc");
-    if (rascunho) {
-      const dados = JSON.parse(rascunho) as Rascunho;
-      setCnpjEscritorio(dados.cnpjEscritorio);
-      setRazaoSocialEscritorio(dados.nomeEscritorio);
-      setEmailEscritorio(dados.emailEscritorio);
-      setClientes(dados.clientes);
-      setTemRascunho(true);
+    const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
+    if (cnpjLimpo.length === 14) {
+      const rascunhoSalvo = localStorage.getItem(`rascunho_pacc_${cnpjLimpo}`);
+      if (rascunhoSalvo) {
+        // Se encontrou rascunho, pergunta se quer carregar (ou carrega silenciosamente se preferir)
+        // Aqui vamos carregar automaticamente apenas se os outros campos estiverem vazios
+        if (!razaoSocialEscritorio && clientes.length === 0) {
+          try {
+            const dados = JSON.parse(rascunhoSalvo) as Rascunho;
+            setRazaoSocialEscritorio(dados.nomeEscritorio || "");
+            setEmailEscritorio(dados.emailEscritorio || "");
+            setClientes(dados.clientes || []);
+            setTemRascunho(true);
+            toast.info("Rascunho encontrado e carregado para este CNPJ", { duration: 4000 });
+          } catch (e) {
+            console.error("Erro ao carregar rascunho", e);
+          }
+        }
+      }
     }
-  }, []);
+  }, [cnpjEscritorio]);
 
-  // Limpar rascunho
+  // Limpar rascunho atual
   const limparRascunho = () => {
-    localStorage.removeItem("rascunho_pacc");
-    setCnpjEscritorio("");
-    setRazaoSocialEscritorio("");
-    setEmailEscritorio("");
-    setClientes([]);
-    setTemRascunho(false);
-    toast.success("Rascunho excluído", { duration: 2000 });
+    const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
+    if (cnpjLimpo) {
+      localStorage.removeItem(`rascunho_pacc_${cnpjLimpo}`);
+      setTemRascunho(false);
+      toast.success("Rascunho deste CNPJ excluído", { duration: 2000 });
+    }
   };
 
   // Gerar modelo CSV
@@ -574,9 +593,17 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
               </button>
             </div>
 
-            {/* Aba 1: Empresa */}
-            {abaSelecionada === 1 && (
-	              <div className="rounded-lg p-8 shadow-sm border bg-white">
+            {/* Conteúdo das Abas com Animação */}
+            <AnimatePresence mode="wait">
+              {abaSelecionada === 1 ? (
+                <motion.div
+                  key="aba1"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.3 }}
+                  className="rounded-lg p-8 shadow-sm border bg-white"
+                >
                 <h2 className="text-2xl font-bold mb-8" style={{ color: SESCON_DARK_BLUE }}>
                   Identificação da Empresa
                 </h2>
@@ -655,43 +682,46 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                     </Button>
                   </div>
                 </div>
-              </div>
-            )}
-
-            {/* FAQ Section - Centralizado */}
-            {abaSelecionada === 1 && (
-              <div className="rounded-lg p-8 shadow-sm border" style={{ borderColor: SESCON_BLUE, background: SESCON_LIGHT_BLUE }}>
-                <h2 className="text-2xl font-bold mb-6" style={{ color: SESCON_DARK_BLUE }}>
-                  Perguntas Frequentes
-                </h2>
-                <div className="space-y-3">
-                  {faqs.map((faq, i) => (
-                    <div key={i} className="border rounded-lg overflow-hidden shadow-sm" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-                      <button
-                        onClick={() => setExpandedFAQ(expandedFAQ === i ? null : i)}
-                        className="w-full p-4 text-left flex items-center justify-between bg-white hover:bg-gray-50 transition-colors"
-                      >
-                        <p className="font-semibold text-sm" style={{ color: SESCON_DARK_BLUE }}>{faq.pergunta}</p>
-                        {expandedFAQ === i ? (
-                          <ChevronUp className="w-5 h-5 flex-shrink-0" style={{ color: SESCON_BLUE }} />
-                        ) : (
-                          <ChevronDown className="w-5 h-5 flex-shrink-0" style={{ color: SESCON_BLUE }} />
+                
+                {/* FAQ Section - Centralizado */}
+                <div className="mt-6 rounded-lg p-8 shadow-sm border" style={{ borderColor: SESCON_BLUE, background: SESCON_LIGHT_BLUE }}>
+                  <h2 className="text-2xl font-bold mb-6" style={{ color: SESCON_DARK_BLUE }}>
+                    Perguntas Frequentes
+                  </h2>
+                  <div className="space-y-3">
+                    {faqs.map((faq, i) => (
+                      <div key={i} className="border rounded-lg overflow-hidden shadow-sm" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+                        <button
+                          onClick={() => setExpandedFAQ(expandedFAQ === i ? null : i)}
+                          className="w-full p-4 text-left flex items-center justify-between bg-white hover:bg-gray-50 transition-colors"
+                        >
+                          <p className="font-semibold text-sm" style={{ color: SESCON_DARK_BLUE }}>{faq.pergunta}</p>
+                          {expandedFAQ === i ? (
+                            <ChevronUp className="w-5 h-5 flex-shrink-0" style={{ color: SESCON_BLUE }} />
+                          ) : (
+                            <ChevronDown className="w-5 h-5 flex-shrink-0" style={{ color: SESCON_BLUE }} />
+                          )}
+                        </button>
+                        {expandedFAQ === i && (
+                          <div className="p-4 bg-gray-50 border-t" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+                            <div className="text-sm text-gray-700 leading-relaxed space-y-2" dangerouslySetInnerHTML={{ __html: faq.resposta.replace(/(\d{2}\.\d{2}-\d\/\d{2})/g, `<strong style="color: ${SESCON_DARK_BLUE}; font-weight: 800;">$1</strong>`) }} />
+                          </div>
                         )}
-                      </button>
-                      {expandedFAQ === i && (
-                        <div className="p-4 bg-gray-50 border-t" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-                          <div className="text-sm text-gray-700 leading-relaxed space-y-2" dangerouslySetInnerHTML={{ __html: faq.resposta.replace(/(\d{2}\.\d{2}-\d\/\d{2})/g, `<strong style="color: ${SESCON_DARK_BLUE}; font-weight: 800;">$1</strong>`) }} />
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
-
-            {/* Aba 2: Clientes */}
-            {abaSelecionada === 2 && (
-              <div className="bg-white rounded-lg p-8 shadow-sm border" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+              </motion.div>
+            ) : (
+                <motion.div
+                  key="aba2"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="bg-white rounded-lg p-8 shadow-sm border"
+                  style={{ borderColor: SESCON_LIGHT_BLUE }}
+                >
                 <h2 className="text-2xl font-bold mb-8" style={{ color: SESCON_DARK_BLUE }}>
                   Gestão de Clientes
                 </h2>
@@ -989,32 +1019,40 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                     </div>
                   </div>
 
-                  <div className="flex gap-3 pt-4">
-                    <Button
-                      onClick={() => setAbaSelecionada(1)}
-                      variant="outline"
-                      className="flex-1 rounded-lg border-2 font-semibold py-2"
-                      style={{ borderColor: SESCON_BLUE, color: SESCON_BLUE }}
-                    >
-                      Voltar
-                    </Button>
-                    <Button
-                      onClick={salvarRascunho}
-                      className="flex-1 rounded-lg font-semibold py-2 text-white hover:bg-blue-700 transition-colors"
-                      style={{ background: SESCON_ACCENT }} // Cor de destaque para ação secundária
-                    >
-                      <Save className="w-4 h-4 mr-2" />
-                      Salvar Rascunho
-                    </Button>
-                    <Button
-                      onClick={() => setMostrarModalClientes(true)}
-                      disabled={clientes.length === 0}
-                      className="flex-1 rounded-lg font-semibold py-2 text-white hover:bg-blue-700 transition-colors"
-                      style={{ background: SESCON_ACCENT }} // Cor de destaque para ação secundária
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Visualizar Clientes
-                    </Button>
+                  <div className="flex flex-col gap-3 pt-4">
+                    {temRascunho && (
+                      <div className="flex items-center justify-center gap-2 text-sm text-gray-500 mb-2">
+                        <Clock className="w-4 h-4" />
+                        <span>Rascunho salvo automaticamente vinculado ao CNPJ</span>
+                      </div>
+                    )}
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={() => setAbaSelecionada(1)}
+                        variant="outline"
+                        className="flex-1 rounded-lg border-2 font-semibold py-2"
+                        style={{ borderColor: SESCON_BLUE, color: SESCON_BLUE }}
+                      >
+                        Voltar
+                      </Button>
+                      <Button
+                        onClick={salvarRascunho}
+                        className="flex-1 rounded-lg font-semibold py-2 text-white hover:bg-blue-700 transition-colors"
+                        style={{ background: SESCON_ACCENT }} // Cor de destaque para ação secundária
+                      >
+                        <Save className="w-4 h-4 mr-2" />
+                        Salvar Rascunho
+                      </Button>
+                      <Button
+                        onClick={() => setMostrarModalClientes(true)}
+                        disabled={clientes.length === 0}
+                        className="flex-1 rounded-lg font-semibold py-2 text-white hover:bg-blue-700 transition-colors"
+                        style={{ background: SESCON_ACCENT }} // Cor de destaque para ação secundária
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        Visualizar Clientes
+                      </Button>
+                    </div>
                     <Button
                       onClick={enviarDados}
                       disabled={isLoading || clientes.length === 0}
@@ -1028,8 +1066,9 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                     </>
                   )}
                 </div>
-              </div>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </main>
