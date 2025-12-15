@@ -7,6 +7,16 @@ import { toast } from "sonner";
 // @ts-ignore
 import * as XLSX from 'xlsx';
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Cliente {
   id: string;
@@ -99,20 +109,77 @@ export default function Home() {
     ehMatriz: false,
     contratosocial: undefined as File | undefined
   });
-  const [buscandoReceita, setBuscandoReceita] = useState(false);
   const [cnpjEscritorioValido, setCnpjEscritorioValido] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [mostrarResumo, setMostrarResumo] = useState(false);
+  const [buscandoReceita, setBuscandoReceita] = useState(false);
+  const [abaSelecionada, setAbaSelecionada] = useState(1);
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+  
+  // Estados de validação
+  const [erroEmail, setErroEmail] = useState("");
+  const [erroCNPJ, setErroCNPJ] = useState("");
+
+  // Função de validação de e-mail
+  const validarEmail = (email: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  // Validação em tempo real do CNPJ
+  useEffect(() => {
+    if (cnpjEscritorio) {
+      const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
+      if (cnpjLimpo.length > 0 && cnpjLimpo.length < 14) {
+        setErroCNPJ("CNPJ incompleto");
+      } else if (cnpjLimpo.length === 14 && !validarCNPJ(cnpjLimpo)) {
+        setErroCNPJ("CNPJ inválido");
+      } else {
+        setErroCNPJ("");
+      }
+    } else {
+      setErroCNPJ("");
+    }
+  }, [cnpjEscritorio]);
+
+  // Validação em tempo real do E-mail
+  useEffect(() => {
+    if (emailEscritorio) {
+      if (!validarEmail(emailEscritorio)) {
+        setErroEmail("E-mail inválido");
+      } else {
+        setErroEmail("");
+      }
+    } else {
+      setErroEmail("");
+    }
+  }, [emailEscritorio]);
+  
   const [temRascunho, setTemRascunho] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [atualizacoes, setAtualizacoes] = useState<Atualizacao[]>([]);
   const [progressoUpload, setProgressoUpload] = useState(0);
   const [statusUpload, setStatusUpload] = useState("");
   const [busca, setBusca] = useState("");
   const [buscaCarregando, setBuscaCarregando] = useState(false);
-  const [abaSelecionada, setAbaSelecionada] = useState(1);
+  // abaSelecionada já foi declarado acima, removendo duplicata
+  // const [abaSelecionada, setAbaSelecionada] = useState(1);
   const [atividadePrincipal, setAtividadePrincipal] = useState("");
   const [mostrarModalClientes, setMostrarModalClientes] = useState(false);
+  const [mostrarResumo, setMostrarResumo] = useState(false);
+  const [mostrarConfirmacaoLimpar, setMostrarConfirmacaoLimpar] = useState(false);
+  const [mostrarConfirmacaoSair, setMostrarConfirmacaoSair] = useState(false);
+
+  // Interceptar fechamento/atualização da página
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (cnpjEscritorio || razaoSocialEscritorio || clientes.length > 0) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [cnpjEscritorio, razaoSocialEscritorio, clientes]);
 
   // Cores SESCON Oficiais - Azul Marinho Mais Escuro
   const SESCON_BLUE = "#003d7a";
@@ -472,6 +539,7 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
       localStorage.removeItem(`rascunho_pacc_${cnpjLimpo}`);
       setTemRascunho(false);
       toast.success("Rascunho deste CNPJ excluído", { duration: 2000 });
+      setMostrarConfirmacaoLimpar(false);
     }
   };
 
@@ -567,6 +635,32 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
 
           {/* Right Content - Formulário */}
           <div className="col-span-3 space-y-6">
+            {/* Barra de Progresso */}
+            <div className="bg-white rounded-lg p-4 shadow-sm border mb-6" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-semibold" style={{ color: SESCON_DARK_BLUE }}>
+                  Progresso do Cadastro
+                </span>
+                <span className="text-sm font-bold" style={{ color: SESCON_BLUE }}>
+                  {abaSelecionada === 1 ? "50%" : "90%"}
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div 
+                  className="h-2.5 rounded-full transition-all duration-500 ease-out" 
+                  style={{ 
+                    width: abaSelecionada === 1 ? "50%" : "90%", 
+                    background: SESCON_BLUE 
+                  }}
+                ></div>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                {abaSelecionada === 1 
+                  ? "Passo 1 de 2: Identificação do Escritório" 
+                  : "Passo 2 de 2: Gestão de Clientes e Envio"}
+              </p>
+            </div>
+
             {/* Abas - Redesenhadas */}
             <div className="flex gap-6 border-b-2 mb-6" style={{ borderColor: SESCON_LIGHT_BLUE }}>
               <button
@@ -628,10 +722,11 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                           }
                         }}
                         maxLength={18}
-	                        className="flex-1 rounded-lg border-2 px-4 py-2 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                        className={`flex-1 rounded-lg border-2 px-4 py-2 transition-colors ${erroCNPJ ? "border-red-500 focus:border-red-500" : "focus:border-blue-500 focus:ring-blue-500"}`}
                       />
                       {buscandoReceita && <Loader2 className="w-5 h-5 animate-spin" style={{ color: SESCON_BLUE }} />}
                     </div>
+                    {erroCNPJ && <p className="text-xs mt-1 text-red-500 font-semibold">{erroCNPJ}</p>}
                     <p className="text-xs mt-2 text-gray-600">Os dados serão preenchidos automaticamente da Receita Federal</p>
                   </div>
 
@@ -657,8 +752,9 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                       placeholder="contato@empresa.com.br"
                       value={emailEscritorio}
                       onChange={(e) => setEmailEscritorio(e.target.value)}
-	                      className="rounded-lg border-2 px-4 py-2"
+                      className={`rounded-lg border-2 px-4 py-2 ${erroEmail ? "border-red-500 focus:border-red-500" : ""}`}
                     />
+                    {erroEmail && <p className="text-xs mt-1 text-red-500 font-semibold">{erroEmail}</p>}
                     <p className="text-xs mt-2 text-gray-600">Este e-mail receberá a confirmação do envio</p>
                   </div>
 
@@ -673,6 +769,16 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                   )}
 
                   <div className="flex gap-3 pt-4">
+                    {temRascunho && (
+                      <Button
+                        onClick={() => setMostrarConfirmacaoLimpar(true)}
+                        variant="outline"
+                        className="rounded-lg border-2 font-semibold py-3 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 transition-colors"
+                      >
+                        <Trash2 className="w-5 h-5 mr-2" />
+                        Limpar Rascunho
+                      </Button>
+                    )}
                     <Button
                       onClick={() => setAbaSelecionada(2)}
                       className="flex-1 rounded-lg font-bold py-3 text-white text-lg hover:bg-blue-700 transition-colors"
@@ -1128,6 +1234,24 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
           </div>
         </div>
       )}
+
+      {/* Modais de Confirmação */}
+      <AlertDialog open={mostrarConfirmacaoLimpar} onOpenChange={setMostrarConfirmacaoLimpar}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Limpar Rascunho?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação excluirá permanentemente o rascunho salvo para este CNPJ. Você perderá todos os dados preenchidos até agora.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={limparRascunho} className="bg-red-600 hover:bg-red-700">
+              Sim, limpar rascunho
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Footer Redesenhado - Estilo Profissional */}
       <footer className="pt-8 pb-6 px-8" style={{ background: "#003366" }}>
