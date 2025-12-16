@@ -479,6 +479,27 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
+      // Tentar enviar para o Google Sheets (se a URL estiver configurada)
+      // Substitua a string vazia abaixo pela URL do seu Web App do Google Apps Script
+      const GOOGLE_SHEETS_WEBHOOK_URL = ""; 
+      
+      if (GOOGLE_SHEETS_WEBHOOK_URL) {
+        try {
+          await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
+            method: "POST",
+            mode: "no-cors", // Necessário para evitar bloqueio de CORS do Google
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(dadosEnvio),
+          });
+          console.log("Dados enviados para o Google Sheets");
+        } catch (sheetError) {
+          console.error("Erro ao enviar para o Google Sheets:", sheetError);
+          // Não interrompemos o fluxo principal se o Sheets falhar, pois o backup local já foi salvo
+        }
+      }
+
       const atualizacao: Atualizacao = {
         id: Math.random().toString(),
         nomeEscritorio: razaoSocialEscritorio,
