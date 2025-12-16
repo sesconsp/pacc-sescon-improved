@@ -457,6 +457,28 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
     setIsLoading(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // Gerar arquivo de backup JSON para o usuário (já que não temos backend ainda)
+      const dadosEnvio = {
+        escritorio: {
+          cnpj: cnpjEscritorio,
+          razaoSocial: razaoSocialEscritorio,
+          email: emailEscritorio
+        },
+        clientes: clientes,
+        dataEnvio: new Date().toISOString()
+      };
+
+      const blob = new Blob([JSON.stringify(dadosEnvio, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `backup_sescon_${cnpjEscritorio.replace(/\D/g, "")}_${new Date().getTime()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
       const atualizacao: Atualizacao = {
         id: Math.random().toString(),
         nomeEscritorio: razaoSocialEscritorio,
@@ -472,9 +494,15 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
       setRazaoSocialEscritorio("");
       setEmailEscritorio("");
       setMostrarResumo(false);
-      localStorage.removeItem("rascunho_pacc");
+      
+      // Limpar rascunho específico do CNPJ
+      const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
+      if (cnpjLimpo) {
+        localStorage.removeItem(`rascunho_pacc_${cnpjLimpo}`);
+      }
+      
       setTemRascunho(false);
-      toast.success("Dados enviados com sucesso!", { duration: 3000 });
+      toast.success("Dados enviados! Um backup foi salvo no seu computador.", { duration: 4000 });
     } catch (error) {
       toast.error("Erro ao enviar dados", { duration: 3000 });
     } finally {
