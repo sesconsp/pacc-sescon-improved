@@ -458,14 +458,21 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // Gerar arquivo de backup JSON para o usuário (já que não temos backend ainda)
+      // Preparar dados para envio (serializar metadados de arquivo)
+      // Nota: O arquivo real não é enviado para o Sheets via JSON, apenas o nome.
+      // Para upload real de arquivos, seria necessário um backend com suporte a multipart/form-data.
+      const clientesSerializados = clientes.map(c => ({
+        ...c,
+        contratosocial: c.contratosocial ? { name: c.contratosocial.name, size: c.contratosocial.size } : null
+      }));
+
       const dadosEnvio = {
         escritorio: {
           cnpj: cnpjEscritorio,
           razaoSocial: razaoSocialEscritorio,
           email: emailEscritorio
         },
-        clientes: clientes,
+        clientes: clientesSerializados,
         dataEnvio: new Date().toISOString()
       };
 
