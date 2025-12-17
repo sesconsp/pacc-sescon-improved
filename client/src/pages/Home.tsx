@@ -458,12 +458,39 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // Preparar dados para envio (serializar metadados de arquivo)
-      // Nota: O arquivo real não é enviado para o Sheets via JSON, apenas o nome.
-      // Para upload real de arquivos, seria necessário um backend com suporte a multipart/form-data.
-      const clientesSerializados = clientes.map(c => ({
-        ...c,
-        contratosocial: c.contratosocial ? { name: c.contratosocial.name, size: c.contratosocial.size } : null
+      // Função auxiliar para converter arquivo em Base64
+      const fileToBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = error => reject(error);
+        });
+      };
+
+      // Preparar clientes com arquivos convertidos para Base64
+      const clientesComArquivos = await Promise.all(clientes.map(async (c) => {
+        let arquivoBase64 = null;
+        let nomeArquivo = null;
+        let tipoArquivo = null;
+
+        if (c.contratosocial) {
+          try {
+            arquivoBase64 = await fileToBase64(c.contratosocial);
+            nomeArquivo = c.contratosocial.name;
+            tipoArquivo = c.contratosocial.type;
+          } catch (e) {
+            console.error("Erro ao converter arquivo", e);
+          }
+        }
+
+        return {
+          ...c,
+          contratosocial: c.contratosocial ? { name: c.contratosocial.name, size: c.contratosocial.size } : null,
+          arquivoBase64, // Campo novo para envio ao Google Apps Script
+          nomeArquivo,
+          tipoArquivo
+        };
       }));
 
       const dadosEnvio = {
@@ -472,7 +499,7 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
           razaoSocial: razaoSocialEscritorio,
           email: emailEscritorio
         },
-        clientes: clientesSerializados,
+        clientes: clientesComArquivos,
         dataEnvio: new Date().toISOString()
       };
 
