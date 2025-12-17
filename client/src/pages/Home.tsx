@@ -515,7 +515,7 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
 
       // Tentar enviar para o Google Sheets (se a URL estiver configurada)
       // Substitua a string vazia abaixo pela URL do seu Web App do Google Apps Script
-      const GOOGLE_SHEETS_WEBHOOK_URL = ""; 
+      const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyCj3wFTksGcudO7fy2gcCFJI2rakcScHpWV2XjpJaIVLMtANHmuHYLpRjiggebssviWw/exec"; 
       
       if (GOOGLE_SHEETS_WEBHOOK_URL) {
         try {
