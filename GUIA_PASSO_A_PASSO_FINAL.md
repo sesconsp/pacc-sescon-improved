@@ -71,23 +71,40 @@ function doPost(e) {
     
     if (novasLinhas.length > 0) sheet.getRange(sheet.getLastRow() + 1, 1, novasLinhas.length, novasLinhas[0].length).setValues(novasLinhas);
     
-    // *** ENVIO DE E-MAIL DE CONFIRMAÇÃO ***
+    // *** ENVIO DE E-MAIL DE CONFIRMAÇÃO (HTML) ***
     try {
       var assunto = "Confirmação de Envio - Central SESCON-SP";
-      var corpo = "Olá, " + razaoSocialEscritorio + "!\n\n" +
-                  "Recebemos seus dados com sucesso.\n\n" +
-                  "Resumo do Envio:\n" +
-                  "- CNPJ do Escritório: " + cnpjEscritorio + "\n" +
-                  "- Total de Clientes: " + clientes.length + "\n" +
-                  "- Data de Recebimento: " + Utilities.formatDate(dataAtual, "GMT-3", "dd/MM/yyyy HH:mm:ss") + "\n\n" +
-                  "Agradecemos sua colaboração.\n\n" +
-                  "Atenciosamente,\n" +
-                  "Equipe SESCON-SP";
+      var dataFormatada = Utilities.formatDate(dataAtual, "GMT-3", "dd/MM/yyyy HH:mm:ss");
+      
+      var htmlBody = 
+        '<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">' +
+          '<div style="background-color: #003d7a; padding: 20px; text-align: center;">' +
+            '<img src="https://sescon.org.br/wp-content/uploads/2017/10/logo_sescon_sp.png" alt="SESCON-SP" style="max-height: 60px; background-color: white; padding: 5px; border-radius: 4px;">' +
+          '</div>' +
+          '<div style="padding: 30px; background-color: #ffffff;">' +
+            '<h2 style="color: #003d7a; margin-top: 0;">Recebemos seus dados!</h2>' +
+            '<p style="color: #555; font-size: 16px;">Olá, <strong>' + razaoSocialEscritorio + '</strong>.</p>' +
+            '<p style="color: #555; font-size: 16px;">Confirmamos o recebimento da sua lista de clientes através da Central de Atualização.</p>' +
+            
+            '<div style="background-color: #f8f9fa; border-left: 4px solid #003d7a; padding: 15px; margin: 20px 0;">' +
+              '<p style="margin: 5px 0; color: #333;"><strong>CNPJ do Escritório:</strong> ' + cnpjEscritorio + '</p>' +
+              '<p style="margin: 5px 0; color: #333;"><strong>Total de Clientes:</strong> ' + clientes.length + '</p>' +
+              '<p style="margin: 5px 0; color: #333;"><strong>Data de Recebimento:</strong> ' + dataFormatada + '</p>' +
+            '</div>' +
+            
+            '<p style="color: #555; font-size: 14px;">Seus dados foram salvos com segurança e serão processados em breve.</p>' +
+            '<hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">' +
+            '<p style="color: #888; font-size: 12px; text-align: center;">Este é um e-mail automático, por favor não responda.</p>' +
+          '</div>' +
+          '<div style="background-color: #f1f1f1; padding: 15px; text-align: center; color: #666; font-size: 12px;">' +
+            '© ' + new Date().getFullYear() + ' SESCON-SP. Todos os direitos reservados.' +
+          '</div>' +
+        '</div>';
       
       MailApp.sendEmail({
         to: emailEscritorio,
         subject: assunto,
-        body: corpo
+        htmlBody: htmlBody
       });
     } catch (erroEmail) {
       // Se der erro no email, não faz nada, apenas segue (os dados já foram salvos)
