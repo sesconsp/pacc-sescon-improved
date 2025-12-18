@@ -71,6 +71,28 @@ function doPost(e) {
     
     if (novasLinhas.length > 0) sheet.getRange(sheet.getLastRow() + 1, 1, novasLinhas.length, novasLinhas[0].length).setValues(novasLinhas);
     
+    // *** ENVIO DE E-MAIL DE CONFIRMAÇÃO ***
+    try {
+      var assunto = "Confirmação de Envio - Central SESCON-SP";
+      var corpo = "Olá, " + razaoSocialEscritorio + "!\n\n" +
+                  "Recebemos seus dados com sucesso.\n\n" +
+                  "Resumo do Envio:\n" +
+                  "- CNPJ do Escritório: " + cnpjEscritorio + "\n" +
+                  "- Total de Clientes: " + clientes.length + "\n" +
+                  "- Data de Recebimento: " + Utilities.formatDate(dataAtual, "GMT-3", "dd/MM/yyyy HH:mm:ss") + "\n\n" +
+                  "Agradecemos sua colaboração.\n\n" +
+                  "Atenciosamente,\n" +
+                  "Equipe SESCON-SP";
+      
+      MailApp.sendEmail({
+        to: emailEscritorio,
+        subject: assunto,
+        body: corpo
+      });
+    } catch (erroEmail) {
+      // Se der erro no email, não faz nada, apenas segue (os dados já foram salvos)
+    }
+
     return ContentService.createTextOutput(JSON.stringify({'result': 'success'})).setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({'result': 'error', 'error': error.toString()})).setMimeType(ContentService.MimeType.JSON);
