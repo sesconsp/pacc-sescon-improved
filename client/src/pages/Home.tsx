@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2, Upload, CheckCircle, Mail, AlertCircle, FileText, Download, ChevronDown, ChevronUp, Loader2, Search, Save, RotateCcw, Eye, Clock, CheckCircle2, AlertTriangle, Send, FileDown, Download as DownloadIcon, Trash, Instagram, Facebook, Youtube, Linkedin, MessageCircle, Building, Users } from "lucide-react";
+import { SuccessScreen } from "@/components/SuccessScreen";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 // @ts-ignore
@@ -165,8 +166,10 @@ export default function Home() {
   const [atividadePrincipal, setAtividadePrincipal] = useState("");
   const [mostrarModalClientes, setMostrarModalClientes] = useState(false);
   const [mostrarResumo, setMostrarResumo] = useState(false);
+  const [sucessoEnvio, setSucessoEnvio] = useState<Atualizacao | null>(null);
   const [mostrarConfirmacaoLimpar, setMostrarConfirmacaoLimpar] = useState(false);
   const [mostrarConfirmacaoSair, setMostrarConfirmacaoSair] = useState(false);
+  const [tabAtual, setTabAtual] = useState("empresa");
 
   // Interceptar fechamento/atualização da página
   useEffect(() => {
@@ -534,8 +537,11 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
         }
       }
 
-      const atualizacao: Atualizacao = {
-        id: Math.random().toString(),
+      // Gerar protocolo e mostrar tela de sucesso
+      const protocolo = `SESCON-${new Date().getFullYear()}${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+      
+      const novaAtualizacao: Atualizacao = {
+        id: protocolo,
         nomeEscritorio: razaoSocialEscritorio,
         cnpjEscritorio: cnpjEscritorio,
         totalClientes: clientes.length,
@@ -543,27 +549,51 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
         horaEnvio: new Date().toLocaleTimeString("pt-BR"),
         resumo: `${clientes.length} cliente(s) atualizado(s) com sucesso`
       };
-      setAtualizacoes([atualizacao, ...atualizacoes]);
-      setClientes([]);
+      
+      setSucessoEnvio(novaAtualizacao);
+      setAtualizacoes([novaAtualizacao, ...atualizacoes]);
+      
+      // Limpar formulário (dados locais) mas manter estado de sucesso visível
+      localStorage.removeItem(`rascunho_sescon_${cnpjEscritorio.replace(/\D/g, "")}`);
       setCnpjEscritorio("");
       setRazaoSocialEscritorio("");
       setEmailEscritorio("");
-      setMostrarResumo(false);
+      setClientes([]);
+      setAtividadePrincipal("");
       
-      // Limpar rascunho específico do CNPJ
-      const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
-      if (cnpjLimpo) {
-        localStorage.removeItem(`rascunho_pacc_${cnpjLimpo}`);
-      }
-      
-      setTemRascunho(false);
-      toast.success("Dados enviados! Um backup foi salvo no seu computador.", { duration: 4000 });
+      toast.success("Dados enviados com sucesso!", { duration: 5000 });
     } catch (error) {
-      toast.error("Erro ao enviar dados", { duration: 3000 });
+      console.error(error);
+      toast.error("Erro ao processar envio. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
   };
+
+  const resetarFormulario = () => {
+    setSucessoEnvio(null);
+    setTabAtual("empresa");
+    window.scrollTo(0, 0);
+  };
+
+  if (sucessoEnvio) {
+    return (
+      <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 font-sans">
+        <div className="max-w-5xl mx-auto mb-8 text-center">
+           <div className="flex justify-center items-center gap-4 mb-2">
+            <img src="https://sescon.org.br/wp-content/uploads/2017/10/logo_sescon_sp.png" alt="SESCON-SP" className="h-16 object-contain" />
+            <h1 className="text-3xl font-bold text-slate-900">Central de Atualização SESCON-SP</h1>
+          </div>
+        </div>
+        <SuccessScreen 
+          protocolo={sucessoEnvio.id}
+          totalClientes={sucessoEnvio.totalClientes}
+          emailEscritorio={sucessoEnvio.cnpjEscritorio} // Usando campo disponível, idealmente seria o email
+          onReset={resetarFormulario}
+        />
+      </div>
+    );
+  }
 
   // Salvar rascunho vinculado ao CNPJ
   const salvarRascunho = () => {
