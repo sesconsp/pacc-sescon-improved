@@ -369,7 +369,7 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
       const linha = json[i];
       const cnpj = String(linha.CNPJ || linha.cnpj || "").trim();
       const razaoSocial = String(linha["Razão Social"] || linha["razao_social"] || linha["Razao Social"] || "").trim();
-      const email = String(linha["E-mail"] || linha["email"] || ["Email"] || ["E-MAIL"] "").trim();
+      const email = String(linha["E-mail"] || linha["email"] || ["Email"] || ["E-MAIL"] || "").trim();
       
       if (cnpj && razaoSocial) {
         novosClientes.push({
