@@ -99,6 +99,7 @@ const faqs: FAQ[] = [
 const SESCON_BLUE = "#003b61";
 const SESCON_DARK_BLUE = "#002a45";
 const SESCON_LIGHT_BLUE = "#eef6fb";
+const SESCON_ACCENT = "#005a8d";
 
 // Função auxiliar para converter arquivo em Base64
 const fileToBase64 = (file: File): Promise<string> => {
@@ -507,6 +508,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#f5f7fa" }}>
+      {/* Header Corporativo */}
       <header className="border-b" style={{ background: SESCON_BLUE, borderColor: SESCON_DARK_BLUE }}>
         <div className="px-8 py-6">
           <div className="flex items-center justify-between gap-6">
@@ -521,8 +523,10 @@ export default function Home() {
         </div>
       </header>
 
+      {/* Main Content */}
       <main className="flex-1 px-8 py-8">
         <div className="grid grid-cols-4 gap-8 h-full">
+          {/* Left Sidebar */}
           <div className="col-span-1 space-y-6">
             <div className="rounded-lg p-6 text-white shadow-lg" style={{ background: `linear-gradient(135deg, ${SESCON_BLUE} 0%, ${SESCON_DARK_BLUE} 100%)` }}>
               <h3 className="text-lg font-bold mb-6 pb-4 border-b border-white border-opacity-30">Como Funciona</h3>
@@ -544,7 +548,9 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Right Content */}
           <div className="col-span-3 space-y-6">
+            {/* Barra de Progresso */}
             <div className="bg-white rounded-lg p-4 shadow-sm border mb-6" style={{ borderColor: SESCON_LIGHT_BLUE }}>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-semibold" style={{ color: SESCON_DARK_BLUE }}>Progresso do Cadastro</span>
@@ -553,8 +559,12 @@ export default function Home() {
               <div className="w-full bg-gray-200 rounded-full h-2.5">
                 <div className="h-2.5 rounded-full transition-all duration-500 ease-out" style={{ width: abaSelecionada === 1 ? "50%" : "90%", background: SESCON_BLUE }}></div>
               </div>
+              <p className="text-xs text-gray-500 mt-2">
+                {abaSelecionada === 1 ? "Passo 1 de 2: Identificação do Escritório" : "Passo 2 de 2: Gestão de Clientes e Envio"}
+              </p>
             </div>
 
+            {/* Abas */}
             <div className="flex gap-6 border-b-2 mb-6" style={{ borderColor: SESCON_LIGHT_BLUE }}>
               <button onClick={() => setAbaSelecionada(1)} className={`pb-4 px-2 font-bold transition-all ${abaSelecionada === 1 ? "border-b-4" : "text-gray-400"}`} style={{ borderColor: abaSelecionada === 1 ? SESCON_BLUE : "transparent", color: abaSelecionada === 1 ? SESCON_BLUE : "" }}>1. Identificação</button>
               <button onClick={() => setAbaSelecionada(2)} className={`pb-4 px-2 font-bold transition-all ${abaSelecionada === 2 ? "border-b-4" : "text-gray-400"}`} style={{ borderColor: abaSelecionada === 2 ? SESCON_BLUE : "transparent", color: abaSelecionada === 2 ? SESCON_BLUE : "" }}>2. Clientes</button>
@@ -568,17 +578,17 @@ export default function Home() {
                     <div>
                       <label className="block text-sm font-semibold mb-3" style={{ color: SESCON_DARK_BLUE }}>CNPJ do Escritório *</label>
                       <div className="flex gap-3 items-center">
-                        <Input type="text" placeholder="00.000.000/0000-00" value={cnpjEscritorio} onChange={(e) => setCnpjEscritorio(formatarCNPJ(e.target.value))} onBlur={() => buscarCNPJEscritorio(cnpjEscritorio)} maxLength={18} className="flex-1 rounded-lg border-2 px-4 py-2" />
+                        <Input type="text" placeholder="00.000.000/0000-00" value={cnpjEscritorio} onChange={(e) => setCnpjEscritorio(formatarCNPJ(e.target.value))} onBlur={() => buscarCNPJEscritorio(cnpjEscritorio)} maxLength={18} className="flex-1 rounded-lg border-2 px-4 py-2" style={{ borderColor: SESCON_BLUE }} />
                         {buscandoReceita && <Loader2 className="w-5 h-5 animate-spin" style={{ color: SESCON_BLUE }} />}
                       </div>
                     </div>
                     <div>
                       <label className="block text-sm font-semibold mb-3" style={{ color: SESCON_DARK_BLUE }}>Nome do Escritório *</label>
-                      <Input type="text" value={razaoSocialEscritorio} onChange={(e) => setRazaoSocialEscritorio(e.target.value)} className="rounded-lg border-2 px-4 py-2" />
+                      <Input type="text" value={razaoSocialEscritorio} onChange={(e) => setRazaoSocialEscritorio(e.target.value)} className="rounded-lg border-2 px-4 py-2" style={{ borderColor: SESCON_BLUE }} />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold mb-3" style={{ color: SESCON_DARK_BLUE }}>E-mail para Contato *</label>
-                      <Input type="email" value={emailEscritorio} onChange={(e) => setEmailEscritorio(e.target.value)} className="rounded-lg border-2 px-4 py-2" />
+                      <Input type="email" value={emailEscritorio} onChange={(e) => setEmailEscritorio(e.target.value)} className="rounded-lg border-2 px-4 py-2" style={{ borderColor: SESCON_BLUE }} />
                     </div>
                     <Button onClick={() => setAbaSelecionada(2)} className="w-full rounded-lg font-bold py-3 text-white" style={{ background: SESCON_BLUE }}>Próximo</Button>
                   </div>
@@ -615,35 +625,81 @@ export default function Home() {
                           </div>
                         </div>
 
-                        <div className="p-6 rounded-lg border-2" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-                          <p className="font-bold mb-4">Adicionar Manualmente</p>
-                          <div className="grid grid-cols-2 gap-4">
-                            <Input placeholder="CNPJ" value={novoCliente.cnpj} onChange={(e) => setNovoCliente({ ...novoCliente, cnpj: formatarCNPJ(e.target.value) })} onBlur={() => buscarCNPJCliente(novoCliente.cnpj)} />
-                            <Input placeholder="Razão Social" value={novoCliente.razaoSocial} onChange={(e) => setNovoCliente({ ...novoCliente, razaoSocial: e.target.value })} />
-                            <div className="col-span-2">
-                              <label className="block text-sm mb-2">Contrato Social (PDF)</label>
-                              <Input type="file" accept=".pdf" onChange={(e) => setNovoCliente({ ...novoCliente, contratosocial: e.target.files?.[0] })} />
-                            </div>
-                            <Button onClick={adicionarCliente} className="col-span-2 text-white" style={{ background: SESCON_BLUE }}>Adicionar Cliente</Button>
-                          </div>
-                        </div>
-
-                        <div className="mt-8">
-                          <p className="font-bold mb-4">Clientes ({clientes.length})</p>
+                        {/* Lista de Clientes Adicionados */}
+                        <div>
+                          <p className="text-sm font-semibold mb-4" style={{ color: SESCON_DARK_BLUE }}>Clientes Adicionados ({clientes.length})</p>
                           <div className="space-y-2 max-h-64 overflow-y-auto">
-                            {clientes.map(c => (
-                              <div key={c.id} className="p-3 border rounded-lg flex justify-between items-center bg-white">
-                                <div><p className="font-bold text-sm">{c.razaoSocial}</p><p className="text-xs text-gray-500">{c.cnpj}</p></div>
-                                <Button onClick={() => removerCliente(c.id)} variant="ghost" className="text-red-500"><Trash2 className="w-4 h-4" /></Button>
-                              </div>
-                            ))}
+                            {clientes.length > 0 ? (
+                              clientes.map((cliente) => (
+                                <div key={cliente.id} className="p-3 rounded-lg border flex justify-between items-start" style={{ borderColor: SESCON_LIGHT_BLUE, background: SESCON_LIGHT_BLUE }}>
+                                  <div className="flex-1">
+                                    <p className="font-semibold text-sm" style={{ color: SESCON_DARK_BLUE }}>{cliente.razaoSocial}</p>
+                                    <p className="text-xs text-gray-600">{cliente.cnpj}</p>
+                                  </div>
+                                  <Button onClick={() => removerCliente(cliente.id)} variant="ghost" size="sm" className="text-red-600 hover:bg-red-50"><Trash2 className="w-4 h-4" /></Button>
+                                </div>
+                              ))
+                            ) : (
+                              <p className="text-center text-gray-500 text-sm py-8">Nenhum cliente adicionado ainda</p>
+                            )}
                           </div>
                         </div>
 
-                        <Button onClick={enviarDados} disabled={isLoading} className="w-full py-6 text-xl font-bold text-white" style={{ background: SESCON_BLUE }}>
-                          {isLoading ? <Loader2 className="animate-spin mr-2" /> : <Send className="mr-2" />}
-                          {isLoading ? "Enviando..." : "Enviar para SESCON-SP"}
-                        </Button>
+                        {/* Adicionar Manualmente */}
+                        <div className="p-6 rounded-lg border-2" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+                          <p className="text-sm font-semibold mb-4" style={{ color: SESCON_DARK_BLUE }}>Adicionar Cliente Manualmente</p>
+                          <div className="space-y-3">
+                            <Input placeholder="CNPJ" value={novoCliente.cnpj} onChange={(e) => setNovoCliente({ ...novoCliente, cnpj: formatarCNPJ(e.target.value) })} onBlur={() => buscarCNPJCliente(novoCliente.cnpj)} maxLength={18} className="rounded-lg border-2 px-4 py-2" style={{ borderColor: SESCON_BLUE }} />
+                            <Input placeholder="Razão Social" value={novoCliente.razaoSocial} onChange={(e) => setNovoCliente({ ...novoCliente, razaoSocial: e.target.value })} className="rounded-lg border-2 px-4 py-2" style={{ borderColor: SESCON_BLUE }} />
+                            
+                            <div className="space-y-2">
+                              <label className="block text-sm font-semibold" style={{ color: SESCON_DARK_BLUE }}>E-mail do Cliente</label>
+                              <div className="flex gap-2">
+                                <label className="flex items-center gap-2 flex-1 p-3 rounded-lg border-2 cursor-pointer" style={{ borderColor: novoCliente.emailPrincipal ? SESCON_BLUE : "#ddd", background: novoCliente.emailPrincipal ? SESCON_LIGHT_BLUE : "white" }}>
+                                  <input type="radio" checked={novoCliente.emailPrincipal} onChange={() => setNovoCliente({ ...novoCliente, emailPrincipal: true, emailCustomizado: "" })} className="w-4 h-4" />
+                                  <span className="text-sm" style={{ color: SESCON_DARK_BLUE }}>Usar e-mail da empresa</span>
+                                </label>
+                                <label className="flex items-center gap-2 flex-1 p-3 rounded-lg border-2 cursor-pointer" style={{ borderColor: !novoCliente.emailPrincipal ? SESCON_BLUE : "#ddd", background: !novoCliente.emailPrincipal ? SESCON_LIGHT_BLUE : "white" }}>
+                                  <input type="radio" checked={!novoCliente.emailPrincipal} onChange={() => setNovoCliente({ ...novoCliente, emailPrincipal: false })} className="w-4 h-4" />
+                                  <span className="text-sm" style={{ color: SESCON_DARK_BLUE }}>E-mail customizado</span>
+                                </label>
+                              </div>
+                              {!novoCliente.emailPrincipal && (
+                                <Input type="email" placeholder="email@cliente.com.br" value={novoCliente.emailCustomizado} onChange={(e) => setNovoCliente({ ...novoCliente, emailCustomizado: e.target.value })} className="rounded-lg border-2 px-4 py-2" style={{ borderColor: SESCON_BLUE }} />
+                              )}
+                            </div>
+
+                            <div className="space-y-2">
+                              <label className="block text-sm font-semibold" style={{ color: SESCON_DARK_BLUE }}>Contrato Social (Opcional)</label>
+                              <div className="flex items-center gap-3">
+                                <input type="file" accept=".pdf" onChange={(e) => setNovoCliente({ ...novoCliente, contratosocial: e.target.files?.[0] })} className="hidden" id="contrato-social-input" />
+                                <label htmlFor="contrato-social-input" className="flex-1 cursor-pointer">
+                                  <div className="flex items-center justify-center gap-2 p-3 rounded-lg border-2 border-dashed hover:bg-gray-50 transition-colors" style={{ borderColor: SESCON_BLUE }}>
+                                    <FileText className="w-4 h-4" style={{ color: SESCON_BLUE }} />
+                                    <span className="text-sm" style={{ color: SESCON_BLUE }}>{novoCliente.contratosocial ? novoCliente.contratosocial.name : 'Selecionar PDF'}</span>
+                                  </div>
+                                </label>
+                              </div>
+                            </div>
+
+                            <Button onClick={adicionarCliente} className="w-full rounded-lg font-semibold py-2 text-white" style={{ background: SESCON_BLUE }}>
+                              <Plus className="w-4 h-4 mr-2" /> Adicionar Cliente
+                            </Button>
+                          </div>
+                        </div>
+
+                        {/* Ações Finais */}
+                        <div className="flex flex-col gap-3 pt-4">
+                          <div className="flex gap-3">
+                            <Button onClick={() => setAbaSelecionada(1)} variant="outline" className="flex-1 rounded-lg border-2 font-semibold py-2" style={{ borderColor: SESCON_BLUE, color: SESCON_BLUE }}>Voltar</Button>
+                            <Button onClick={salvarRascunho} className="flex-1 rounded-lg font-semibold py-2 text-white" style={{ background: SESCON_ACCENT }}><Save className="w-4 h-4 mr-2" /> Salvar Rascunho</Button>
+                            <Button onClick={() => setMostrarModalClientes(true)} disabled={clientes.length === 0} className="flex-1 rounded-lg font-semibold py-2 text-white" style={{ background: SESCON_ACCENT }}><Eye className="w-4 h-4 mr-2" /> Visualizar Clientes</Button>
+                          </div>
+                          <Button onClick={enviarDados} disabled={isLoading || clientes.length === 0} className="flex-1 rounded-lg font-bold py-3 text-white text-lg" style={{ background: "#4CAF50" }}>
+                            {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Send className="w-5 h-5 mr-2" />}
+                            {isLoading ? "Enviando..." : "Enviar Dados"}
+                          </Button>
+                        </div>
                       </>
                     )}
                   </div>
@@ -654,11 +710,68 @@ export default function Home() {
         </div>
       </main>
 
+      {/* Modal de Visualização */}
+      {mostrarModalClientes && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b p-6" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+              <div className="flex items-center justify-between">
+                <h3 className="text-2xl font-bold" style={{ color: SESCON_DARK_BLUE }}>Visualizar Clientes</h3>
+                <button onClick={() => setMostrarModalClientes(false)} className="text-gray-500 hover:text-gray-700 text-2xl font-bold">✕</button>
+              </div>
+              <p className="text-sm text-gray-600 mt-2">Total de clientes a enviar: <strong>{clientes.length}</strong></p>
+            </div>
+            <div className="p-6 space-y-3">
+              {clientes.map((cliente, idx) => (
+                <div key={cliente.id} className="p-4 rounded-lg border flex justify-between items-start" style={{ borderColor: SESCON_LIGHT_BLUE, background: SESCON_LIGHT_BLUE }}>
+                  <div className="flex-1">
+                    <p className="font-semibold text-sm" style={{ color: SESCON_DARK_BLUE }}>{idx + 1}. {cliente.razaoSocial}</p>
+                    <p className="text-xs text-gray-600 mt-1">CNPJ: {cliente.cnpj}</p>
+                    <p className="text-xs text-gray-600 mt-1">E-mail: {cliente.emailCustomizado}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="sticky bottom-0 bg-white border-t p-6 flex gap-3" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+              <Button onClick={() => setMostrarModalClientes(false)} variant="outline" className="flex-1 rounded-lg border-2 font-semibold py-2" style={{ borderColor: SESCON_BLUE, color: SESCON_BLUE }}>Voltar</Button>
+              <Button onClick={() => { setMostrarModalClientes(false); enviarDados(); }} disabled={isLoading} className="flex-1 rounded-lg font-semibold py-2 text-white" style={{ background: SESCON_BLUE }}>
+                {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
+                {isLoading ? "Enviando..." : "Confirmar e Enviar"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Footer Corporativo */}
       <footer className="pt-8 pb-6 px-8" style={{ background: "#003366" }}>
-        <div className="max-w-6xl mx-auto text-white text-center">
-          <img src="/pacc-sescon-improved/logo-sescon-branco.png" alt="SESCON-SP" className="h-16 mx-auto mb-4" />
-          <p className="text-sm font-bold">SESCON-SP | CNPJ 62.638.168/0001-84</p>
-          <p className="text-xs opacity-70 mt-4">© {new Date().getFullYear()} SESCON-SP Todos os Direitos Reservados.</p>
+        <div className="max-w-6xl mx-auto text-white">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 mb-6 border-b border-white border-opacity-30">
+            <div className="flex flex-col items-start space-y-3 mb-6 md:mb-0">
+              <p className="text-sm font-semibold">Siga o Sescon-SP:</p>
+              <div className="flex items-center gap-4">
+                <Instagram className="w-6 h-6 cursor-pointer hover:text-pink-300" />
+                <Facebook className="w-6 h-6 cursor-pointer hover:text-blue-300" />
+                <Youtube className="w-6 h-6 cursor-pointer hover:text-red-300" />
+                <Linkedin className="w-6 h-6 cursor-pointer hover:text-blue-300" />
+                <MessageCircle className="w-6 h-6 cursor-pointer hover:text-green-300" />
+              </div>
+            </div>
+            <div className="flex flex-col items-center space-y-2 mb-6 md:mb-0 flex-1 md:px-8 text-center">
+              <p className="text-sm font-bold">SESCON-SP | CNPJ 62.638.168/0001-84</p>
+              <p className="text-xs">Av. Tiradentes, 998 - Luz | São Paulo-SP - 01102-000</p>
+              <p className="text-xs font-bold mt-2">SESCON-SP 2025 | Sindicato das Empresas de Serviços Contábeis</p>
+            </div>
+            <div className="hidden md:flex justify-end">
+              <img src="/pacc-sescon-improved/logo-sescon-branco.png" alt="SESCON-SP" className="h-20 w-auto" />
+            </div>
+          </div>
+          <div className="space-y-4">
+            <p className="text-xs leading-relaxed opacity-90">
+              © O Sescon-SP e a Aescon-SP informam que, em respeito aos preceitos elencados no art. 6º da LGPD...
+            </p>
+            <p className="text-xs font-semibold">SESCON-SP Todos os Direitos Reservados.</p>
+          </div>
         </div>
       </footer>
     </div>
