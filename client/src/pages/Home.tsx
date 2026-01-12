@@ -153,7 +153,6 @@ export default function Home({ onSuccess }: { onSuccess?: () => void }) {
       setIsSubmitting(true);
       setUploadProgress(10);
       
-      // 1. Processa os clientes e converte os arquivos PDF para Base64
       const clientesProcessados = await Promise.all(
         data.clientes.map(async (cliente: any, index: number) => {
           let arquivoData = null;
@@ -167,7 +166,6 @@ export default function Home({ onSuccess }: { onSuccess?: () => void }) {
             };
           }
           
-          // Atualiza progresso visual
           setUploadProgress(10 + Math.floor((index / data.clientes.length) * 40));
 
           return {
@@ -189,7 +187,6 @@ export default function Home({ onSuccess }: { onSuccess?: () => void }) {
 
       setUploadProgress(60);
 
-      // 2. Envia para o Google Apps Script
       await fetch("https://script.google.com/macros/s/AKfycbyBjgN0QA8k-4gvUrutLRkQAC93avC9PmKdLsA3Buy-Nm_6thfGKLL6jO5K-GZVVr_8xg/exec", {
         method: "POST",
         mode: "no-cors",
@@ -257,7 +254,6 @@ export default function Home({ onSuccess }: { onSuccess?: () => void }) {
               alt="SESCON-SP" 
               className="h-12 md:h-16 object-contain"
               onError={(e) => {
-                // Fallback caso a imagem não carregue
                 (e.target as HTMLImageElement).src = "https://www.sescon.org.br/wp-content/uploads/2021/08/logo-sescon-sp.png";
               }}
             />
@@ -308,8 +304,8 @@ export default function Home({ onSuccess }: { onSuccess?: () => void }) {
                     </CardHeader>
                     <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                       <FormField
-                        control={form.control,
-                        name: "escritorioCnpj",
+                        control={form.control}
+                        name="escritorioCnpj"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>CNPJ do Escritório</FormLabel>
@@ -321,8 +317,8 @@ export default function Home({ onSuccess }: { onSuccess?: () => void }) {
                         )}
                       />
                       <FormField
-                        control={form.control,
-                        name: "escritorioEmail",
+                        control={form.control}
+                        name="escritorioEmail"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>E-mail de Contato</FormLabel>
@@ -334,8 +330,8 @@ export default function Home({ onSuccess }: { onSuccess?: () => void }) {
                         )}
                       />
                       <FormField
-                        control={form.control,
-                        name: "escritorioRazao",
+                        control={form.control}
+                        name="escritorioRazao"
                         render={({ field }) => (
                           <FormItem className="md:col-span-2">
                             <FormLabel>Razão Social</FormLabel>
