@@ -546,6 +546,32 @@ export default function Home() {
               </div>
               <p className="text-sm leading-relaxed" style={{ color: SESCON_DARK_BLUE }}>A base anterior será excluída. Apenas os clientes que você enviar serão mantidos.</p>
             </div>
+
+            {/* FAQ Section */}
+            <div className="bg-white rounded-lg shadow-sm border overflow-hidden" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+              <div className="p-4 border-b bg-gray-50" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+                <h3 className="font-bold flex items-center gap-2" style={{ color: SESCON_DARK_BLUE }}>
+                  <MessageCircle className="w-5 h-5" /> Perguntas Frequentes
+                </h3>
+              </div>
+              <div className="divide-y" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+                {faqs.map((faq, index) => (
+                  <div key={index} className="p-4">
+                    <button onClick={() => setExpandedFAQ(expandedFAQ === index ? null : index)} className="w-full flex justify-between items-center text-left gap-4">
+                      <span className="text-sm font-semibold" style={{ color: SESCON_DARK_BLUE }}>{faq.pergunta}</span>
+                      {expandedFAQ === index ? <ChevronUp className="w-4 h-4 flex-shrink-0" /> : <ChevronDown className="w-4 h-4 flex-shrink-0" />}
+                    </button>
+                    <AnimatePresence>
+                      {expandedFAQ === index && (
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                          <p className="text-sm text-gray-600 mt-3 leading-relaxed" dangerouslySetInnerHTML={{ __html: faq.resposta }} />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Right Content */}
@@ -566,8 +592,12 @@ export default function Home() {
 
             {/* Abas */}
             <div className="flex gap-6 border-b-2 mb-6" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-              <button onClick={() => setAbaSelecionada(1)} className={`pb-4 px-2 font-bold transition-all ${abaSelecionada === 1 ? "border-b-4" : "text-gray-400"}`} style={{ borderColor: abaSelecionada === 1 ? SESCON_BLUE : "transparent", color: abaSelecionada === 1 ? SESCON_BLUE : "" }}>1. Identificação</button>
-              <button onClick={() => setAbaSelecionada(2)} className={`pb-4 px-2 font-bold transition-all ${abaSelecionada === 2 ? "border-b-4" : "text-gray-400"}`} style={{ borderColor: abaSelecionada === 2 ? SESCON_BLUE : "transparent", color: abaSelecionada === 2 ? SESCON_BLUE : "" }}>2. Clientes</button>
+              <button onClick={() => setAbaSelecionada(1)} className={`pb-4 px-4 font-bold transition-all border-b-4 text-lg flex items-center gap-3 ${abaSelecionada === 1 ? "" : "text-gray-400 border-transparent"}`} style={{ borderColor: abaSelecionada === 1 ? SESCON_BLUE : "transparent", color: abaSelecionada === 1 ? SESCON_BLUE : "" }}>
+                <Building className="w-5 h-5" /> 1. Identificação
+              </button>
+              <button onClick={() => setAbaSelecionada(2)} className={`pb-4 px-4 font-bold transition-all border-b-4 text-lg flex items-center gap-3 ${abaSelecionada === 2 ? "" : "text-gray-400 border-transparent"}`} style={{ borderColor: abaSelecionada === 2 ? SESCON_BLUE : "transparent", color: abaSelecionada === 2 ? SESCON_BLUE : "" }}>
+                <Users className="w-5 h-5" /> 2. Clientes
+              </button>
             </div>
 
             <AnimatePresence mode="wait">
@@ -581,6 +611,7 @@ export default function Home() {
                         <Input type="text" placeholder="00.000.000/0000-00" value={cnpjEscritorio} onChange={(e) => setCnpjEscritorio(formatarCNPJ(e.target.value))} onBlur={() => buscarCNPJEscritorio(cnpjEscritorio)} maxLength={18} className="flex-1 rounded-lg border-2 px-4 py-2" style={{ borderColor: SESCON_BLUE }} />
                         {buscandoReceita && <Loader2 className="w-5 h-5 animate-spin" style={{ color: SESCON_BLUE }} />}
                       </div>
+                      {erroCNPJ && <p className="text-red-500 text-xs mt-1">{erroCNPJ}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-semibold mb-3" style={{ color: SESCON_DARK_BLUE }}>Nome do Escritório *</label>
@@ -589,6 +620,7 @@ export default function Home() {
                     <div>
                       <label className="block text-sm font-semibold mb-3" style={{ color: SESCON_DARK_BLUE }}>E-mail para Contato *</label>
                       <Input type="email" value={emailEscritorio} onChange={(e) => setEmailEscritorio(e.target.value)} className="rounded-lg border-2 px-4 py-2" style={{ borderColor: SESCON_BLUE }} />
+                      {erroEmail && <p className="text-red-500 text-xs mt-1">{erroEmail}</p>}
                     </div>
                     <Button onClick={() => setAbaSelecionada(2)} className="w-full rounded-lg font-bold py-3 text-white" style={{ background: SESCON_BLUE }}>Próximo</Button>
                   </div>
@@ -610,6 +642,7 @@ export default function Home() {
                         <div className="p-8 rounded-xl border-2 border-dashed bg-blue-50/30 text-center" style={{ borderColor: SESCON_BLUE }}>
                           <Upload className="w-8 h-8 mx-auto mb-4" style={{ color: SESCON_BLUE }} />
                           <h3 className="text-xl font-bold mb-2">Importar Lista</h3>
+                          <p className="text-sm text-gray-600 mb-6">Importe seus clientes via arquivo Excel (.xlsx) ou CSV</p>
                           <div className="flex gap-4 justify-center mt-6">
                             <Button onClick={gerarModeloCSV} variant="outline" style={{ borderColor: SESCON_BLUE, color: SESCON_BLUE }}>Baixar Modelo</Button>
                             <label className="cursor-pointer bg-blue-600 text-white px-6 py-2 rounded-lg font-bold" style={{ background: SESCON_BLUE }}>
@@ -680,6 +713,7 @@ export default function Home() {
                                   </div>
                                 </label>
                               </div>
+                              <p className="text-xs text-gray-600">Aceita apenas arquivos em formato PDF</p>
                             </div>
 
                             <Button onClick={adicionarCliente} className="w-full rounded-lg font-semibold py-2 text-white" style={{ background: SESCON_BLUE }}>
@@ -750,25 +784,31 @@ export default function Home() {
             <div className="flex flex-col items-start space-y-3 mb-6 md:mb-0">
               <p className="text-sm font-semibold">Siga o Sescon-SP:</p>
               <div className="flex items-center gap-4">
-                <Instagram className="w-6 h-6 cursor-pointer hover:text-pink-300" />
-                <Facebook className="w-6 h-6 cursor-pointer hover:text-blue-300" />
-                <Youtube className="w-6 h-6 cursor-pointer hover:text-red-300" />
-                <Linkedin className="w-6 h-6 cursor-pointer hover:text-blue-300" />
-                <MessageCircle className="w-6 h-6 cursor-pointer hover:text-green-300" />
+                <a href="https://www.instagram.com/sesconsp/?hl=pt" target="_blank" rel="noopener noreferrer" className="text-white hover:text-pink-300 transition-colors"><Instagram className="w-6 h-6" /></a>
+                <a href="https://www.facebook.com/sesconsp" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-300 transition-colors"><Facebook className="w-6 h-6" /></a>
+                <a href="https://www.youtube.com/channel/UCBjwnyWvusn2PsIT-wRk9MQ" target="_blank" rel="noopener noreferrer" className="text-white hover:text-red-300 transition-colors"><Youtube className="w-6 h-6" /></a>
+                <a href="https://br.linkedin.com/company/sescon-sp" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-300 transition-colors"><Linkedin className="w-6 h-6" /></a>
+                <a href="https://api.whatsapp.com/send?phone=551133044416" target="_blank" rel="noopener noreferrer" className="text-white hover:text-green-300 transition-colors"><MessageCircle className="w-6 h-6" /></a>
               </div>
             </div>
             <div className="flex flex-col items-center space-y-2 mb-6 md:mb-0 flex-1 md:px-8 text-center">
               <p className="text-sm font-bold">SESCON-SP | CNPJ 62.638.168/0001-84</p>
               <p className="text-xs">Av. Tiradentes, 998 - Luz | São Paulo-SP - 01102-000</p>
               <p className="text-xs font-bold mt-2">SESCON-SP 2025 | Sindicato das Empresas de Serviços Contábeis</p>
+              <p className="text-xs mt-1">Para suporte, entre em contato: <a href="mailto:cadastro@sescon.org.br" className="underline hover:text-blue-200">cadastro@sescon.org.br</a></p>
             </div>
             <div className="hidden md:flex justify-end">
               <img src="/pacc-sescon-improved/logo-sescon-branco.png" alt="SESCON-SP" className="h-20 w-auto" />
             </div>
           </div>
           <div className="space-y-4">
+            <div className="flex flex-col md:flex-row gap-4 text-xs border-b border-white border-opacity-30 pb-4">
+              <a href="#" className="text-white hover:text-blue-200 transition-colors">Canais de atendimento</a>
+              <span className="hidden md:inline">|</span>
+              <a href="#" className="text-white hover:text-blue-200 transition-colors">Política de Privacidade e Cookies</a>
+            </div>
             <p className="text-xs leading-relaxed opacity-90">
-              © O Sescon-SP e a Aescon-SP informam que, em respeito aos preceitos elencados no art. 6º da LGPD...
+              © O Sescon-SP e a Aescon-SP informam que, em respeito aos preceitos elencados no art. 6º da LGPD e, em especial, ao Princípio da Finalidade, a coleta dos dados pessoais dispostos nos formulários de contato, será pautada na hipótese de tratamento prevista no inciso IX do Art. 7º da Lei nº 13.709/18.
             </p>
             <p className="text-xs font-semibold">SESCON-SP Todos os Direitos Reservados.</p>
           </div>
