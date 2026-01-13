@@ -110,7 +110,58 @@ const fileToBase64 = (file: File): Promise<string> => {
     reader.onerror = (error) => reject(error);
   });
 };
+const onSubmit = async (values: any) => {
+  try {
+    setIsSubmitting(true);
+    
+    // 1. Processa os clientes e converte os arquivos PDF
+    const clientesProcessados = await Promise.all(
+      values.clientes.map(async (cliente: any) => {
+        let arquivoData = null;
+        // Verifica se existe um arquivo selecionado no campo 'contratosocial'
+        if (cliente.contratosocial && cliente.contratosocial[0]) {
+          const file = cliente.contratosocial[0];
+          const base64 = await fileToBase64(file);
+          arquivoData = {
+            data: base64,
+            name: file.name,
+            type: file.type
+          };
+        }
+        return {
+          cnpj: cliente.cnpj,
+          razaoSocial: cliente.razaoSocial,
+          email: cliente.email,
+          telefone: cliente.telefone,
+          contratoArquivo: arquivoData // Enviamos o arquivo convertido aqui
+        };
+      })
+    );
 
+    // 2. Monta o pacote final
+    const payload = {
+      escritorioCnpj: values.escritorioCnpj,
+      escritorioRazao: values.escritorioRazao,
+      escritorioEmail: values.escritorioEmail,
+      clientes: clientesProcessados
+    };
+	   // 3. Envia para o Google
+    await fetch("https://script.google.com/macros/s/AKfycbxR2MCXtsKqCO3cXC6NgAkntgt6E2N5eTFEAqbyw7YW9Q2lATMGOE1L-NI916Ofduio/exec", {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload )
+    });
+
+    toast.success("Formulário enviado com sucesso!");
+    // Opcional: reset() ou redirecionar
+  } catch (error) {
+    console.error(error);
+    toast.error("Erro ao enviar os dados. Tente novamente.");
+  } finally {
+    setIsSubmitting(false);
+  }
+}
 export default function Home() {
   const [cnpjEscritorio, setCnpjEscritorio] = useState("");
   const [razaoSocialEscritorio, setRazaoSocialEscritorio] = useState("");
