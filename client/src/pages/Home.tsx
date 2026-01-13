@@ -1,38 +1,28 @@
-
 // src/pages/Home.tsx
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Plus,
   Trash2,
   Upload,
   CheckCircle,
-  Mail,
-  AlertCircle,
-  FileText,
   Download,
   ChevronDown,
   ChevronUp,
   Loader2,
-  Search,
   Save,
-  RotateCcw,
   Eye,
   Clock,
-  CheckCircle2,
   AlertTriangle,
   Send,
-  FileDown,
-  Download as DownloadIcon,
-  Trash,
+  FileText,
   Instagram,
   Facebook,
   Youtube,
   Linkedin,
   MessageCircle,
   Building,
-  Users
+  Users,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -47,7 +37,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
 interface Cliente {
@@ -60,7 +50,6 @@ interface Cliente {
   cnpjValido?: boolean;
   ehMatriz?: boolean;
 }
-
 interface Rascunho {
   nomeEscritorio: string;
   cnpjEscritorio: string;
@@ -68,7 +57,6 @@ interface Rascunho {
   clientes: Omit<Cliente, "contratosocial">[];
   dataSalva: string;
 }
-
 interface Atualizacao {
   id: string;
   nomeEscritorio: string;
@@ -78,7 +66,6 @@ interface Atualizacao {
   horaEnvio: string;
   resumo: string;
 }
-
 interface FAQ {
   pergunta: string;
   resposta: string;
@@ -88,53 +75,53 @@ const faqs: FAQ[] = [
   {
     pergunta: "Por que preciso informar todos os meus clientes?",
     resposta:
-      "O SESCON está modernizando sua base de dados. Ao informar todos os seus clientes atuais, garantimos que apenas empresas que você realmente representa receberão nossas comunicações."
+      "O SESCON está modernizando sua base de dados. Ao informar todos os seus clientes atuais, garantimos que apenas empresas que você realmente representa receberão nossas comunicações.",
   },
   {
     pergunta: "Posso usar o mesmo e-mail para vários clientes?",
     resposta:
-      "Sim, você pode usar o mesmo e-mail para vários clientes. Se não informar um e-mail específico, será utilizado o e-mail do seu escritório."
+      "Sim, você pode usar o mesmo e-mail para vários clientes. Se não informar um e-mail específico, será utilizado o e-mail do seu escritório.",
   },
   {
     pergunta: "O contrato social é obrigatório?",
     resposta:
-      "Não, o contrato social é opcional. Você pode enviar o formulário sem anexar. Se desejar, aceita apenas arquivos em PDF."
+      "Não, o contrato social é opcional. Você pode enviar o formulário sem anexar. Se desejar, aceita apenas arquivos em PDF.",
   },
   {
     pergunta: "Posso atualizar minha lista depois?",
     resposta:
-      "Sim, você pode atualizar sua lista a qualquer momento preenchendo o formulário novamente. A nova lista substituirá a anterior."
+      "Sim, você pode atualizar sua lista a qualquer momento preenchendo o formulário novamente. A nova lista substituirá a anterior.",
   },
   {
     pergunta: "Como baixo os dados que enviei?",
     resposta:
-      "Após enviar, você receberá um e-mail de confirmação com um link para baixar um comprovante em PDF com todos os dados."
+      "Após enviar, você receberá um e-mail de confirmação com um link para baixar um comprovante em PDF com todos os dados.",
   },
   {
     pergunta: "Quanto tempo leva para processar?",
     resposta:
-      "A atualização é processada imediatamente após o envio. Você receberá um e-mail de confirmação em poucos minutos."
+      "A atualização é processada imediatamente após o envio. Você receberá um e-mail de confirmação em poucos minutos.",
   },
   {
     pergunta: "O que fazer se cometer um erro?",
     resposta:
-      "Você pode enviar os dados novamente. A nova lista substituirá a anterior. Se precisar de ajuda, entre em contato conosco."
+      "Você pode enviar os dados novamente. A nova lista substituirá a anterior. Se precisar de ajuda, entre em contato conosco.",
   },
   {
     pergunta: "Como valido meu CNPJ?",
     resposta:
-      "O sistema valida automaticamente o CNPJ quando você digita. Se válido, aparecerá uma mensagem de confirmação."
+      "O sistema valida automaticamente o CNPJ quando você digita. Se válido, aparecerá uma mensagem de confirmação.",
   },
   {
     pergunta: "Qual a responsabilidade da contabilidade sobre as informações?",
     resposta:
-      "A contabilidade atua como facilitadora no envio das informações, garantindo que os dados cadastrais e de contribuições estejam alinhados com as obrigações acessórias e a regularidade das empresas representadas."
+      "A contabilidade atua como facilitadora no envio das informações, garantindo que os dados cadastrais e de contribuições estejam alinhados com as obrigações acessórias e a regularidade das empresas representadas.",
   },
   {
     pergunta: "Como saber quais são as categorias representadas pelo SESCON-SP?",
     resposta:
-      'O SESCON-SP representa 58 categorias econômicas, divididas entre Contábil e Assessoramento. Abaixo estão listados todos os CNAEs representados:<br/><br/>\n<ul>\n<li>02.30-6/00: Atividade de apoio à produção florestal</li>\n<li>52.29-0/02: Serviços de reboque de veículos</li>\n<li>52.29-0/99: Outras atividades auxiliares dos transportes terrestres não especificadas</li>\n<li>52.40-1/01: Operação dos aeroportos e campos de aterrissagem</li>\n<li>52.50-8/04: Organização logística do transporte de carga</li>\n<li>52.50-8/05: Operador de transporte multimodal - OTM</li>\n<li>64.61-1/00: Holdings de instituições financeiras</li>\n<li>64.62-0/00: Holdings de instituições não-financeiras</li>\n<li>64.63-8/00: Outras sociedades de participação, exceto holdings</li>\n<li>66.11-8/01: Bolsa de valores</li>\n<li>66.11-8/02: Bolsa de mercadorias</li>\n<li>66.11-8/03: Bolsa de mercadorias e futuros</li>\n<li>66.11-8/04: Administração de mercados de balcão organizados</li>\n<li>66.12-6/05: Agentes de investimentos em aplicações financeiras</li>\n<li>66.13-4/00: Administração de cartões de crédito</li>\n<li>66.19-3/02: Correspondentes de instituições financeiras</li>\n<li>66.19-3/03: Representação de bancos</li>\n<li>66.19-3/99: Outras atividades auxiliares dos serviços financeiros não especificadas</li>\n<li>66.21-5/01: Peritos e avaliadores de seguros</li>\n<li>66.21-5/02: Auditoria e consultoria atuarial</li>\n<li>66.29-1/00: Atividades auxiliares dos seguros, da previdência complementar e dos planos</li>\n<li>66.30-4/00: Atividades de administração de fundos por contrato ou comissão</li>\n<li>68.10-2/02: Aluguel de imóveis próprios</li>\n<li>69.11-7/03: Atividades auxiliares da justiça: arbitragem, mediação, avaliações, perícia.</li>\n<li>69.11-7/20: Agente de propriedade industrial</li>\n<li>69.20-6/01: Atividades de contabilidade</li>\n<li>69.20-6/02: Atividades de consultoria e auditoria contábil e tributária</li>\n<li>70.20-4/00: Atividades de consultoria em gestão empresarial, exceto consultoria técnica</li>\n<li>71.19-7/01: Serviços de cartografia, topografia e geodésia</li>\n<li>71.19-7/02: Atividades de estudos geológicos (prospecção geológica)</li>\n<li>71.19-7/03: Serviços de desenho técnico relacionados à arquitetura e engenharia</li>\n<li>71.19-7/04: Serviços de perícia técnica relacionados à segurança do trabalho</li>\n<li>71.20-1/00: Testes e análises técnicas (ensaios de materiais e produtos)</li>\n<li>72.10-0/00: Pesquisa e desenvolvimento experimental em ciências físicas e naturais</li>\n<li>72.20-7/00: Pesquisa e desenvolvimento experimental em ciências sociais e humanas</li>\n<li>73.19-0/02: Promoção de Vendas</li>\n<li>73.19-0/04: Consultoria em publicidade</li>\n<li>73.20-3/00: Pesquisa de mercado e de opinião pública</li>\n<li>74.20-0/02: Atividades de produção de fotografias aéreas e submarinas</li>\n<li>74.20-0/05: Serviços de microfilmagem</li>\n<li>74.90-1/01: Serviços de Tradução, Interpretação e Similares</li>\n<li>74.90-1/03: Serviços de agronomia e de consultoria e de atividades agrícolas e pecuárias</li>\n<li>74.90-1/04: Atividades de intermediação e agenciamento de serviços e negócios em geral</li>\n<li>74.90-1/05: Agenciamento de profissionais para atividades esportivas, culturais</li>\n<li>74.90-1/99: Outras atividades profissionais, científicas e técnicas não especificadas</li>\n<li>77.40-3/00: Gestão de ativos intangíveis não-financeiros</li>\n<li>78.10-8/00: Seleção e Agenciamento de Mão de obra</li>\n<li>80.20-0/00: Atividades de monitoramento de sistemas de segurança</li>\n<li>82.11-3/00: Serviços combinados de escritório e apoio administrativo</li>\n<li>82.19-9/99: Preparação de documentos e serviços especializados de apoio administrativo</li>\n<li>82.99-7/99: Outras atividades de serviços prestados principalmente às empresas</li>\n<li>85.50-3/02: Atividades de apoio à educação, exceto caixas escolares</li>\n<li>85.99-6/04: Treinamento em desenvolvimento profissional e gerencial</li>\n<li>86.60-7/00: Atividades de apoio à gestão de saúde (exceto serviços privativos de médicos)</li>\n<li>94.11-1/00: Atividades de organizações associativas patronais e empresariais</li>\n<li>94.12-0/00: Atividades de organizações associativas profissionais</li>\n<li>94.30-8/00: Atividades de associações de defesa de direitos sociais</li>\n<li>94.91-0/00: Atividades de organizações religiosas</li>\n<li>94.99-5/00: Atividades associativas não especificadas anteriormente</li>\n</ul>'
-  }
+      'O SESCON-SP representa 58 categorias econômicas, divididas entre Contábil e Assessoramento. Abaixo estão listados todos os CNAEs representados:<br/><br/>\n<ul>\n<li>02.30-6/00: Atividade de apoio à produção florestal</li>\n<li>52.29-0/02: Serviços de reboque de veículos</li>\n<li>52.29-0/99: Outras atividades auxiliares dos transportes terrestres não especificadas</li>\n<li>52.40-1/01: Operação dos aeroportos e campos de aterrissagem</li>\n<li>52.50-8/04: Organização logística do transporte de carga</li>\n<li>52.50-8/05: Operador de transporte multimodal - OTM</li>\n<li>64.61-1/00: Holdings de instituições financeiras</li>\n<li>64.62-0/00: Holdings de instituições não-financeiras</li>\n<li>64.63-8/00: Outras sociedades de participação, exceto holdings</li>\n<li>66.11-8/01: Bolsa de valores</li>\n<li>66.11-8/02: Bolsa de mercadorias</li>\n<li>66.11-8/03: Bolsa de mercadorias e futuros</li>\n<li>66.11-8/04: Administração de mercados de balcão organizados</li>\n<li>66.12-6/05: Agentes de investimentos em aplicações financeiras</li>\n<li>66.13-4/00: Administração de cartões de crédito</li>\n<li>66.19-3/02: Correspondentes de instituições financeiras</li>\n<li>66.19-3/03: Representação de bancos</li>\n<li>66.19-3/99: Outras atividades auxiliares dos serviços financeiros não especificadas</li>\n<li>66.21-5/01: Peritos e avaliadores de seguros</li>\n<li>66.21-5/02: Auditoria e consultoria atuarial</li>\n<li>66.29-1/00: Atividades auxiliares dos seguros, da previdência complementar e dos planos</li>\n<li>66.30-4/00: Atividades de administração de fundos por contrato ou comissão</li>\n<li>68.10-2/02: Aluguel de imóveis próprios</li>\n<li>69.11-7/03: Atividades auxiliares da justiça: arbitragem, mediação, avaliações, perícia.</li>\n<li>69.11-7/20: Agente de propriedade industrial</li>\n<li>69.20-6/01: Atividades de contabilidade</li>\n<li>69.20-6/02: Atividades de consultoria e auditoria contábil e tributária</li>\n<li>70.20-4/00: Atividades de consultoria em gestão empresarial, exceto consultoria técnica</li>\n<li>71.19-7/01: Serviços de cartografia, topografia e geodésia</li>\n<li>71.19-7/02: Atividades de estudos geológicos (prospecção geológica)</li>\n<li>71.19-7/03: Serviços de desenho técnico relacionados à arquitetura e engenharia</li>\n<li>71.19-7/04: Serviços de perícia técnica relacionados à segurança do trabalho</li>\n<li>71.20-1/00: Testes e análises técnicas (ensaios de materiais e produtos)</li>\n<li>72.10-0/00: Pesquisa e desenvolvimento experimental em ciências físicas e naturais</li>\n<li>72.20-7/00: Pesquisa e desenvolvimento experimental em ciências sociais e humanas</li>\n<li>73.19-0/02: Promoção de Vendas</li>\n<li>73.19-0/04: Consultoria em publicidade</li>\n<li>73.20-3/00: Pesquisa de mercado e de opinião pública</li>\n<li>74.20-0/02: Atividades de produção de fotografias aéreas e submarinas</li>\n<li>74.20-0/05: Serviços de microfilmagem</li>\n<li>74.90-1/01: Serviços de Tradução, Interpretação e Similares</li>\n<li>74.90-1/03: Serviços de agronomia e de consultoria e de atividades agrícolas e pecuárias</li>\n<li>74.90-1/04: Atividades de intermediação e agenciamento de serviços e negócios em geral</li>\n<li>74.90-1/05: Agenciamento de profissionais para atividades esportivas, culturais</li>\n<li>74.90-1/99: Outras atividades profissionais, científicas e técnicas não especificadas</li>\n<li>77.40-3/00: Gestão de ativos intangíveis não-financeiros</li>\n<li>78.10-8/00: Seleção e Agenciamento de Mão de obra</li>\n<li>80.20-0/00: Atividades de monitoramento de sistemas de segurança</li>\n<li>82.11-3/00: Serviços combinados de escritório e apoio administrativo</li>\n<li>82.19-9/99: Preparação de documentos e serviços especializados de apoio administrativo</li>\n<li>82.99-7/99: Outras atividades de serviços prestados principalmente às empresas</li>\n<li>85.50-3/02: Atividades de apoio à educação, exceto caixas escolares</li>\n<li>85.99-6/04: Treinamento em desenvolvimento profissional e gerencial</li>\n<li>86.60-7/00: Atividades de apoio à gestão de saúde (exceto serviços privativos de médicos)</li>\n<li>94.11-1/00: Atividades de organizações associativas patronais e empresariais</li>\n<li>94.12-0/00: Atividades de organizações associativas profissionais</li>\n<li>94.30-8/00: Atividades de associações de defesa de direitos sociais</li>\n<li>94.91-0/00: Atividades de organizações religiosas</li>\n<li>94.99-5/00: Atividades associativas não especificadas anteriormente</li>\n</ul>',
+  },
 ];
 
 export default function Home() {
@@ -149,7 +136,7 @@ export default function Home() {
     emailCustomizado: "",
     cnpjValido: false,
     ehMatriz: false,
-    contratosocial: undefined as File | undefined
+    contratosocial: undefined as File | undefined,
   });
   const [cnpjEscritorioValido, setCnpjEscritorioValido] = useState(false);
   const [buscandoReceita, setBuscandoReceita] = useState(false);
@@ -164,15 +151,23 @@ export default function Home() {
   const [atualizacoes, setAtualizacoes] = useState<Atualizacao[]>([]);
   const [progressoUpload, setProgressoUpload] = useState(0);
   const [statusUpload, setStatusUpload] = useState("");
-  const [busca, setBusca] = useState("");
-  const [buscaCarregando, setBuscaCarregando] = useState(false);
   const [atividadePrincipal, setAtividadePrincipal] = useState("");
   const [mostrarModalClientes, setMostrarModalClientes] = useState(false);
-  const [mostrarResumo, setMostrarResumo] = useState(false);
   const [mostrarConfirmacaoLimpar, setMostrarConfirmacaoLimpar] = useState(false);
-  const [mostrarConfirmacaoSair, setMostrarConfirmacaoSair] = useState(false);
 
-  // Cores SESCON Oficiais
+  // Interceptar fechamento/atualização da página
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (cnpjEscritorio && razaoSocialEscritorio && clientes.length > 0) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [cnpjEscritorio, razaoSocialEscritorio, clientes]);
+
+  // Cores SESCON
   const SESCON_BLUE = "#003d7a";
   const SESCON_DARK_BLUE = "#002147";
   const SESCON_LIGHT_BLUE = "#e6f0f7";
@@ -181,7 +176,7 @@ export default function Home() {
   // Validação de e-mail
   const validarEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  // Validação em tempo real do CNPJ
+  // Validações em tempo real
   useEffect(() => {
     if (cnpjEscritorio) {
       const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
@@ -197,7 +192,6 @@ export default function Home() {
     }
   }, [cnpjEscritorio]);
 
-  // Validação em tempo real do Email
   useEffect(() => {
     if (emailEscritorio) {
       setErroEmail(validarEmail(emailEscritorio) ? "" : "E-mail inválido");
@@ -205,18 +199,6 @@ export default function Home() {
       setErroEmail("");
     }
   }, [emailEscritorio]);
-
-  // Interceptar fechamento/atualização da página
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (cnpjEscritorio && razaoSocialEscritorio && clientes.length > 0) {
-        e.preventDefault();
-        e.returnValue = "";
-      }
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [cnpjEscritorio, razaoSocialEscritorio, clientes]);
 
   // Helpers CNPJ
   function formatarCNPJ(cnpj: string): string {
@@ -231,7 +213,6 @@ export default function Home() {
       14
     )}`;
   }
-
   function validarCNPJ(cnpj: string): boolean {
     const numeros = cnpj.replace(/\D/g, "");
     if (numeros.length !== 14) return false;
@@ -261,13 +242,12 @@ export default function Home() {
     resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
     return resultado === parseInt(digito.charAt(1));
   }
-
   function verificarMatrizFilial(cnpj: string): boolean {
     const numeros = cnpj.replace(/\D/g, "");
     return numeros.substring(8, 12) === "0001";
   }
 
-  // Buscar CNPJ no BrasilAPI
+  // Buscar CNPJ (BrasilAPI)
   async function buscarCNPJEscritorio(cnpj: string) {
     const numeros = cnpj.replace(/\D/g, "");
     if (numeros.length !== 14 || !validarCNPJ(cnpj)) {
@@ -280,8 +260,8 @@ export default function Home() {
       const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${numeros}`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      if (data.name || data.razao_social) {
-        const nome = data.name || data.razao_social;
+      const nome = data?.name || data?.razao_social;
+      if (nome) {
         setRazaoSocialEscritorio(nome);
         setCnpjEscritorioValido(true);
         toast.success("CNPJ validado com sucesso!", { duration: 2000 });
@@ -289,8 +269,8 @@ export default function Home() {
         setCnpjEscritorioValido(false);
         toast.error("CNPJ não encontrado na Receita Federal", { duration: 2000 });
       }
-    } catch (error) {
-      console.error("Erro ao buscar CNPJ:", error);
+    } catch (err) {
+      console.error("Erro ao buscar CNPJ:", err);
       setCnpjEscritorioValido(false);
       toast.error("Erro ao buscar CNPJ. Verifique sua conexão.", { duration: 3000 });
     } finally {
@@ -309,18 +289,18 @@ export default function Home() {
       const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${numeros}`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      if (data.name || data.razao_social) {
-        const nome = data.name || data.razao_social;
+      const nome = data?.name || data?.razao_social;
+      if (nome) {
         setNovoCliente({
           ...novoCliente,
           razaoSocial: nome,
           cnpjValido: true,
-          ehMatriz: verificarMatrizFilial(cnpj)
+          ehMatriz: verificarMatrizFilial(cnpj),
         });
         toast.success("Dados do cliente carregados!", { duration: 2000 });
       }
-    } catch (error) {
-      console.error("Erro ao buscar CNPJ:", error);
+    } catch (err) {
+      console.error("Erro ao buscar CNPJ:", err);
       setNovoCliente({ ...novoCliente, cnpjValido: false });
     } finally {
       setBuscandoReceita(false);
@@ -352,7 +332,7 @@ export default function Home() {
             emailPrincipal: !email,
             emailCustomizado: email || emailEscritorioParam,
             cnpjValido: validarCNPJ(cnpj),
-            ehMatriz: verificarMatrizFilial(cnpj)
+            ehMatriz: verificarMatrizFilial(cnpj),
           });
         }
         if (onProgress) {
@@ -382,8 +362,12 @@ export default function Home() {
       for (let i = 0; i < json.length; i++) {
         const linha = json[i];
         const cnpj = String(linha.CNPJ || linha.cnpj || "").trim();
-        const razaoSocial = String(linha["Razão Social"] || linha["razao_social"] || linha["Razao Social"] || "").trim();
-        const email = String(linha["E-mail"] || linha["email"] || linha["Email"] || linha["E-MAIL"] || "").trim();
+        const razaoSocial = String(
+          linha["Razão Social"] || linha["razao_social"] || linha["Razao Social"] || ""
+        ).trim();
+        const email = String(
+          linha["E-mail"] || linha["email"] || linha["Email"] || linha["E-MAIL"] || ""
+        ).trim();
         if (cnpj && razaoSocial) {
           novosClientes.push({
             id: Math.random().toString(),
@@ -392,7 +376,7 @@ export default function Home() {
             emailPrincipal: !email,
             emailCustomizado: email || emailEscritorioParam || "",
             cnpjValido: validarCNPJ(cnpj),
-            ehMatriz: verificarMatrizFilial(cnpj)
+            ehMatriz: verificarMatrizFilial(cnpj),
           });
         }
         if (onProgress) {
@@ -405,7 +389,7 @@ export default function Home() {
     reader.readAsBinaryString(file);
   }
 
-  // Adicionar cliente
+  // Adicionar/Remover cliente
   const adicionarCliente = () => {
     if (!novoCliente.cnpj || !novoCliente.razaoSocial) {
       toast.error("Por favor, preencha CNPJ e Razão Social", { duration: 3000 });
@@ -416,8 +400,7 @@ export default function Home() {
       return;
     }
     if (!novoCliente.emailPrincipal && novoCliente.emailCustomizado) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(novoCliente.emailCustomizado)) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(novoCliente.emailCustomizado)) {
         toast.error("E-mail customizado inválido", { duration: 3000 });
         return;
       }
@@ -430,7 +413,7 @@ export default function Home() {
       emailCustomizado: novoCliente.emailCustomizado,
       cnpjValido: true,
       ehMatriz: novoCliente.ehMatriz,
-      contratosocial: novoCliente.contratosocial
+      contratosocial: novoCliente.contratosocial,
     };
     setClientes([...clientes, cliente]);
     setNovoCliente({
@@ -440,17 +423,13 @@ export default function Home() {
       emailCustomizado: "",
       cnpjValido: false,
       ehMatriz: false,
-      contratosocial: undefined
+      contratosocial: undefined,
     });
     toast.success("Cliente adicionado com sucesso!", { duration: 2000 });
   };
+  const removerCliente = (id: string) => setClientes(clientes.filter((c) => c.id !== id));
 
-  // Remover cliente
-  const removerCliente = (id: string) => {
-    setClientes(clientes.filter((c) => c.id !== id));
-  };
-
-  // ================= ENVIAR DADOS (Hospeda PDF no Drive) =================
+  // ======== ENVIAR DADOS (Hospeda PDF no Google Drive via Apps Script) ========
   const enviarDados = async () => {
     if (!cnpjEscritorio || !razaoSocialEscritorio || !emailEscritorio) {
       toast.error("Por favor, preencha os dados do escritório", { duration: 3000 });
@@ -463,7 +442,7 @@ export default function Home() {
 
     setIsLoading(true);
     try {
-      await new Promise((r) => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 500));
 
       const fileToBase64 = (file: File): Promise<string> =>
         new Promise((resolve, reject) => {
@@ -481,14 +460,14 @@ export default function Home() {
             arquivoData = {
               data: base64,
               name: c.contratosocial.name,
-              type: c.contratosocial.type
+              type: c.contratosocial.type,
             };
           }
           return {
             cnpj: c.cnpj,
             razaoSocial: c.razaoSocial,
             email: c.emailCustomizado || emailEscritorio,
-            contratosocial: arquivoData
+            contratosocial: arquivoData,
           };
         })
       );
@@ -498,16 +477,18 @@ export default function Home() {
         escritorioRazao: razaoSocialEscritorio,
         escritorioEmail: emailEscritorio,
         clientes: clientesComArquivos,
-        dataEnvio: new Date().toISOString()
+        dataEnvio: new Date().toISOString(),
       };
 
-      // (Opcional) backup local do JSON
+      // (Opcional) backup local
       try {
-        const blob = new Blob([JSON.stringify(dadosEnvio, null, 2)], { type: "application/json" });
+        const blob = new Blob([JSON.stringify(dadosEnvio, null, 2)], {
+          type: "application/json",
+        });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `backup_sescon_${cnpjEscritorio.replace(/\D/g, "")}_${new Date().getTime()}.json`;
+        a.download = `backup_sescon_${cnpjEscritorio.replace(/\D/g, "")}_${Date.now()}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -516,7 +497,6 @@ export default function Home() {
         // ignora
       }
 
-      // Envio para Apps Script (Drive/Sheets)
       const GOOGLE_SHEETS_WEBHOOK_URL =
         "https://script.google.com/macros/s/AKfycbyBjgN0QA8k-4gvUrutLRkQAC93avC9PmKdLsA3Buy-Nm_6thfGKLL6jO5K-GZVVr_8xg/exec";
 
@@ -524,7 +504,7 @@ export default function Home() {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dadosEnvio)
+        body: JSON.stringify(dadosEnvio),
       });
 
       const atualizacao: Atualizacao = {
@@ -534,7 +514,7 @@ export default function Home() {
         totalClientes: clientes.length,
         dataEnvio: new Date().toLocaleDateString("pt-BR"),
         horaEnvio: new Date().toLocaleTimeString("pt-BR"),
-        resumo: `${clientes.length} cliente(s) atualizado(s) com sucesso`
+        resumo: `${clientes.length} cliente(s) atualizado(s) com sucesso`,
       };
       setAtualizacoes([atualizacao, ...atualizacoes]);
 
@@ -542,7 +522,6 @@ export default function Home() {
       setCnpjEscritorio("");
       setRazaoSocialEscritorio("");
       setEmailEscritorio("");
-      setMostrarResumo(false);
 
       const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
       if (cnpjLimpo) localStorage.removeItem(`rascunho_pacc_${cnpjLimpo}`);
@@ -556,7 +535,7 @@ export default function Home() {
       setIsLoading(false);
     }
   };
-  // ================= FIM ENVIAR DADOS =================
+  // ======== FIM ENVIAR DADOS ========
 
   // Rascunho
   const salvarRascunho = () => {
@@ -574,36 +553,32 @@ export default function Home() {
       cnpjEscritorio: cnpjEscritorio,
       emailEscritorio: emailEscritorio,
       clientes: clientes.map(({ contratosocial, ...rest }) => rest),
-      dataSalva: new Date().toLocaleString("pt-BR")
+      dataSalva: new Date().toLocaleString("pt-BR"),
     };
     localStorage.setItem(`rascunho_pacc_${cnpjLimpo}`, JSON.stringify(rascunho));
     setTemRascunho(true);
     toast.success(`Rascunho salvo para o CNPJ ${cnpjEscritorio}`, { duration: 3000 });
   };
 
-  // Carregar rascunho
   useEffect(() => {
     const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
     if (cnpjLimpo.length === 14) {
       const rascunhoSalvo = localStorage.getItem(`rascunho_pacc_${cnpjLimpo}`);
-      if (rascunhoSalvo) {
-        if (!razaoSocialEscritorio && clientes.length === 0) {
-          try {
-            const dados = JSON.parse(rascunhoSalvo) as Rascunho;
-            setRazaoSocialEscritorio(dados.nomeEscritorio || "");
-            setEmailEscritorio(dados.emailEscritorio || "");
-            setClientes(dados.clientes || []);
-            setTemRascunho(true);
-            toast.info("Rascunho encontrado e carregado para este CNPJ", { duration: 4000 });
-          } catch (e) {
-            console.error("Erro ao carregar rascunho", e);
-          }
+      if (rascunhoSalvo && !razaoSocialEscritorio && clientes.length === 0) {
+        try {
+          const dados = JSON.parse(rascunhoSalvo) as Rascunho;
+          setRazaoSocialEscritorio(dados.nomeEscritorio || "");
+          setEmailEscritorio(dados.emailEscritorio || "");
+          setClientes(dados.clientes || []);
+          setTemRascunho(true);
+          toast.info("Rascunho encontrado e carregado para este CNPJ", { duration: 4000 });
+        } catch (e) {
+          console.error("Erro ao carregar rascunho", e);
         }
       }
     }
   }, [cnpjEscritorio]); // eslint-disable-line
 
-  // Limpar rascunho
   const limparRascunho = () => {
     const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
     if (cnpjLimpo) {
@@ -614,7 +589,6 @@ export default function Home() {
     }
   };
 
-  // Modelo CSV
   const gerarModeloCSV = () => {
     const csv = "CNPJ,Razão Social,E-mail\n00.000.000/0000-00,Empresa Exemplo,email@exemplo.com";
     const link = document.createElement("a");
@@ -624,21 +598,6 @@ export default function Home() {
     document.body.removeChild(link);
   };
 
-  // Debounce busca
-  useEffect(() => {
-    if (!busca) {
-      setBuscaCarregando(false);
-      return;
-    }
-    setBuscaCarregando(true);
-    const timer = setTimeout(() => setBuscaCarregando(false), 300);
-    return () => clearTimeout(timer);
-  }, [busca]);
-
-  const clientesFiltrados = clientes.filter(
-    (c) => c.razaoSocial.toLowerCase().includes(busca.toLowerCase()) || c.cnpj.includes(busca)
-  );
-
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#f5f7fa" }}>
       {/* Header */}
@@ -646,7 +605,9 @@ export default function Home() {
         <div className="px-8 py-6">
           <div className="flex items-center justify-between gap-6">
             <div className="flex items-center gap-6">
-              <img src="/logo-sescon.png" alt="SESCON-SP" className="h-20 w-auto hidden md font-extrabold text-white">Central de Atualização SESCON-SP</h1>
+              <img src="/logo-sescon.png" alt="SESCON-SP" className="h-20 w-auto hidden md:block" />
+              <div>
+                <h1 className="text-3xl font-extrabold text-white">Central de Atualização SESCON-SP</h1>
                 <p className="text-blue-100 text-base mt-1">
                   Atualize as informações dos seus clientes representados de forma rápida e segura.
                 </p>
@@ -672,7 +633,7 @@ export default function Home() {
                   { num: 1, text: "Preencha os dados do seu escritório" },
                   { num: 2, text: "Importe ou adicione todos os seus clientes" },
                   { num: 3, text: "Revise as informações" },
-                  { num: 4, text: "Envie para processamento" }
+                  { num: 4, text: "Envie para processamento" },
                 ].map((step) => (
                   <div key={step.num} className="flex gap-3">
                     <div
@@ -723,7 +684,9 @@ export default function Home() {
                 />
               </div>
               <p className="text-xs text-gray-500 mt-2">
-                {abaSelecionada === 1 ? "Passo 1 de 2: Identificação do Escritório" : "Passo 2 de 2: Gestão de Clientes e Envio"}
+                {abaSelecionada === 1
+                  ? "Passo 1 de 2: Identificação do Escritório"
+                  : "Passo 2 de 2: Gestão de Clientes e Envio"}
               </p>
             </div>
 
@@ -734,7 +697,7 @@ export default function Home() {
                 className={`pb-4 px-4 font-bold transition-all border-b-4 text-lg flex items-center gap-3 hover:text-blue-800`}
                 style={{
                   color: abaSelecionada === 1 ? SESCON_BLUE : "#999",
-                  borderColor: abaSelecionada === 1 ? SESCON_BLUE : "transparent"
+                  borderColor: abaSelecionada === 1 ? SESCON_BLUE : "transparent",
                 }}
               >
                 <Building className="w-5 h-5" />
@@ -745,7 +708,7 @@ export default function Home() {
                 className={`pb-4 px-4 font-bold transition-all border-b-4 text-lg flex items-center gap-3 hover:text-blue-800`}
                 style={{
                   color: abaSelecionada === 2 ? SESCON_BLUE : "#999",
-                  borderColor: abaSelecionada === 2 ? SESCON_BLUE : "transparent"
+                  borderColor: abaSelecionada === 2 ? SESCON_BLUE : "transparent",
                 }}
               >
                 <Users className="w-5 h-5" />
@@ -753,7 +716,7 @@ export default function Home() {
               </button>
             </div>
 
-            {/* Conteúdo das Abas */}
+            {/* Conteúdo das abas */}
             <AnimatePresence mode="wait">
               {abaSelecionada === 1 ? (
                 <motion.div
@@ -778,10 +741,7 @@ export default function Home() {
                           type="text"
                           placeholder="00.000.000/0000-00"
                           value={cnpjEscritorio}
-                          onChange={(e) => {
-                            const formatado = formatarCNPJ(e.target.value);
-                            setCnpjEscritorio(formatado);
-                          }}
+                          onChange={(e) => setCnpjEscritorio(formatarCNPJ(e.target.value))}
                           onBlur={() => {
                             if (cnpjEscritorio.replace(/\D/g, "").length === 14) {
                               buscarCNPJEscritorio(cnpjEscritorio);
@@ -829,9 +789,7 @@ export default function Home() {
                     {cnpjEscritorioValido && (
                       <div className="p-4 rounded-lg border-l-4 flex gap-3" style={{ background: "#e8f5e9", borderColor: "#4caf50" }}>
                         <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                        <p className="text-sm text-green-800">
-                          CNPJ validado com sucesso. Dados carregados da Receita Federal.
-                        </p>
+                        <p className="text-sm text-green-800">CNPJ validado com sucesso. Dados carregados da Receita Federal.</p>
                       </div>
                     )}
 
@@ -885,7 +843,7 @@ export default function Home() {
                                   __html: faq.resposta.replace(
                                     /(\d{2}\.\d{2}-\d\/\d{2})/g,
                                     `<strong style="color: ${SESCON_DARK_BLUE}; font-weight: 800;">$1</strong>`
-                                  )
+                                  ),
                                 }}
                               />
                             </div>
@@ -942,10 +900,7 @@ export default function Home() {
                     </div>
 
                     {atividadePrincipal === "outros" ? (
-                      <div
-                        className="p-8 rounded-xl border-2 border-dashed bg-blue-50/30 text-center"
-                        style={{ borderColor: SESCON_BLUE }}
-                      >
+                      <div className="p-8 rounded-xl border-2 border-dashed bg-blue-50/30 text-center" style={{ borderColor: SESCON_BLUE }}>
                         <h3 className="text-xl font-bold mb-4" style={{ color: SESCON_DARK_BLUE }}>
                           Atualização Cadastral
                         </h3>
@@ -975,8 +930,7 @@ export default function Home() {
                               Importar Lista de Clientes
                             </h3>
                             <p className="text-sm text-gray-600 max-w-md leading-relaxed">
-                              Agilize o cadastro importando seus clientes via planilha.
-                              <br />
+                              Agilize o cadastro importando seus clientes via planilha.<br />
                               Aceitamos arquivos <strong>.CSV</strong> ou <strong>.Excel</strong> com as colunas: CNPJ, Razão Social e E-mail.
                             </p>
                           </div>
@@ -998,38 +952,22 @@ export default function Home() {
                                 accept=".csv,.xlsx,.xls"
                                 onChange={(e) => {
                                   const file = e.target.files?.[0];
-                                  if (file) {
-                                    if (file.name.endsWith(".csv")) {
-                                      processarUploadCSV(
-                                        file,
-                                        (novosClientes) => {
-                                          setClientes([...clientes, ...novosClientes]);
-                                          setProgressoUpload(0);
-                                          setStatusUpload("");
-                                          toast.success("Arquivo importado com sucesso!", { duration: 3000 });
-                                        },
-                                        (progresso, status) => {
-                                          setProgressoUpload(progresso);
-                                          setStatusUpload(status);
-                                        },
-                                        emailEscritorio
-                                      );
-                                    } else {
-                                      processarUploadExcel(
-                                        file,
-                                        (novosClientes) => {
-                                          setClientes([...clientes, ...novosClientes]);
-                                          setProgressoUpload(0);
-                                          setStatusUpload("");
-                                          toast.success("Arquivo importado com sucesso!", { duration: 3000 });
-                                        },
-                                        (progresso, status) => {
-                                          setProgressoUpload(progresso);
-                                          setStatusUpload(status);
-                                        },
-                                        emailEscritorio
-                                      );
-                                    }
+                                  if (!file) return;
+                                  const onDone = (novosClientes: Cliente[]) => {
+                                    setClientes([...clientes, ...novosClientes]);
+                                    setProgressoUpload(0);
+                                    setStatusUpload("");
+                                    toast.success("Arquivo importado com sucesso!", { duration: 3000 });
+                                  };
+                                  const onProgress = (progresso: number, status: string) => {
+                                    setProgressoUpload(progresso);
+                                    setStatusUpload(status);
+                                  };
+
+                                  if (file.name.toLowerCase().endsWith(".csv")) {
+                                    processarUploadCSV(file, onDone, onProgress, emailEscritorio);
+                                  } else {
+                                    processarUploadExcel(file, onDone, onProgress, emailEscritorio);
                                   }
                                 }}
                                 className="hidden"
@@ -1039,7 +977,7 @@ export default function Home() {
                                 className="w-full rounded-lg font-bold py-6 text-white shadow-md hover:shadow-lg transition-all h-auto flex flex-col gap-2"
                                 style={{ background: SESCON_BLUE }}
                                 onClick={(e) => {
-                                  const input = (e.currentTarget.previousElementSibling as HTMLInputElement) || null;
+                                  const input = e.currentTarget.previousElementSibling as HTMLInputElement;
                                   input?.click();
                                 }}
                               >
@@ -1054,10 +992,7 @@ export default function Home() {
                           <div className="space-y-2">
                             <p className="text-xs text-gray-600">{statusUpload}</p>
                             <div className="w-full bg-gray-200 rounded-full h-2">
-                              <div
-                                className="h-2 rounded-full transition-all"
-                                style={{ width: `${progressoUpload}%`, background: SESCON_BLUE }}
-                              />
+                              <div className="h-2 rounded-full transition-all" style={{ width: `${progressoUpload}%`, background: SESCON_BLUE }} />
                             </div>
                           </div>
                         )}
@@ -1081,12 +1016,7 @@ export default function Home() {
                                     </p>
                                     <p className="text-xs text-gray-600">{cliente.cnpj}</p>
                                   </div>
-                                  <Button
-                                    onClick={() => removerCliente(cliente.id)}
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-red-600 hover:bg-red-50"
-                                  >
+                                  <Button onClick={() => removerCliente(cliente.id)} variant="ghost" size="sm" className="text-red-600 hover:bg-red-50">
                                     <Trash2 className="w-4 h-4" />
                                   </Button>
                                 </div>
@@ -1108,14 +1038,9 @@ export default function Home() {
                               type="text"
                               placeholder="CNPJ"
                               value={novoCliente.cnpj}
-                              onChange={(e) => {
-                                const formatado = formatarCNPJ(e.target.value);
-                                setNovoCliente({ ...novoCliente, cnpj: formatado });
-                              }}
+                              onChange={(e) => setNovoCliente({ ...novoCliente, cnpj: formatarCNPJ(e.target.value) })}
                               onBlur={() => {
-                                if (novoCliente.cnpj.replace(/\D/g, "").length === 14) {
-                                  buscarCNPJCliente(novoCliente.cnpj);
-                                }
+                                if (novoCliente.cnpj.replace(/\D/g, "").length === 14) buscarCNPJCliente(novoCliente.cnpj);
                               }}
                               maxLength={18}
                               className="rounded-lg border-2 px-4 py-2"
@@ -1139,15 +1064,13 @@ export default function Home() {
                                   className="flex items-center gap-2 flex-1 p-3 rounded-lg border-2 cursor-pointer"
                                   style={{
                                     borderColor: novoCliente.emailPrincipal ? SESCON_BLUE : "#ddd",
-                                    background: novoCliente.emailPrincipal ? SESCON_LIGHT_BLUE : "white"
+                                    background: novoCliente.emailPrincipal ? SESCON_LIGHT_BLUE : "white",
                                   }}
                                 >
                                   <input
                                     type="radio"
                                     checked={novoCliente.emailPrincipal}
-                                    onChange={() =>
-                                      setNovoCliente({ ...novoCliente, emailPrincipal: true, emailCustomizado: "" })
-                                    }
+                                    onChange={() => setNovoCliente({ ...novoCliente, emailPrincipal: true, emailCustomizado: "" })}
                                     className="w-4 h-4"
                                   />
                                   <span className="text-sm" style={{ color: SESCON_DARK_BLUE }}>
@@ -1159,7 +1082,7 @@ export default function Home() {
                                   className="flex items-center gap-2 flex-1 p-3 rounded-lg border-2 cursor-pointer"
                                   style={{
                                     borderColor: !novoCliente.emailPrincipal ? SESCON_BLUE : "#ddd",
-                                    background: !novoCliente.emailPrincipal ? SESCON_LIGHT_BLUE : "white"
+                                    background: !novoCliente.emailPrincipal ? SESCON_LIGHT_BLUE : "white",
                                   }}
                                 >
                                   <input
@@ -1202,7 +1125,7 @@ export default function Home() {
                                         toast.success(`Arquivo "${file.name}" selecionado!`, { duration: 2000 });
                                       } else {
                                         toast.error("Apenas arquivos PDF são aceitos!", { duration: 3000 });
-                                        e.target.value = "";
+                                        e.currentTarget.value = "";
                                       }
                                     }
                                   }}
@@ -1239,11 +1162,7 @@ export default function Home() {
                               <p className="text-xs text-gray-600">Aceita apenas arquivos em formato PDF</p>
                             </div>
 
-                            <Button
-                              onClick={adicionarCliente}
-                              className="w-full rounded-lg font-semibold py-2 text-white"
-                              style={{ background: SESCON_BLUE }}
-                            >
+                            <Button className="w-full rounded-lg font-semibold py-2 text-white" style={{ background: SESCON_BLUE }} onClick={adicionarCliente}>
                               <Plus className="w-4 h-4 mr-2" />
                               Adicionar Cliente
                             </Button>
@@ -1304,7 +1223,7 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Modal de Visualização de Clientes */}
+      {/* Modal de Visualização */}
       {mostrarModalClientes && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-96 overflow-y-auto">
@@ -1369,7 +1288,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Modal Limpar Rascunho */}
+      {/* Confirmação Limpar Rascunho */}
       <AlertDialog open={mostrarConfirmacaoLimpar} onOpenChange={setMostrarConfirmacaoLimpar}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -1395,40 +1314,72 @@ export default function Home() {
             <div className="flex flex-col items-start space-y-3 mb-6 md:mb-0">
               <p className="text-sm font-semibold">Siga o Sescon-SP:</p>
               <div className="flex items-center gap-4">
+                <a href="https://www.instagram.com/sesconsp/?hl=pt" target="_blank" rel="noopener noreferrer" className="text-white hover:text-pink-300 transition-colors" title="Instagram">
+                  <Instagram className="w-6 h-6" />
+                </a>
+                <a href="https://www.facebook.com/sesconsp" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-300 transition-colors" title="Facebook">
+                  <Facebook className="w-6 h-6" />
+                </a>
+                <a href="https://www.youtube.com/channel/UCBjwnyWvusn2PsIT-wRk9MQ" target="_blank" rel="noopener noreferrer" className="text-white hover:text-red-300 transition-colors" title="YouTube">
+                  <Youtube className="w-6 h-6" />
+                </a>
+                <a href="https://br.linkedin.com/company/sescon-sp" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-300 transition-colors" title="LinkedIn">
+                  <Linkedin className="w-6 h-6" />
+                </a>
                 <a
-                  href="https://www.instagram.com/sesconsp/?hl=pt"
-                  target="_blank"
-                           <a
-                  href="https://www.facebook.com/sesconsp"
+                  href="https://api.whatsapp.com/send?phone=551133044416&text=Seja%20bem%20vindo%20ao%20atendimento%20do%20SESCON-SP%20e%20AESCON-SP"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white hover:text-blue-300 transition-colors        target="_blank"
-                  rel="noopener noreferrer"
-                 r.linkedin.com/company/sescon-sp"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white hover:text-blue-300 transition-colors"
-                  title="LinkedIn"
-               N-SP"
-                  target="_blank"
-                             </div>
+                  className="text-white hover:text-green-300 transition-colors"
+                  title="WhatsApp"
+                >
+                  <MessageCircle className="w-6 h-6" />
+                </a>
+              </div>
             </div>
 
             {/* Centro: Informações */}
             <div className="flex flex-col items-center space-y-2 mb-6 md:mb-0 flex-1 md:px-8 text-center">
-              <p className="text-sm font-bold">SESCON-SP — CNPJ 62.638.168/0001-84</p>
-              <p className="text-xs">Av. Tiradentes, 998 - Luz • São Paulo-SP • 01102-000 (200m do metrô Armênia)</p>
+              <p className="text-sm font-bold">SESCON-SP \ CNPJ 62.638.168/0001-84</p>
+              <p className="text-xs">Av. Tiradentes, 998 - Luz \ São Paulo-SP - 01102-000 (200m do metrô Armênia)</p>
               <p className="text-xs font-bold mt-2">
-                SESCON-SP 2025 — Sindicato das Empresas de Serviços Contábeis, Assessoramento, Perícias, Informações e Pesquisas no Estado de São Paulo
+                SESCON-SP 2025 \ Sindicato das Empresas de Serviços Contábeis, Assessoramento, Perícias, Informações e Pesquisas no Estado de São Paulo
               </p>
               <p className="text-xs mt-1">
-                Para suporte, entre em contato:{" "}
-                mailto:cadastro@sescon.org.br
-                  cadastro@sescon.org.br
-                </a>
+                Para suporte, entre em contato: <a href="mailto:cadastro@sescon.org.br" className="underline hover:text-blue-200">cadastro@sescon.org.br</a>
               </p>
             </div>
 
             {/* Direita: Logo */}
             <div className="hidden md:flex justify-end">
-              <img src="/logo-sescon.png" alt="SESCON-SP" className="         {/* Links legais */}
+              <img src="/logo-sescon.png" alt="SESCON-SP" className="h-20 w-auto" />
+            </div>
+          </div>
+
+          {/* Legais */}
+          <div className="space-y-4">
+            <div className="flex flex-col md:flex-row gap-4 text-xs border-b border-white border-opacity-30 pb-4">
+              <a href="https://sescon.org.br/canais-de-atendimento/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-200 transition-colors">
+                Canais de atendimento
+              </a>
+              <span className="hidden md:inline">|</span>
+              <a
+                href="https://sescon.org.br/wp-content/uploads/2025/05/POLITICA-DE-PRIVACIDADE-E-COOKIES-1.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-blue-200 transition-colors"
+              >
+                Política de Privacidade e Cookies
+              </a>
+            </div>
+            <p className="text-xs leading-relaxed opacity-90">
+              © O Sescon-SP e a Aescon-SP informam que, em respeito aos preceitos elencados no art. 6º da LGPD e, em especial, ao Princípio da Finalidade,
+              a coleta dos dados pessoais dispostos nos formulários de contato, será pautada na hipótese de tratamento prevista no inciso IX do Art. 7º da Lei nº 13.709/18.
+            </p>
+            <p className="text-xs font-semibold">SESCON-SP Todos os Direitos Reservados.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
