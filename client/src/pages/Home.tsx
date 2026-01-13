@@ -260,6 +260,37 @@ export default function Home() {
   }
 
   // Buscar CNPJ no BrasilAPI com tratamento de erro melhorado
+
+  // Função auxiliar para buscar CNPJ com fallback entre múltiplas APIs
+  async function fetchCNPJData(cnpjNumeros: string) {
+    // Lista de APIs para tentar em ordem
+    const apis = [
+      `https://brasilapi.com.br/api/cnpj/v1/${cnpjNumeros}`,
+      `https://publica.cnpj.ws/cnpj/${cnpjNumeros}`,
+      `https://minhareceita.org/${cnpjNumeros}`
+    ];
+
+    for (const url of apis) {
+      try {
+        console.log(`Tentando buscar CNPJ em: ${url}`);
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          // Normalização dos dados (cada API retorna campos diferentes)
+          return {
+            razaoSocial: data.razao_social || data.nome || data.nome_fantasia || data.name,
+            sucesso: true
+          };
+        }
+      } catch (e) {
+        console.warn(`Falha ao buscar na API ${url}:`, e);
+        continue; // Tenta a próxima API
+      }
+    }
+    return { sucesso: false };
+  }
+
+  // Buscar CNPJ no BrasilAPI com tratamento de erro melhorado
   async function buscarCNPJEscritorio(cnpj: string) {
     const numeros = cnpj.replace(/\D/g, "");
     if (numeros.length !== 14 || !validarCNPJ(cnpj)) {
@@ -270,27 +301,20 @@ export default function Home() {
     
     setBuscandoReceita(true);
     try {
-      const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${numeros}`);
+      const result = await fetchCNPJData(numeros);
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      if (data.name || data.razao_social) {
-        const nome = data.name || data.razao_social;
-        setRazaoSocialEscritorio(nome);
+      if (result.sucesso && result.razaoSocial) {
+        setRazaoSocialEscritorio(result.razaoSocial);
         setCnpjEscritorioValido(true);
         toast.success("CNPJ validado com sucesso!", { duration: 2000 });
-      } else if (data.message) {
+      } else {
         setCnpjEscritorioValido(false);
-        toast.error("CNPJ não encontrado na Receita Federal", { duration: 2000 });
+        toast.error("CNPJ não encontrado ou APIs indisponíveis. Por favor, preencha manualmente.", { duration: 4000 });
       }
     } catch (error) {
       console.error("Erro ao buscar CNPJ:", error);
       setCnpjEscritorioValido(false);
-      toast.error("Erro ao buscar CNPJ. Verifique sua conexão.", { duration: 3000 });
+      toast.error("Erro ao buscar CNPJ. Tente preencher manualmente.", { duration: 3000 });
     } finally {
       setBuscandoReceita(false);
     }
@@ -306,27 +330,23 @@ export default function Home() {
     
     setBuscandoReceita(true);
     try {
-      const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${numeros}`);
+      const result = await fetchCNPJData(numeros);
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      if (data.name || data.razao_social) {
-        const nome = data.name || data.razao_social;
+      if (result.sucesso && result.razaoSocial) {
         setNovoCliente({ 
           ...novoCliente, 
-          razaoSocial: nome, 
+          razaoSocial: result.razaoSocial, 
           cnpjValido: true, 
           ehMatriz: verificarMatrizFilial(cnpj) 
         });
         toast.success("Dados do cliente carregados!", { duration: 2000 });
+      } else {
+        // Se falhar a busca automática, não bloqueia o usuário, apenas não preenche
+        setNovoCliente({ ...novoCliente, cnpjValido: true }); // Permite prosseguir mesmo sem busca
       }
     } catch (error) {
       console.error("Erro ao buscar CNPJ:", error);
-      setNovoCliente({ ...novoCliente, cnpjValido: false });
+      setNovoCliente({ ...novoCliente, cnpjValido: true });
     } finally {
       setBuscandoReceita(false);
     }
