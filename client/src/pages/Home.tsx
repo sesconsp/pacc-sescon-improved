@@ -380,7 +380,7 @@ export default function Home() {
           cnpj: c.cnpj,
           razaoSocial: c.razaoSocial,
           email: c.emailCustomizado || emailEscritorio,
-          contratoArquivo: arquivoData
+          contratosocial: arquivoData
         };
       }));
 
