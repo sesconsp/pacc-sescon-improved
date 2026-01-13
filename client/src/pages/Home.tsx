@@ -504,7 +504,7 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
         dataEnvio: new Date().toISOString()
       };
 
-      const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyBjgN0QA8k-4gvUrutLRkQAC93avC9PmKdLsA3Buy-Nm_6thfGKLL6jO5K-GZVVr_8xg/exec";
+      const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxR2MCXtsKqCO3cXC6NgAkntgt6E2N5eTFEAqbyw7YW9Q2lATMGOE1L-NI916Ofduio/exec";
       
       await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
         method: "POST",
