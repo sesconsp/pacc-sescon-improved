@@ -80,9 +80,9 @@ const faqs: FAQ[] = [
   {
     pergunta: "O que fazer se cometer um erro?",
     resposta: "Você pode enviar os dados novamente. A nova lista substituirá a anterior. Se precisar de ajuda, entre em contato conosco."
-	  },
-	  {
-	    pergunta: "Como valido meu CNPJ?",
+  },
+  {
+    pergunta: "Como valido meu CNPJ?",
     resposta: "O sistema valida automaticamente o CNPJ quando você digita. Se válido, aparecerá uma mensagem de confirmação."
   },
   {
@@ -91,9 +91,9 @@ const faqs: FAQ[] = [
   },
   {
     pergunta: "Como saber quais são as categorias representadas pelo SESCON-SP?",
-	    resposta: "O SESCON-SP representa 58 categorias econômicas, divididas entre Contábil e Assessoramento. Abaixo estão listados todos os CNAEs representados:<br/><br/>\n<ul>\n<li>02.30-6/00: Atividade de apoio à produção florestal</li>\n<li>52.29-0/02: Serviços de reboque de veículos</li>\n<li>52.29-0/99: Outras atividades auxiliares dos transportes terrestres não especificadas</li>\n<li>52.40-1/01: Operação dos aeroportos e campos de aterrissagem</li>\n<li>52.50-8/04: Organização logística do transporte de carga</li>\n<li>52.50-8/05: Operador de transporte multimodal - OTM</li>\n<li>64.61-1/00: Holdings de instituições financeiras</li>\n<li>64.62-0/00: Holdings de instituições não-financeiras</li>\n<li>64.63-8/00: Outras sociedades de participação, exceto holdings</li>\n<li>66.11-8/01: Bolsa de valores</li>\n<li>66.11-8/02: Bolsa de mercadorias</li>\n<li>66.11-8/03: Bolsa de mercadorias e futuros</li>\n<li>66.11-8/04: Administração de mercados de balcão organizados</li>\n<li>66.12-6/05: Agentes de investimentos em aplicações financeiras</li>\n<li>66.13-4/00: Administração de cartões de crédito</li>\n<li>66.19-3/02: Correspondentes de instituições financeiras</li>\n<li>66.19-3/03: Representação de bancos</li>\n<li>66.19-3/99: Outras atividades auxiliares dos serviços financeiros não especificadas</li>\n<li>66.21-5/01: Peritos e avaliadores de seguros</li>\n<li>66.21-5/02: Auditoria e consultoria atuarial</li>\n<li>66.29-1/00: Atividades auxiliares dos seguros, da previdência complementar e dos planos</li>\n<li>66.30-4/00: Atividades de administração de fundos por contrato ou comissão</li>\n<li>68.10-2/02: Aluguel de imóveis próprios</li>\n<li>69.11-7/03: Atividades auxiliares da justiça: arbitragem, mediação, avaliações, perícia.</li>\n<li>69.11-7/20: Agente de propriedade industrial</li>\n<li>69.20-6/01: Atividades de contabilidade</li>\n<li>69.20-6/02: Atividades de consultoria e auditoria contábil e tributária</li>\n<li>70.20-4/00: Atividades de consultoria em gestão empresarial, exceto consultoria técnica</li>\n<li>71.19-7/01: Serviços de cartografia, topografia e geodésia</li>\n<li>71.19-7/02: Atividades de estudos geológicos (prospecção geológica)</li>\n<li>71.19-7/03: Serviços de desenho técnico relacionados à arquitetura e engenharia</li>\n<li>71.19-7/04: Serviços de perícia técnica relacionados à segurança do trabalho</li>\n<li>71.20-1/00: Testes e análises técnicas (ensaios de materiais e produtos, análise</li>\n<li>72.10-0/00: Pesquisa e desenvolvimento experimental em ciências físicas e naturais</li>\n<li>72.20-7/00: Pesquisa e desenvolvimento experimental em ciências sociais e humanas</li>\n<li>73.19-0/02: Promoção de Vendas</li>\n<li>73.19-0/04: Consultoria em publicidade</li>\n<li>73.20-3/00: Pesquisa de mercado e de opinião pública</li>\n<li>74.20-0/02: Atividades de produção de fotografias aéreas e submarinas</li>\n<li>74.20-0/05: Serviços de microfilmagem</li>\n<li>74.90-1/01: Serviços de Tradução, Interpretação e Similares</li>\n<li>74.90-1/03: Serviços de agronomia e de consultoria e de atividades agrícolas e pecuárias</li>\n<li>74.90-1/04: Atividades de intermediação e agenciamento de serviços e negócios em geral</li>\n<li>74.90-1/05: Agenciamento de profissionais para atividades esportivas, culturais</li>\n<li>74.90-1/99: Outras atividades profissionais, científicas e técnicas não especificadas</li>\n<li>77.40-3/00: Gestão de ativos intangíveis não-financeiros</li>\n<li>78.10-8/00: Seleção e Agenciamento de Mão de obra</li>\n<li>80.20-0/00: Atividades de monitoramento de sistemas de segurança</li>\n<li>82.11-3/00: Serviços combinados de escritório e apoio administrativo</li>\n<li>82.19-9/99: Preparação de documentos e serviços especializados de apoio administrativo</li>\n<li>82.99-7/99: Outras atividades de serviços prestados principalmente às empresas</li>\n<li>85.50-3/02: Atividades de apoio à educação, exceto caixas escolares</li>\n<li>85.99-6/04: Treinamento em desenvolvimento profissional e gerencial</li>\n<li>86.60-7/00: Atividades de apoio a gestão de saúde (exceto serviços privativos de médicos)</li>\n<li>94.11-1/00: Atividades de organizações associativas patronais e empresariais</li>\n<li>94.12-0/00: Atividades de organizações associativas profissionais</li>\n<li>94.30-8/00: Atividades de associações de defesa de direitos sociais</li>\n<li>94.91-0/00: Atividades de organizações religiosas</li>\n<li>94.99-5/00: Atividades associativas não especificadas anteriormente</li>\n</ul>"
-	  }
-	];
+    resposta: "O SESCON-SP representa 58 categorias econômicas, divididas entre Contábil e Assessoramento. Abaixo estão listados todos os CNAEs representados:<br/><br/>\n<ul>\n<li>02.30-6/00: Atividade de apoio à produção florestal</li>\n<li>52.29-0/02: Serviços de reboque de veículos</li>\n<li>52.29-0/99: Outras atividades auxiliares dos transportes terrestres não especificadas</li>\n<li>52.40-1/01: Operação dos aeroportos e campos de aterrissagem</li>\n<li>52.50-8/04: Organização logística do transporte de carga</li>\n<li>52.50-8/05: Operador de transporte multimodal - OTM</li>\n<li>64.61-1/00: Holdings de instituições financeiras</li>\n<li>64.62-0/00: Holdings de instituições não-financeiras</li>\n<li>64.63-8/00: Outras sociedades de participação, exceto holdings</li>\n<li>66.11-8/01: Bolsa de valores</li>\n<li>66.11-8/02: Bolsa de mercadorias</li>\n<li>66.11-8/03: Bolsa de mercadorias e futuros</li>\n<li>66.11-8/04: Administração de mercados de balcão organizados</li>\n<li>66.12-6/05: Agentes de investimentos em aplicações financeiras</li>\n<li>66.13-4/00: Administração de carteiras de crédito</li>\n<li>66.19-3/02: Correspondentes de instituições financeiras</li>\n<li>66.19-3/03: Representação de bancos</li>\n<li>66.19-3/99: Outras atividades auxiliares dos serviços financeiros não especificadas</li>\n<li>66.21-5/01: Peritos e avaliadores de seguros</li>\n<li>66.21-5/02: Auditoria e consultoria atuarial</li>\n<li>66.29-1/00: Atividades auxiliares dos seguros, da previdência complementar e dos planos</li>\n<li>66.30-4/00: Atividades de administração de fundos por contrato ou comissão</li>\n<li>68.10-2/02: Aluguel de imóveis próprios</li>\n<li>69.11-7/03: Atividades auxiliares da justiça: arbitragem, mediação, avaliações, perícia.</li>\n<li>69.11-7/20: Agente de propriedade industrial</li>\n<li>69.20-6/01: Atividades de contabilidade</li>\n<li>69.20-6/02: Atividades de consultoria e auditoria contábil e tributária</li>\n<li>70.20-4/00: Atividades de consultoria em gestão empresarial, exceto consultoria técnica</li>\n<li>71.19-7/01: Serviços de cartografia, topografia e geodésia</li>\n<li>71.19-7/02: Atividades de estudos geológicos (prospecção geológica)</li>\n<li>71.19-7/03: Serviços de desenho técnico relacionados à arquitetura e engenharia</li>\n<li>71.19-7/04: Serviços de perícia técnica relacionados à segurança do trabalho</li>\n<li>71.20-1/00: Testes e análises técnicas (ensaios de materiais e produtos, análise</li>\n<li>72.10-0/00: Pesquisa e desenvolvimento experimental em ciências físicas e naturais</li>\n<li>72.20-7/00: Pesquisa e desenvolvimento experimental em ciências sociais e humanas</li>\n<li>73.19-0/02: Promoção de Vendas</li>\n<li>73.19-0/04: Consultoria em publicidade</li>\n<li>73.20-3/00: Pesquisa de mercado e de opinião pública</li>\n<li>74.20-0/02: Atividades de produção de fotografias aéreas e submarinas</li>\n<li>74.20-0/05: Serviços de microfilmagem</li>\n<li>74.90-1/01: Serviços de Tradução, Interpretação e Similares</li>\n<li>74.90-1/03: Serviços de agronomia e de consultoria e de atividades agrícolas e pecuárias</li>\n<li>74.90-1/04: Atividades de intermediação e agenciamento de serviços e negócios em geral</li>\n<li>74.90-1/05: Agenciamento de profissionais para atividades esportivas, culturais</li>\n<li>74.90-1/99: Outras atividades profissionais, científicas e técnicas não especificadas</li>\n<li>77.40-3/00: Gestão de ativos intangíveis não-financeiros</li>\n<li>78.10-8/00: Seleção e Agenciamento de Mão de obra</li>\n<li>80.20-0/00: Atividades de monitoramento de sistemas de segurança</li>\n<li>82.11-3/00: Serviços combinados de escritório e apoio administrativo</li>\n<li>82.19-9/99: Preparação de documentos e serviços especializados de apoio administrativo</li>\n<li>82.99-7/99: Outras atividades de serviços prestados principalmente às empresas</li>\n<li>85.50-3/02: Atividades de apoio à educação, exceto caixas escolares</li>\n<li>85.99-6/04: Treinamento em desenvolvimento profissional e gerencial</li>\n<li>86.60-7/00: Atividades de apoio a gestão de saúde (exceto serviços privativos de médicos)</li>\n<li>94.11-1/00: Atividades de organizações associativas patronais e empresariais</li>\n<li>94.12-0/00: Atividades de organizações associativas profissionais</li>\n<li>94.30-8/00: Atividades de associações de defesa de direitos sociais</li>\n<li>94.91-0/00: Atividades de organizações religiosas</li>\n<li>94.99-5/00: Atividades associativas não especificadas anteriormente</li>\n</ul>"
+  }
+];
 
 // Cores SESCON
 const SESCON_BLUE = "#003b61";
@@ -110,58 +110,52 @@ const fileToBase64 = (file: File): Promise<string> => {
     reader.onerror = (error) => reject(error);
   });
 };
-const onSubmit = async (values: any) => {
-  try {
-    setIsSubmitting(true);
-    
-    // 1. Processa os clientes e converte os arquivos PDF
-    const clientesProcessados = await Promise.all(
-      values.clientes.map(async (cliente: any) => {
-        let arquivoData = null;
-        // Verifica se existe um arquivo selecionado no campo 'contratosocial'
-        if (cliente.contratosocial && cliente.contratosocial[0]) {
-          const file = cliente.contratosocial[0];
-          const base64 = await fileToBase64(file);
-          arquivoData = {
-            data: base64,
-            name: file.name,
-            type: file.type
-          };
-        }
-        return {
-          cnpj: cliente.cnpj,
-          razaoSocial: cliente.razaoSocial,
-          email: cliente.email,
-          telefone: cliente.telefone,
-          contratoArquivo: arquivoData // Enviamos o arquivo convertido aqui
-        };
-      })
-    );
 
-    // 2. Monta o pacote final
-    const payload = {
-      escritorioCnpj: values.escritorioCnpj,
-      escritorioRazao: values.escritorioRazao,
-      escritorioEmail: values.escritorioEmail,
-      clientes: clientesProcessados
-    };
-	   // 3. Envia para o Google
-    await fetch("https://script.google.com/macros/s/AKfycbxR2MCXtsKqCO3cXC6NgAkntgt6E2N5eTFEAqbyw7YW9Q2lATMGOE1L-NI916Ofduio/exec", {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload )
-    });
+// Função para validar CNPJ
+const validarCNPJ = (cnpj: string): boolean => {
+  const cnpjLimpo = cnpj.replace(/\D/g, "");
+  if (cnpjLimpo.length !== 14) return false;
+  
+  let tamanho = cnpjLimpo.length - 2;
+  let numeros = cnpjLimpo.substring(0, tamanho);
+  let digitos = cnpjLimpo.substring(tamanho);
+  let soma = 0;
+  let pos = 0;
 
-    toast.success("Formulário enviado com sucesso!");
-    // Opcional: reset() ou redirecionar
-  } catch (error) {
-    console.error(error);
-    toast.error("Erro ao enviar os dados. Tente novamente.");
-  } finally {
-    setIsSubmitting(false);
+  for (let i = tamanho - 1; i >= 0; i--) {
+    pos++;
+    soma += parseInt(numeros.charAt(tamanho - pos)) * (pos % 8 === 0 ? 2 : pos + 1);
   }
-}
+
+  let resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+  if (resultado !== parseInt(digitos.charAt(0))) return false;
+
+  tamanho = tamanho + 1;
+  numeros = cnpjLimpo.substring(0, tamanho);
+  soma = 0;
+  pos = 0;
+
+  for (let i = tamanho - 1; i >= 0; i--) {
+    pos++;
+    soma += parseInt(numeros.charAt(tamanho - pos)) * (pos % 8 === 0 ? 2 : pos + 1);
+  }
+
+  resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+  if (resultado !== parseInt(digitos.charAt(1))) return false;
+
+  return true;
+};
+
+// Função para formatar CNPJ
+const formatarCNPJ = (value: string): string => {
+  const cnpj = value.replace(/\D/g, "");
+  if (cnpj.length <= 2) return cnpj;
+  if (cnpj.length <= 5) return `${cnpj.slice(0, 2)}.${cnpj.slice(2)}`;
+  if (cnpj.length <= 8) return `${cnpj.slice(0, 2)}.${cnpj.slice(2, 5)}.${cnpj.slice(5)}`;
+  if (cnpj.length <= 12) return `${cnpj.slice(0, 2)}.${cnpj.slice(2, 5)}.${cnpj.slice(5, 8)}/${cnpj.slice(8)}`;
+  return `${cnpj.slice(0, 2)}.${cnpj.slice(2, 5)}.${cnpj.slice(5, 8)}/${cnpj.slice(8, 12)}-${cnpj.slice(12)}`;
+};
+
 export default function Home() {
   const [cnpjEscritorio, setCnpjEscritorio] = useState("");
   const [razaoSocialEscritorio, setRazaoSocialEscritorio] = useState("");
@@ -180,6 +174,7 @@ export default function Home() {
   const [buscandoReceita, setBuscandoReceita] = useState(false);
   const [abaSelecionada, setAbaSelecionada] = useState(1);
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+  const [atividadePrincipal, setAtividadePrincipal] = useState("contabilidade");
   
   // Estados de validação
   const [erroEmail, setErroEmail] = useState("");
@@ -227,9 +222,6 @@ export default function Home() {
   const [statusUpload, setStatusUpload] = useState("");
   const [busca, setBusca] = useState("");
   const [buscaCarregando, setBuscaCarregando] = useState(false);
-  // abaSelecionada já foi declarado acima, removendo duplicata
-  // const [abaSelecionada, setAbaSelecionada] = useState(1);
-  const [atividadePrincipal, setAtividadePrincipal] = useState("");
   const [mostrarModalClientes, setMostrarModalClientes] = useState(false);
   const [mostrarResumo, setMostrarResumo] = useState(false);
   const [mostrarConfirmacaoLimpar, setMostrarConfirmacaoLimpar] = useState(false);
@@ -243,276 +235,136 @@ export default function Home() {
         e.returnValue = "";
       }
     };
-
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [cnpjEscritorio, razaoSocialEscritorio, clientes]);
 
-  // Cores SESCON Oficiais - Azul Marinho Mais Escuro
-  const SESCON_BLUE = "#003d7a";
-  const SESCON_DARK_BLUE = "#002147";
-  const SESCON_LIGHT_BLUE = "#e6f0f7";
-  const SESCON_ACCENT = "#0056b3";
-
-  // Formatar CNPJ com máscara
-  function formatarCNPJ(cnpj: string): string {
-    const numeros = cnpj.replace(/\D/g, "");
-    if (numeros.length <= 2) return numeros;
-    if (numeros.length <= 5) return `${numeros.slice(0, 2)}.${numeros.slice(2)}`;
-    if (numeros.length <= 8) return `${numeros.slice(0, 2)}.${numeros.slice(2, 5)}.${numeros.slice(5)}`;
-    if (numeros.length <= 12) return `${numeros.slice(0, 2)}.${numeros.slice(2, 5)}.${numeros.slice(5, 8)}/${numeros.slice(8)}`;
-    return `${numeros.slice(0, 2)}.${numeros.slice(2, 5)}.${numeros.slice(5, 8)}/${numeros.slice(8, 12)}-${numeros.slice(12, 14)}`;
-  }
-
-  // Validar CNPJ - Algoritmo correto
-  function validarCNPJ(cnpj: string): boolean {
-    const numeros = cnpj.replace(/\D/g, "");
-    
-    // Verifica se tem 14 dígitos
-    if (numeros.length !== 14) return false;
-    
-    // Verifica se todos os dígitos são iguais (CNPJs inválidos)
-    if (/^(\d)\1{13}$/.test(numeros)) return false;
-    
-    // Calcula o primeiro dígito verificador
-    let tamanho = numeros.length - 2;
-    let numeros_array = numeros.substring(0, tamanho);
-    let digito = numeros.substring(tamanho);
-    let soma = 0;
-    let pos = tamanho - 7;
-    
-    for (let i = tamanho; i >= 1; i--) {
-      soma += parseInt(numeros_array.charAt(tamanho - i)) * pos--;
-      if (pos < 2) pos = 9;
-    }
-    
-    let resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-    if (resultado !== parseInt(digito.charAt(0))) return false;
-    
-    // Calcula o segundo dígito verificador
-    tamanho = tamanho + 1;
-    numeros_array = numeros.substring(0, tamanho);
-    soma = 0;
-    pos = tamanho - 7;
-    
-    for (let i = tamanho; i >= 1; i--) {
-      soma += parseInt(numeros_array.charAt(tamanho - i)) * pos--;
-      if (pos < 2) pos = 9;
-    }
-    
-    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-    return resultado === parseInt(digito.charAt(1));
-  }
-
-  // Verificar se é Matriz ou Filial
-  function verificarMatrizFilial(cnpj: string): boolean {
-    const numeros = cnpj.replace(/\D/g, "");
-    return numeros.substring(8, 12) === "0001";
-  }
-
-  // Buscar CNPJ no BrasilAPI com tratamento de erro melhorado
-
-  // Função auxiliar para buscar CNPJ com fallback entre múltiplas APIs
-  async function fetchCNPJData(cnpjNumeros: string) {
-    // Lista de APIs para tentar em ordem
-    const apis = [
-      `https://brasilapi.com.br/api/cnpj/v1/${cnpjNumeros}`,
-      `https://publica.cnpj.ws/cnpj/${cnpjNumeros}`,
-      `https://minhareceita.org/${cnpjNumeros}`
-    ];
-
-    for (const url of apis) {
-      try {
-        console.log(`Tentando buscar CNPJ em: ${url}`);
-        const response = await fetch(url);
-        if (response.ok) {
-          const data = await response.json();
-          // Normalização dos dados (cada API retorna campos diferentes)
-          return {
-            razaoSocial: data.razao_social || data.nome || data.nome_fantasia || data.name,
-            sucesso: true
-          };
-        }
-      } catch (e) {
-        console.warn(`Falha ao buscar na API ${url}:`, e);
-        continue; // Tenta a próxima API
+  // Buscar CNPJ do escritório (simulado)
+  const buscarCNPJEscritorio = async (cnpj: string) => {
+    setBuscandoReceita(true);
+    try {
+      // Simulação de busca - em produção, isso chamaria uma API real
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const cnpjLimpo = cnpj.replace(/\D/g, "");
+      if (validarCNPJ(cnpjLimpo)) {
+        setCnpjEscritorioValido(true);
+        setRazaoSocialEscritorio("Escritório Contábil Exemplo LTDA");
+        toast.success("CNPJ validado com sucesso!", { duration: 2000 });
       }
+    } catch (error) {
+      toast.error("Erro ao buscar CNPJ", { duration: 3000 });
+    } finally {
+      setBuscandoReceita(false);
     }
-    return { sucesso: false };
-  }
+  };
 
-  // Buscar CNPJ no BrasilAPI com tratamento de erro melhorado
-  async function buscarCNPJEscritorio(cnpj: string) {
-    const numeros = cnpj.replace(/\D/g, "");
-    if (numeros.length !== 14 || !validarCNPJ(cnpj)) {
-      setCnpjEscritorioValido(false);
+  // Buscar CNPJ do cliente (simulado)
+  const buscarCNPJCliente = async (cnpj: string) => {
+    try {
+      // Simulação de busca
+      await new Promise(resolve => setTimeout(resolve, 500));
+      const cnpjLimpo = cnpj.replace(/\D/g, "");
+      if (validarCNPJ(cnpjLimpo)) {
+        setNovoCliente({
+          ...novoCliente,
+          cnpjValido: true,
+          razaoSocial: "Empresa Cliente LTDA",
+          ehMatriz: true
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao buscar CNPJ do cliente", error);
+    }
+  };
+
+  // Processar upload de CSV
+  const processarUploadCSV = (file: File, callback: (clientes: Cliente[]) => void) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const csv = e.target?.result as string;
+        const linhas = csv.split('\n').filter(l => l.trim());
+        const novosClientes: Cliente[] = [];
+        
+        linhas.forEach((linha, idx) => {
+          if (idx === 0) return; // Pular cabeçalho
+          const [cnpj, razaoSocial, email] = linha.split(',').map(s => s.trim());
+          if (cnpj && razaoSocial) {
+            novosClientes.push({
+              id: Math.random().toString(),
+              cnpj: formatarCNPJ(cnpj),
+              razaoSocial,
+              emailPrincipal: !email,
+              emailCustomizado: email || "",
+              cnpjValido: validarCNPJ(cnpj),
+              ehMatriz: false
+            });
+          }
+        });
+        
+        callback(novosClientes);
+        toast.success(`${novosClientes.length} cliente(s) importado(s)!`, { duration: 3000 });
+      } catch (error) {
+        toast.error("Erro ao processar CSV", { duration: 3000 });
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  // Processar upload de Excel
+  const processarUploadExcel = (file: File, callback: (clientes: Cliente[]) => void) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const dados = new Uint8Array(e.target?.result as ArrayBuffer);
+        const workbook = XLSX.read(dados, { type: 'array' });
+        const planilha = workbook.Sheets[workbook.SheetNames[0]];
+        const dados_json = XLSX.utils.sheet_to_json(planilha);
+        
+        const novosClientes: Cliente[] = dados_json.map((row: any) => ({
+          id: Math.random().toString(),
+          cnpj: formatarCNPJ(row.CNPJ || row.cnpj || ""),
+          razaoSocial: row["Razão Social"] || row["razao_social"] || row.razaoSocial || "",
+          emailPrincipal: !row.Email && !row.email,
+          emailCustomizado: row.Email || row.email || "",
+          cnpjValido: validarCNPJ((row.CNPJ || row.cnpj || "").replace(/\D/g, "")),
+          ehMatriz: false
+        })).filter((c: Cliente) => c.cnpj && c.razaoSocial);
+        
+        callback(novosClientes);
+        toast.success(`${novosClientes.length} cliente(s) importado(s)!`, { duration: 3000 });
+      } catch (error) {
+        toast.error("Erro ao processar Excel", { duration: 3000 });
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  // Adicionar cliente manualmente
+  const adicionarCliente = () => {
+    if (!novoCliente.cnpj || !novoCliente.razaoSocial) {
+      toast.error("Preencha CNPJ e Razão Social", { duration: 2000 });
+      return;
+    }
+
+    const cnpjLimpo = novoCliente.cnpj.replace(/\D/g, "");
+    if (!validarCNPJ(cnpjLimpo)) {
       toast.error("CNPJ inválido", { duration: 2000 });
       return;
     }
-    
-    setBuscandoReceita(true);
-    try {
-      const result = await fetchCNPJData(numeros);
-      
-      if (result.sucesso && result.razaoSocial) {
-        setRazaoSocialEscritorio(result.razaoSocial);
-        setCnpjEscritorioValido(true);
-        toast.success("CNPJ validado com sucesso!", { duration: 2000 });
-      } else {
-        setCnpjEscritorioValido(false);
-        toast.error("CNPJ não encontrado ou APIs indisponíveis. Por favor, preencha manualmente.", { duration: 4000 });
-      }
-    } catch (error) {
-      console.error("Erro ao buscar CNPJ:", error);
-      setCnpjEscritorioValido(false);
-      toast.error("Erro ao buscar CNPJ. Tente preencher manualmente.", { duration: 3000 });
-    } finally {
-      setBuscandoReceita(false);
-    }
-  }
 
-  // Buscar CNPJ do cliente
-  async function buscarCNPJCliente(cnpj: string) {
-    const numeros = cnpj.replace(/\D/g, "");
-    if (numeros.length !== 14 || !validarCNPJ(cnpj)) {
-      setNovoCliente({ ...novoCliente, cnpjValido: false });
-      return;
-    }
-    
-    setBuscandoReceita(true);
-    try {
-      const result = await fetchCNPJData(numeros);
-      
-      if (result.sucesso && result.razaoSocial) {
-        setNovoCliente({ 
-          ...novoCliente, 
-          razaoSocial: result.razaoSocial, 
-          cnpjValido: true, 
-          ehMatriz: verificarMatrizFilial(cnpj) 
-        });
-        toast.success("Dados do cliente carregados!", { duration: 2000 });
-      } else {
-        // Se falhar a busca automática, não bloqueia o usuário, apenas não preenche
-        setNovoCliente({ ...novoCliente, cnpjValido: true }); // Permite prosseguir mesmo sem busca
-      }
-    } catch (error) {
-      console.error("Erro ao buscar CNPJ:", error);
-      setNovoCliente({ ...novoCliente, cnpjValido: true });
-    } finally {
-      setBuscandoReceita(false);
-    }
-  }
-
-  // Função para processar upload de CSV com progresso
-function processarUploadCSV(file: File, callback: (clientes: Cliente[]) => void, onProgress?: (progresso: number, status: string) => void, emailEscritorio?: string) {
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const texto = e.target?.result as string;
-    const linhas = texto.split("\n").filter(l => l.trim());
-    const novosClientes: Cliente[] = [];
-    
-    for (let i = 1; i < linhas.length; i++) {
-      const partes = linhas[i].split(",").map(p => p.trim());
-      if (partes.length >= 2) {
-        const cnpj = partes[0];
-        const razaoSocial = partes[1];
-        const email = partes[2] && partes[2].trim() ? partes[2] : "";
-        
-        novosClientes.push({
-          id: Math.random().toString(),
-          cnpj,
-          razaoSocial,
-          emailPrincipal: !email, // Se não tem email customizado, usa o da empresa
-          emailCustomizado: email || emailEscritorio,
-          cnpjValido: validarCNPJ(cnpj),
-          ehMatriz: verificarMatrizFilial(cnpj)
-        });
-      }
-      
-      if (onProgress) {
-        const progresso = Math.round((i / linhas.length) * 100);
-        onProgress(progresso, `Processando ${i} de ${linhas.length} linhas...`);
-      }
-    }
-    
-    callback(novosClientes);
-  };
-  reader.readAsText(file);
-}
-
-// Função para processar upload de Excel com progresso
-function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => void, onProgress?: (progresso: number, status: string) => void, emailEscritorio?: string) {
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const dados = e.target?.result as string;
-    // @ts-ignore
-    const workbook = XLSX.read(dados, { type: 'binary' } as any);
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const json = XLSX.utils.sheet_to_json(sheet) as any[];
-    
-    const novosClientes: Cliente[] = [];
-    
-    for (let i = 0; i < json.length; i++) {
-      const linha = json[i];
-      const cnpj = String(linha.CNPJ || linha.cnpj || "").trim();
-      const razaoSocial = String(linha["Razão Social"] || linha["razao_social"] || linha["Razao Social"] || "").trim();
-      const email = String(linha["E-mail"] || linha["email"] || ["Email"] || ["E-MAIL"] || "").trim();
-      
-      if (cnpj && razaoSocial) {
-        novosClientes.push({
-          id: Math.random().toString(),
-          cnpj,
-          razaoSocial,
-          emailPrincipal: !email, // Se não tem email customizado, usa o da empresa
-          emailCustomizado: email || emailEscritorio || "",
-          cnpjValido: validarCNPJ(cnpj),
-          ehMatriz: verificarMatrizFilial(cnpj)
-        });
-      }
-      
-      if (onProgress) {
-        const progresso = Math.round(((i + 1) / json.length) * 100);
-        onProgress(progresso, `Processando ${i + 1} de ${json.length} linhas...`);
-      }
-    }
-    
-    callback(novosClientes);
-  };
-  reader.readAsBinaryString(file);
-}
-
-  // Adicionar cliente
-  const adicionarCliente = () => {
-    if (!novoCliente.cnpj || !novoCliente.razaoSocial) {
-      toast.error("Por favor, preencha CNPJ e Razão Social", { duration: 3000 });
-      return;
-    }
-
-    // Validar e-mail se customizado
-    if (!novoCliente.emailPrincipal && !novoCliente.emailCustomizado) {
-      toast.error("Por favor, preencha o e-mail customizado", { duration: 3000 });
-      return;
-    }
-
-    if (!novoCliente.emailPrincipal && novoCliente.emailCustomizado) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(novoCliente.emailCustomizado)) {
-        toast.error("E-mail customizado inválido", { duration: 3000 });
-        return;
-      }
-    }
-
-    const cliente: Cliente = {
+    const novoClienteObj: Cliente = {
       id: Math.random().toString(),
       cnpj: novoCliente.cnpj,
       razaoSocial: novoCliente.razaoSocial,
       emailPrincipal: novoCliente.emailPrincipal,
       emailCustomizado: novoCliente.emailCustomizado,
       cnpjValido: true,
-      ehMatriz: novoCliente.ehMatriz
+      ehMatriz: novoCliente.ehMatriz,
+      contratosocial: novoCliente.contratosocial
     };
 
-    setClientes([...clientes, cliente]);
+    setClientes([...clientes, novoClienteObj]);
     setNovoCliente({
       cnpj: "",
       razaoSocial: "",
@@ -528,6 +380,7 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
   // Remover cliente
   const removerCliente = (id: string) => {
     setClientes(clientes.filter(c => c.id !== id));
+    toast.success("Cliente removido", { duration: 2000 });
   };
 
   // Enviar dados
@@ -563,7 +416,7 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
           cnpj: c.cnpj,
           razaoSocial: c.razaoSocial,
           email: c.emailCustomizado || emailEscritorio,
-          contratoArquivo: arquivoData // Nome do campo esperado pelo Apps Script
+          contratoArquivo: arquivoData
         };
       }));
 
@@ -575,9 +428,10 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
         dataEnvio: new Date().toISOString()
       };
 
+      // URL do Google Apps Script para enviar para Google Drive
       const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxR2MCXtsKqCO3cXC6NgAkntgt6E2N5eTFEAqbyw7YW9Q2lATMGOE1L-NI916Ofduio/exec";
       
-      await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
+      const response = await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
@@ -699,7 +553,7 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
     return () => clearTimeout(timer);
   }, [busca]);
 
-  const clientesFiltrados = clientes.filter(c =>
+  const clientesFiltrados = clientes.filter((c: Cliente) =>
     c.razaoSocial.toLowerCase().includes(busca.toLowerCase()) ||
     c.cnpj.includes(busca)
   );
@@ -727,8 +581,8 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
           {/* Left Sidebar - Instruções e FAQ Fixo */}
           <div className="col-span-1 space-y-6">
             {/* Card de Instruções */}
-	            <div 
-	              className="rounded-lg p-6 text-white shadow-lg"
+            <div 
+              className="rounded-lg p-6 text-white shadow-lg"
               style={{ background: `linear-gradient(135deg, ${SESCON_BLUE} 0%, ${SESCON_DARK_BLUE} 100%)` }}
             >
               <h3 className="text-lg font-bold mb-6 pb-4 border-b border-white border-opacity-30">Como Funciona</h3>
@@ -872,7 +726,7 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                       placeholder="Será preenchido automaticamente"
                       value={razaoSocialEscritorio}
                       onChange={(e) => setRazaoSocialEscritorio(e.target.value)}
-	                      className="rounded-lg border-2 px-4 py-2"
+                      className="rounded-lg border-2 px-4 py-2"
                     />
                   </div>
 
@@ -1051,83 +905,29 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                                 processarUploadCSV(file, (novosClientes) => {
                                   setClientes([...clientes, ...novosClientes]);
                                   setProgressoUpload(0);
-                                  setStatusUpload("");
-                                  toast.success("Arquivo importado com sucesso!", { duration: 3000 });
-                                }, (progresso, status) => {
-                                  setProgressoUpload(progresso);
-                                  setStatusUpload(status);
-                                }, emailEscritorio);
+                                });
                               } else {
                                 processarUploadExcel(file, (novosClientes) => {
                                   setClientes([...clientes, ...novosClientes]);
                                   setProgressoUpload(0);
-                                  setStatusUpload("");
-                                  toast.success("Arquivo importado com sucesso!", { duration: 3000 });
-                                }, (progresso, status) => {
-                                  setProgressoUpload(progresso);
-                                  setStatusUpload(status);
-                                }, emailEscritorio);
+                                });
                               }
                             }
                           }}
                           className="hidden"
+                          id="file-upload"
                         />
-                        <Button
-                          type="button"
-                          className="w-full rounded-lg font-bold py-6 text-white shadow-md hover:shadow-lg transition-all h-auto flex flex-col gap-2"
-                          style={{ background: SESCON_BLUE }}
-                          onClick={(e) => {
-                            const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                            input.click();
-                          }}
+                        <div
+                          className="flex-1 cursor-pointer"
                         >
-                          <Upload className="w-6 h-6" />
-                          <span>Selecionar Arquivo</span>
-                        </Button>
+                          <div className="flex items-center justify-center gap-2 p-6 rounded-lg border-2 border-dashed hover:bg-blue-50 transition-colors h-full" style={{ borderColor: SESCON_BLUE }}>
+                            <Upload className="w-6 h-6" style={{ color: SESCON_BLUE }} />
+                            <span className="font-bold" style={{ color: SESCON_BLUE }}>Selecionar Arquivo</span>
+                          </div>
+                        </div>
                       </label>
                     </div>
-                  </div>
-
-                  {progressoUpload > 0 && (
-                    <div className="space-y-2">
-                      <p className="text-xs text-gray-600">{statusUpload}</p>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="h-2 rounded-full transition-all"
-                          style={{ width: `${progressoUpload}%`, background: SESCON_BLUE }}
-                        ></div>
                       </div>
-                    </div>
-                  )}
-
-                  {/* Lista de Clientes */}
-                  <div>
-                    <p className="text-sm font-semibold mb-4" style={{ color: SESCON_DARK_BLUE }}>
-                      Clientes Adicionados ({clientes.length})
-                    </p>
-                    <div className="space-y-2 max-h-64 overflow-y-auto">
-                      {clientes.length > 0 ? (
-                        clientes.map((cliente) => (
-                          <div key={cliente.id} className="p-3 rounded-lg border flex justify-between items-start" style={{ borderColor: SESCON_LIGHT_BLUE, background: SESCON_LIGHT_BLUE }}>
-                            <div className="flex-1">
-                              <p className="font-semibold text-sm" style={{ color: SESCON_DARK_BLUE }}>{cliente.razaoSocial}</p>
-                              <p className="text-xs text-gray-600">{cliente.cnpj}</p>
-                            </div>
-                            <Button
-                              onClick={() => removerCliente(cliente.id)}
-                              variant="ghost"
-                              size="sm"
-                              className="text-red-600 hover:bg-red-50"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        ))
-                      ) : (
-                        <p className="text-center text-gray-500 text-sm py-8">Nenhum cliente adicionado ainda</p>
-                      )}
-                    </div>
-                  </div>
 
                   {/* Adicionar Manual */}
                   <div className="p-6 rounded-lg border-2" style={{ borderColor: SESCON_LIGHT_BLUE }}>
@@ -1277,7 +1077,7 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                       <Button
                         onClick={salvarRascunho}
                         className="flex-1 rounded-lg font-semibold py-2 text-white hover:bg-blue-700 transition-colors"
-                        style={{ background: SESCON_ACCENT }} // Cor de destaque para ação secundária
+                        style={{ background: SESCON_ACCENT }}
                       >
                         <Save className="w-4 h-4 mr-2" />
                         Salvar Rascunho
@@ -1286,7 +1086,7 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                         onClick={() => setMostrarModalClientes(true)}
                         disabled={clientes.length === 0}
                         className="flex-1 rounded-lg font-semibold py-2 text-white hover:bg-blue-700 transition-colors"
-                        style={{ background: SESCON_ACCENT }} // Cor de destaque para ação secundária
+                        style={{ background: SESCON_ACCENT }}
                       >
                         <Eye className="w-4 h-4 mr-2" />
                         Visualizar Clientes
@@ -1295,8 +1095,8 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                     <Button
                       onClick={enviarDados}
                       disabled={isLoading || clientes.length === 0}
-                      className="flex-1 rounded-lg font-bold py-3 text-white text-lg hover:bg-green-700 transition-colors" // Botão mais robusto e cor de sucesso
-                      style={{ background: "#4CAF50" }} // Verde de sucesso para Enviar
+                      className="flex-1 rounded-lg font-bold py-3 text-white text-lg hover:bg-green-700 transition-colors"
+                      style={{ background: "#4CAF50" }}
                     >
                       {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Send className="w-5 h-5 mr-2" />}
                       {isLoading ? "Enviando..." : "Enviar Dados"}
@@ -1334,117 +1134,46 @@ function processarUploadExcel(file: File, callback: (clientes: Cliente[]) => voi
                   <div className="flex-1">
                     <p className="font-semibold text-sm" style={{ color: SESCON_DARK_BLUE }}>{idx + 1}. {cliente.razaoSocial}</p>
                     <p className="text-xs text-gray-600 mt-1">CNPJ: {cliente.cnpj}</p>
-                    <p className="text-xs text-gray-600 mt-1">E-mail: {cliente.emailCustomizado}</p>
+                    <p className="text-xs text-gray-600 mt-1">E-mail: {cliente.emailCustomizado || emailEscritorio}</p>
                     {cliente.ehMatriz && (
                       <p className="text-xs text-blue-600 mt-1 font-semibold">🏢 Matriz</p>
                     )}
+                    {cliente.contratosocial && (
+                      <p className="text-xs text-green-600 mt-1 font-semibold">✓ Contrato Social anexado</p>
+                    )}
                   </div>
+                  <Button
+                    onClick={() => removerCliente(cliente.id)}
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-600 hover:bg-red-50"
+                  >
+                    <Trash className="w-4 h-4" />
+                  </Button>
                 </div>
               ))}
-            </div>
-            <div className="sticky bottom-0 bg-white border-t p-6 flex gap-3" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-              <Button
-                onClick={() => setMostrarModalClientes(false)}
-                variant="outline"
-                className="flex-1 rounded-lg border-2 font-semibold py-2"
-                style={{ borderColor: SESCON_BLUE, color: SESCON_BLUE }}
-              >
-                Voltar
-              </Button>
-              <Button
-                onClick={() => {
-                  setMostrarModalClientes(false);
-                  enviarDados();
-                }}
-                disabled={isLoading}
-                className="flex-1 rounded-lg font-semibold py-2 text-white"
-                style={{ background: SESCON_BLUE }}
-              >
-                {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
-                {isLoading ? "Enviando..." : "Confirmar e Enviar"}
-              </Button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Modais de Confirmação */}
+      {/* Modal de Confirmação - Limpar Rascunho */}
       <AlertDialog open={mostrarConfirmacaoLimpar} onOpenChange={setMostrarConfirmacaoLimpar}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Limpar Rascunho?</AlertDialogTitle>
+            <AlertDialogTitle>Limpar Rascunho</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta ação excluirá permanentemente o rascunho salvo para este CNPJ. Você perderá todos os dados preenchidos até agora.
+              Tem certeza que deseja excluir o rascunho salvo para este CNPJ? Esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction onClick={limparRascunho} className="bg-red-600 hover:bg-red-700">
-              Sim, limpar rascunho
+              Excluir Rascunho
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* Footer Redesenhado - Estilo Profissional */}
-      <footer className="pt-8 pb-6 px-8" style={{ background: "#003366" }}>
-        <div className="max-w-6xl mx-auto text-white">
-          
-          {/* Seção Superior: Redes Sociais + Informações + Logo */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 mb-6 border-b border-white border-opacity-30">
-            
-            {/* Esquerda: Redes Sociais */}
-            <div className="flex flex-col items-start space-y-3 mb-6 md:mb-0">
-              <p className="text-sm font-semibold">Siga o Sescon-SP:</p>
-              <div className="flex items-center gap-4">
-                <a href="https://www.instagram.com/sesconsp/?hl=pt" target="_blank" rel="noopener noreferrer" className="text-white hover:text-pink-300 transition-colors" title="Instagram">
-                  <Instagram className="w-6 h-6" />
-                </a>
-                <a href="https://www.facebook.com/sesconsp" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-300 transition-colors" title="Facebook">
-                  <Facebook className="w-6 h-6" />
-                </a>
-                <a href="https://www.youtube.com/channel/UCBjwnyWvusn2PsIT-wRk9MQ" target="_blank" rel="noopener noreferrer" className="text-white hover:text-red-300 transition-colors" title="YouTube">
-                  <Youtube className="w-6 h-6" />
-                </a>
-                <a href="https://br.linkedin.com/company/sescon-sp" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-300 transition-colors" title="LinkedIn">
-                  <Linkedin className="w-6 h-6" />
-                </a>
-                <a href="https://api.whatsapp.com/send?phone=551133044416&text=Seja%20bem%20vindo%20ao%20atendimento%20do%20SESCON-SP%20e%20AESCON-SP" target="_blank" rel="noopener noreferrer" className="text-white hover:text-green-300 transition-colors" title="WhatsApp">
-                  <MessageCircle className="w-6 h-6" />
-                </a>
-              </div>
-            </div>
-
-            {/* Centro: Informações Principais */}
-            <div className="flex flex-col items-center space-y-2 mb-6 md:mb-0 flex-1 md:px-8 text-center">
-              <p className="text-sm font-bold">SESCON-SP | CNPJ 62.638.168/0001-84</p>
-              <p className="text-xs">Av. Tiradentes, 998 - Luz | São Paulo-SP - 01102-000 (200m do metrô Armênia)</p>
-              <p className="text-xs font-bold mt-2">SESCON-SP 2025 | Sindicato das Empresas de Serviços Contábeis, Assessoramento, Perícias, Informações e Pesquisas no Estado de São Paulo</p>
-              <p className="text-xs mt-1">Para suporte, entre em contato: <a href="mailto:cadastro@sescon.org.br" className="underline hover:text-blue-200">cadastro@sescon.org.br</a></p>
-            </div>
-
-            {/* Direita: Logo */}
-            <div className="hidden md:flex justify-end">
-              <img src="/logo-sescon-branco.png" alt="SESCON-SP" className="h-20 w-auto" />
-            </div>
-          </div>
-
-          {/* Seção Inferior: Links e Informações Legais */}
-          <div className="space-y-4">
-            <div className="flex flex-col md:flex-row gap-4 text-xs border-b border-white border-opacity-30 pb-4">
-              <a href="https://sescon.org.br/canais-de-atendimento/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-200 transition-colors">Canais de atendimento</a>
-              <span className="hidden md:inline">|</span>
-              <a href="https://sescon.org.br/wp-content/uploads/2025/05/POLITICA-DE-PRIVACIDADE-E-COOKIES-1.pdf" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-200 transition-colors">Política de Privacidade e Cookies</a>
-            </div>
-
-            <p className="text-xs leading-relaxed opacity-90">
-              © O Sescon-SP e a Aescon-SP informam que, em respeito aos preceitos elencados no art. 6º da LGPD e, em especial, ao Princípio da Finalidade, a coleta dos dados pessoais dispostos nos formulários de contato, será pautada na hipótese de tratamento prevista no inciso IX do Art. 7º da Lei nº 13.709/18.
-            </p>
-
-            <p className="text-xs font-semibold">SESCON-SP Todos os Direitos Reservados.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
