@@ -413,40 +413,18 @@ export default function Home() {
       clientes: clientes.map(({ contratosocial, ...rest }) => rest),
       dataSalva: new Date().toLocaleString("pt-BR")
     };
-    
-    // Salva usando o CNPJ como chave
+
     localStorage.setItem(`rascunho_pacc_${cnpjLimpo}`, JSON.stringify(rascunho));
     setTemRascunho(true);
-    toast.success(`Rascunho salvo para o CNPJ ${cnpjEscritorio}`, { duration: 3000 });
+    toast.success("Rascunho salvo com sucesso!", { duration: 2000 });
   };
 
-  // Tentar carregar rascunho quando o CNPJ é preenchido
-  useEffect(() => {
-    const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
-    if (cnpjLimpo.length === 14) {
-      const rascunhoSalvo = localStorage.getItem(`rascunho_pacc_${cnpjLimpo}`);
-      if (rascunhoSalvo) {
-        if (!razaoSocialEscritorio && clientes.length === 0) {
-          try {
-            const dados = JSON.parse(rascunhoSalvo) as Rascunho;
-            setRazaoSocialEscritorio(dados.nomeEscritorio || "");
-            setEmailEscritorio(dados.emailEscritorio || "");
-            setClientes(dados.clientes || []);
-            setTemRascunho(true);
-            toast.info("Rascunho encontrado e carregado para este CNPJ", { duration: 4000 });
-          } catch (e) {
-            console.error("Erro ao carregar rascunho", e);
-          }
-        }
-      }
-    }
-  }, [cnpjEscritorio]);
-
-  // Limpar rascunho atual
+  // Limpar rascunho
   const limparRascunho = () => {
     const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
     if (cnpjLimpo) {
       localStorage.removeItem(`rascunho_pacc_${cnpjLimpo}`);
+      setClientes([]);
       setTemRascunho(false);
       toast.success("Rascunho deste CNPJ excluído", { duration: 2000 });
       setMostrarConfirmacaoLimpar(false);
@@ -482,7 +460,12 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#f5f7fa" }}>
+    <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ background: "#f8fafc" }}>
+      {/* Elementos Decorativos de Fundo */}
+      <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-blue-50 rounded-full blur-3xl -z-10 opacity-50 translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-blue-50 rounded-full blur-3xl -z-10 opacity-30 -translate-x-1/4 translate-y-1/4"></div>
+      <div className="absolute top-1/2 left-1/2 w-full h-full bg-white/40 -z-20 -translate-x-1/2 -translate-y-1/2"></div>
+
       {/* Header Corporativo */}
       <header className="border-b" style={{ background: SESCON_BLUE, borderColor: SESCON_DARK_BLUE }}>
         <div className="px-8 py-6">
@@ -546,53 +529,24 @@ export default function Home() {
           {/* Right Content - Formulário */}
           <div className="col-span-3 space-y-6">
             {/* Barra de Progresso */}
-            <div className="bg-white rounded-lg p-4 shadow-sm border mb-6" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+            <div className="bg-white rounded-xl p-4 shadow-md border mb-6" style={{ borderColor: SESCON_LIGHT_BLUE }}>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-semibold" style={{ color: SESCON_DARK_BLUE }}>
                   Progresso do Cadastro
                 </span>
-                <span className="text-sm font-bold" style={{ color: SESCON_BLUE }}>
-                  {abaSelecionada === 1 ? "50%" : "100%"}
+                <span className="text-xs font-bold" style={{ color: SESCON_BLUE }}>
+                  Passo {abaSelecionada} de 2
                 </span>
               </div>
-              <div className="w-full bg-gray-100 rounded-full h-2">
+              <div className="w-full bg-gray-100 rounded-full h-2.5">
                 <div 
-                  className="h-2 rounded-full transition-all duration-500" 
+                  className="h-2.5 rounded-full transition-all duration-500 ease-in-out"
                   style={{ 
-                    width: abaSelecionada === 1 ? "50%" : "100%",
-                    background: SESCON_BLUE 
+                    width: abaSelecionada === 1 ? '50%' : '100%',
+                    background: `linear-gradient(90deg, ${SESCON_BLUE} 0%, ${SESCON_ACCENT} 100%)`
                   }}
-                />
+                ></div>
               </div>
-              <p className="text-xs text-gray-500 mt-2">
-                Passo {abaSelecionada} de 2: {abaSelecionada === 1 ? "Identificação do Escritório" : "Gestão de Clientes"}
-              </p>
-            </div>
-
-            {/* Abas de Navegação */}
-            <div className="flex border-b mb-6" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-              <button
-                onClick={() => setAbaSelecionada(1)}
-                className={`px-6 py-3 text-sm font-bold transition-all flex items-center gap-2 border-b-2 ${
-                  abaSelecionada === 1 
-                    ? "text-blue-900 border-blue-900 bg-blue-50" 
-                    : "text-gray-400 border-transparent hover:text-gray-600"
-                }`}
-              >
-                <Building className="w-4 h-4" />
-                Dados da Empresa
-              </button>
-              <button
-                onClick={() => setAbaSelecionada(2)}
-                className={`px-6 py-3 text-sm font-bold transition-all flex items-center gap-2 border-b-2 ${
-                  abaSelecionada === 2 
-                    ? "text-blue-900 border-blue-900 bg-blue-50" 
-                    : "text-gray-400 border-transparent hover:text-gray-600"
-                }`}
-              >
-                <Users className="w-4 h-4" />
-                Gestão de Clientes
-              </button>
             </div>
 
             {/* Conteúdo das Abas */}
@@ -603,7 +557,7 @@ export default function Home() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  className="bg-white rounded-xl shadow-sm border p-8"
+                  className="bg-white rounded-2xl shadow-xl border p-8 backdrop-blur-sm bg-white/95"
                   style={{ borderColor: SESCON_LIGHT_BLUE }}
                 >
                   <h2 className="text-2xl font-bold mb-8" style={{ color: SESCON_DARK_BLUE }}>Identificação da Empresa</h2>
@@ -708,7 +662,7 @@ export default function Home() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className="bg-white rounded-xl shadow-sm border p-8"
+                  className="bg-white rounded-2xl shadow-xl border p-8 backdrop-blur-sm bg-white/95"
                   style={{ borderColor: SESCON_LIGHT_BLUE }}
                 >
                   <div className="space-y-8">
@@ -799,12 +753,36 @@ export default function Home() {
 
                     {/* Lista de Clientes */}
                     <div>
-                      <p className="text-sm font-semibold mb-4" style={{ color: SESCON_DARK_BLUE }}>
-                        Clientes Adicionados ({clientes.length})
-                      </p>
-                      <div className="space-y-2 max-h-64 overflow-y-auto">
-                        {clientes.length > 0 ? (
-                          clientes.map((cliente) => (
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                        <p className="text-sm font-semibold" style={{ color: SESCON_DARK_BLUE }}>
+                          Clientes Adicionados ({clientes.length})
+                        </p>
+                        
+                        {/* Barra de Pesquisa */}
+                        <div className="relative flex-1 max-w-md">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                          <Input
+                            type="text"
+                            placeholder="Pesquisar por nome ou CNPJ..."
+                            value={busca}
+                            onChange={(e) => setBusca(e.target.value)}
+                            className="pl-10 pr-10 py-2 text-sm rounded-lg border-2 focus:ring-2 transition-all"
+                            style={{ borderColor: SESCON_LIGHT_BLUE }}
+                          />
+                          {busca && (
+                            <button 
+                              onClick={() => setBusca("")}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                            >
+                              <RotateCcw className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+                        {clientesFiltrados.length > 0 ? (
+                          clientesFiltrados.map((cliente) => (
                             <div key={cliente.id} className="p-3 rounded-lg border flex justify-between items-start" style={{ borderColor: SESCON_LIGHT_BLUE, background: SESCON_LIGHT_BLUE }}>
                               <div className="flex-1">
                                 <p className="font-semibold text-sm" style={{ color: SESCON_DARK_BLUE }}>{cliente.razaoSocial}</p>
@@ -821,7 +799,9 @@ export default function Home() {
                             </div>
                           ))
                         ) : (
-                          <p className="text-center text-gray-500 text-sm py-8">Nenhum cliente adicionado ainda</p>
+                          <p className="text-center text-gray-500 text-sm py-8">
+                            {busca ? "Nenhum cliente encontrado para esta busca" : "Nenhum cliente adicionado ainda"}
+                          </p>
                         )}
                       </div>
                     </div>
