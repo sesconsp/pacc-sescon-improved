@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Upload, CheckCircle, Mail, AlertCircle, FileText, Download, ChevronDown, ChevronUp, Loader2, Search, Save, RotateCcw, Eye, Clock, CheckCircle2, AlertTriangle, Send, FileDown, Download as DownloadIcon, Trash, Instagram, Facebook, Youtube, Linkedin, MessageCircle, Building, Users } from "lucide-react";
+import { Plus, Trash2, Upload, CheckCircle, Mail, AlertCircle, FileText, Download, ChevronDown, ChevronUp, Loader2, Search, Save, RotateCcw, Eye, Clock, CheckCircle2, AlertTriangle, Send, FileDown, Download as DownloadIcon, Trash, Instagram, Facebook, Youtube, Linkedin, MessageCircle, Building, Users, FileJson } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 // @ts-ignore
 import * as XLSX from 'xlsx';
+import { jsPDF } from 'jspdf';
 import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertDialog,
@@ -382,6 +383,13 @@ export default function Home() {
     const cnpjLimpo = novoCliente.cnpj.replace(/\D/g, "");
     if (!validarCNPJ(cnpjLimpo)) {
       toast.error("CNPJ inválido", { duration: 2000 });
+      return;
+    }
+
+    // Validar duplicatas
+    const clienteJaExiste = clientes.some(c => c.cnpj.replace(/\D/g, "") === cnpjLimpo);
+    if (clienteJaExiste) {
+      toast.error("Este cliente já foi adicionado à lista", { duration: 2000 });
       return;
     }
 
