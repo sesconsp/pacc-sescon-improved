@@ -52,6 +52,12 @@ interface FAQ {
   resposta: string;
 }
 
+// Cores SESCON
+const SESCON_BLUE = "#003b61";
+const SESCON_DARK_BLUE = "#002a45";
+const SESCON_LIGHT_BLUE = "#eef6fb";
+const SESCON_ACCENT = "#00568c";
+
 const faqs: FAQ[] = [
   {
     pergunta: "Por que preciso informar todos os meus clientes?",
@@ -91,15 +97,70 @@ const faqs: FAQ[] = [
   },
   {
     pergunta: "Como saber quais são as categorias representadas pelo SESCON-SP?",
-    resposta: "O SESCON-SP representa 58 categorias econômicas, divididas entre Contábil e Assessoramento. Abaixo estão listados todos os CNAEs representados:<br/><br/>\n<ul>\n<li>02.30-6/00: Atividade de apoio à produção florestal</li>\n<li>52.29-0/02: Serviços de reboque de veículos</li>\n<li>52.29-0/99: Outras atividades auxiliares dos transportes terrestres não especificadas</li>\n<li>52.40-1/01: Operação dos aeroportos e campos de aterrissagem</li>\n<li>52.50-8/04: Organização logística do transporte de carga</li>\n<li>52.50-8/05: Operador de transporte multimodal - OTM</li>\n<li>64.61-1/00: Holdings de instituições financeiras</li>\n<li>64.62-0/00: Holdings de instituições não-financeiras</li>\n<li>64.63-8/00: Outras sociedades de participação, exceto holdings</li>\n<li>66.11-8/01: Bolsa de valores</li>\n<li>66.11-8/02: Bolsa de mercadorias</li>\n<li>66.11-8/03: Bolsa de mercadorias e futuros</li>\n<li>66.11-8/04: Administração de mercados de balcão organizados</li>\n<li>66.12-6/05: Agentes de investimentos em aplicações financeiras</li>\n<li>66.13-4/00: Administração de cartões de crédito</li>\n<li>66.19-3/02: Correspondentes de instituições financeiras</li>\n<li>66.19-3/03: Representação de bancos</li>\n<li>66.19-3/99: Outras atividades auxiliares dos serviços financeiros não especificadas</li>\n<li>66.21-5/01: Peritos e avaliadores de seguros</li>\n<li>66.21-5/02: Auditoria e consultoria atuarial</li>\n<li>66.29-1/00: Atividades auxiliares dos seguros, da previdência complementar e dos planos</li>\n<li>66.30-4/00: Atividades de administração de fundos por contrato ou comissão</li>\n<li>68.10-2/02: Aluguel de imóveis próprios</li>\n<li>69.11-7/03: Atividades auxiliares da justiça: arbitragem, mediação, avaliações, perícia.</li>\n<li>69.11-7/20: Agente de propriedade industrial</li>\n<li>69.20-6/01: Atividades de contabilidade</li>\n<li>69.20-6/02: Atividades de consultoria e auditoria contábil e tributária</li>\n<li>70.20-4/00: Atividades de consultoria em gestão empresarial, exceto consultoria técnica</li>\n<li>71.19-7/01: Serviços de cartografia, topografia e geodésia</li>\n<li>71.19-7/02: Atividades de estudos geológicos (prospecção geológica)</li>\n<li>71.19-7/03: Serviços de desenho técnico relacionados à arquitetura e engenharia</li>\n<li>71.19-7/04: Serviços de perícia técnica relacionados à segurança do trabalho</li>\n<li>71.20-1/00: Testes e análises técnicas (ensaios de materiais e produtos, análise</li>\n<li>72.10-0/00: Pesquisa e desenvolvimento experimental em ciências físicas e naturais</li>\n<li>72.20-7/00: Pesquisa e desenvolvimento experimental em ciências sociais e humanas</li>\n<li>73.19-0/02: Promoção de Vendas</li>\n<li>73.19-0/04: Consultoria em publicidade</li>\n<li>73.20-3/00: Pesquisa de mercado e de opinião pública</li>\n<li>74.20-0/02: Atividades de produção de fotografias aéreas e submarinas</li>\n<li>74.20-0/05: Serviços de microfilmagem</li>\n<li>74.90-1/01: Serviços de Tradução, Interpretação e Similares</li>\n<li>74.90-1/03: Serviços de agronomia e de consultoria e de atividades agrícolas e pecuárias</li>\n<li>74.90-1/04: Atividades de intermediação e agenciamento de serviços e negócios em geral</li>\n<li>74.90-1/05: Agenciamento de profissionais para atividades esportivas, culturais</li>\n<li>74.90-1/99: Outras atividades profissionais, científicas e técnicas não especificadas</li>\n<li>77.40-3/00: Gestão de ativos intangíveis não-financeiros</li>\n<li>78.10-8/00: Seleção e Agenciamento de Mão de obra</li>\n<li>80.20-0/00: Atividades de monitoramento de sistemas de segurança</li>\n<li>82.11-3/00: Serviços combinados de escritório e apoio administrativo</li>\n<li>82.19-9/99: Preparação de documentos e serviços especializados de apoio administrativo</li>\n<li>82.99-7/99: Outras atividades de serviços prestados principalmente às empresas</li>\n<li>85.50-3/02: Atividades de apoio à educação, exceto caixas escolares</li>\n<li>85.99-6/04: Treinamento em desenvolvimento profissional e gerencial</li>\n<li>86.60-7/00: Atividades de apoio a gestão de saúde (exceto serviços privativos de médicos)</li>\n<li>94.11-1/00: Atividades de organizações associativas patronais e empresariais</li>\n<li>94.12-0/00: Atividades de organizações associativas profissionais</li>\n<li>94.30-8/00: Atividades de associações de defesa de direitos sociais</li>\n<li>94.91-0/00: Atividades de organizações religiosas</li>\n<li>94.99-5/00: Atividades associativas não especificadas anteriormente</li>\n</ul>"
+    resposta: `O SESCON-SP representa 58 categorias econômicas, divididas entre Contábil e Assessoramento. Abaixo estão listados todos os CNAEs representados:<br/><br/>
+<ul style="list-style-type: none; padding-left: 0;">
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">02.30-6/00</strong>: Atividade de apoio à produção florestal</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">52.29-0/02</strong>: Serviços de reboque de veículos</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">52.29-0/99</strong>: Outras atividades auxiliares dos transportes terrestres não especificadas</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">52.40-1/01</strong>: Operação dos aeroportos e campos de aterrissagem</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">52.50-8/04</strong>: Organização logística do transporte de carga</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">52.50-8/05</strong>: Operador de transporte multimodal - OTM</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">64.61-1/00</strong>: Holdings de instituições financeiras</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">64.62-0/00</strong>: Holdings de instituições não-financeiras</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">64.63-8/00</strong>: Outras sociedades de participação, exceto holdings</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">66.11-8/01</strong>: Bolsa de valores</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">66.11-8/02</strong>: Bolsa de mercadorias</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">66.11-8/03</strong>: Bolsa de mercadorias e futures</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">66.11-8/04</strong>: Administração de mercados de balcão organizados</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">66.12-6/05</strong>: Agentes de investimentos em aplicações financeiras</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">66.13-4/00</strong>: Administração de cartões de crédito</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">66.19-3/02</strong>: Correspondentes de instituições financeiras</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">66.19-3/03</strong>: Representação de bancos</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">66.19-3/99</strong>: Outras atividades auxiliares dos serviços financeiros não especificadas</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">66.21-5/01</strong>: Peritos e avaliadores de seguros</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">66.21-5/02</strong>: Auditoria e consultoria atuarial</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">66.29-1/00</strong>: Atividades auxiliares dos seguros, da previdência complementar e dos planos</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">66.30-4/00</strong>: Atividades de administração de fundos por contrato ou comissão</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">68.10-2/02</strong>: Aluguel de imóveis próprios</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">69.11-7/03</strong>: Atividades auxiliares da justiça: arbitragem, mediação, avaliações, perícia.</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">69.11-7/20</strong>: Agente de propriedade industrial</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">69.20-6/01</strong>: Atividades de contabilidade</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">69.20-6/02</strong>: Atividades de consultoria e auditoria contábil e tributária</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">70.20-4/00</strong>: Atividades de consultoria em gestão empresarial, exceto consultoria técnica</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">71.19-7/01</strong>: Serviços de cartografia, topografia e geodésia</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">71.19-7/02</strong>: Atividades de estudos geológicos (prospecção geológica)</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">71.19-7/03</strong>: Serviços de desenho técnico relacionados à arquitetura e engenharia</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">71.19-7/04</strong>: Serviços de perícia técnica relacionados à segurança do trabalho</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">71.20-1/00</strong>: Testes e análises técnicas (ensaios de materiais e produtos, análise</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">72.10-0/00</strong>: Pesquisa e desenvolvimento experimental em ciências físicas e naturais</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">72.20-7/00</strong>: Pesquisa e desenvolvimento experimental em ciências sociais e humanas</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">73.19-0/02</strong>: Promoção de Vendas</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">73.19-0/04</strong>: Consultoria em publicidade</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">73.20-3/00</strong>: Pesquisa de mercado e de opinião pública</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">74.20-0/02</strong>: Atividades de produção de fotografias aéreas e submarinas</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">74.20-0/05</strong>: Serviços de microfilmagem</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">74.90-1/01</strong>: Serviços de Tradução, Interpretação e Similares</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">74.90-1/03</strong>: Serviços de agronomia e de consultoria e de atividades agrícolas e pecuárias</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">74.90-1/04</strong>: Atividades de intermediação e agenciamento de serviços e negócios em geral</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">74.90-1/05</strong>: Agenciamento de profissionais para atividades esportivas, culturais</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">74.90-1/99</strong>: Outras atividades profissionais, científicas e técnicas não especificadas</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">77.40-3/00</strong>: Gestão de ativos intangíveis não-financeiros</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">78.10-8/00</strong>: Seleção e Agenciamento de Mão de obra</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">80.20-0/00</strong>: Atividades de monitoramento de sistemas de segurança</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">82.11-3/00</strong>: Serviços combinados de escritório e apoio administrativo</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">82.19-9/99</strong>: Preparação de documentos e serviços especializados de apoio administrativo</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">82.99-7/99</strong>: Outras atividades de serviços prestados principalmente às empresas</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">85.50-3/02</strong>: Atividades de apoio à educação, exceto caixas escolares</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">85.99-6/04</strong>: Treinamento em desenvolvimento profissional e gerencial</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">86.60-7/00</strong>: Atividades de apoio a gestão de saúde (exceto serviços privativos de médicos)</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">94.11-1/00</strong>: Atividades de organizações associativas patronais e empresariais</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">94.12-0/00</strong>: Atividades de organizações associativas profissionais</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">94.30-8/00</strong>: Atividades de associações de defesa de direitos sociais</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">94.91-0/00</strong>: Atividades de organizações religiosas</li>
+<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">94.99-5/00</strong>: Atividades associativas não especificadas anteriormente</li>
+</ul>`
   }
 ];
-
-// Cores SESCON
-const SESCON_BLUE = "#003b61";
-const SESCON_DARK_BLUE = "#002a45";
-const SESCON_LIGHT_BLUE = "#eef6fb";
-const SESCON_ACCENT = "#00568c";
 
 // Função auxiliar para converter arquivo em Base64
 const fileToBase64 = (file: File): Promise<string> => {
@@ -115,6 +176,7 @@ export default function Home() {
   const [cnpjEscritorio, setCnpjEscritorio] = useState("");
   const [razaoSocialEscritorio, setRazaoSocialEscritorio] = useState("");
   const [emailEscritorio, setEmailEscritorio] = useState("");
+  const [atividadePrincipal, setAtividadePrincipal] = useState("contabilidade");
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [novoCliente, setNovoCliente] = useState({
     cnpj: "",
@@ -167,10 +229,12 @@ export default function Home() {
       } else {
         toast.error("CNPJ não encontrado na Receita Federal");
         setCnpjEscritorioValido(false);
+        setRazaoSocialEscritorio("");
       }
     } catch (error) {
       toast.error("Erro ao buscar CNPJ na Receita Federal");
       setCnpjEscritorioValido(false);
+      setRazaoSocialEscritorio("");
     } finally {
       setBuscandoReceita(false);
     }
@@ -195,12 +259,12 @@ export default function Home() {
         toast.success("Dados do cliente carregados!", { duration: 2000 });
       } else {
         toast.error("CNPJ não encontrado na Receita Federal", { duration: 2000 });
-        setNovoCliente(prev => ({ ...prev, cnpjValido: false }));
+        setNovoCliente(prev => ({ ...prev, cnpjValido: false, razaoSocial: "" }));
       }
     } catch (error) {
       console.error("Erro ao buscar CNPJ do cliente");
       toast.error("Erro ao buscar CNPJ", { duration: 2000 });
-      setNovoCliente(prev => ({ ...prev, cnpjValido: false }));
+      setNovoCliente(prev => ({ ...prev, cnpjValido: false, razaoSocial: "" }));
     }
   };
 
@@ -350,6 +414,7 @@ export default function Home() {
         escritorioCnpj: cnpjEscritorio,
         escritorioRazao: razaoSocialEscritorio,
         escritorioEmail: emailEscritorio,
+        atividadePrincipal: atividadePrincipal,
         clientes: clientesComArquivos,
         dataEnvio: new Date().toISOString()
       };
@@ -459,6 +524,15 @@ export default function Home() {
     c.cnpj.includes(busca)
   );
 
+  // Redirecionamento para "Outros"
+  useEffect(() => {
+    if (atividadePrincipal === "outros") {
+      window.location.href = "https://sesconsp.github.io/atualizacao-cadastral/";
+    }
+  }, [atividadePrincipal]);
+
+  const podeAvancarAba1 = cnpjEscritorioValido && razaoSocialEscritorio && emailEscritorio.includes("@");
+
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ background: "#f8fafc" }}>
       {/* Elementos Decorativos de Fundo */}
@@ -561,7 +635,7 @@ export default function Home() {
                   style={{ borderColor: SESCON_LIGHT_BLUE }}
                 >
                   <h2 className="text-2xl font-bold mb-8" style={{ color: SESCON_DARK_BLUE }}>Identificação da Empresa</h2>
-                  <div className="space-y-6 max-w-2xl">
+                  <div className="space-y-6 w-full">
                     <div className="space-y-2">
                       <label className="text-sm font-bold flex items-center gap-1" style={{ color: SESCON_DARK_BLUE }}>
                         CNPJ do Escritório <span className="text-red-500">*</span>
@@ -573,7 +647,7 @@ export default function Home() {
                           value={cnpjEscritorio}
                           onChange={(e) => setCnpjEscritorio(formatarCNPJ(e.target.value))}
                           onBlur={() => buscarCNPJ(cnpjEscritorio)}
-                          className="rounded-lg border-2 px-4 py-3 text-lg focus:ring-2 transition-all"
+                          className="rounded-lg border-2 px-4 py-3 text-lg focus:ring-2 transition-all w-full"
                           style={{ borderColor: SESCON_BLUE }}
                           maxLength={18}
                         />
@@ -594,8 +668,8 @@ export default function Home() {
                         type="text"
                         placeholder="Será preenchido automaticamente"
                         value={razaoSocialEscritorio}
-                        onChange={(e) => setRazaoSocialEscritorio(e.target.value)}
-                        className="rounded-lg border-2 px-4 py-3 bg-gray-50"
+                        readOnly
+                        className="rounded-lg border-2 px-4 py-3 bg-gray-50 w-full cursor-not-allowed"
                         style={{ borderColor: SESCON_BLUE }}
                       />
                     </div>
@@ -609,7 +683,8 @@ export default function Home() {
                         placeholder="contato@empresa.com.br"
                         value={emailEscritorio}
                         onChange={(e) => setEmailEscritorio(e.target.value)}
-                        className="rounded-lg border-2 px-4 py-3"
+                        disabled={!cnpjEscritorioValido}
+                        className={`rounded-lg border-2 px-4 py-3 w-full ${!cnpjEscritorioValido ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                         style={{ borderColor: SESCON_BLUE }}
                       />
                       <p className="text-xs text-gray-500">Este e-mail receberá a confirmação do envio</p>
@@ -617,7 +692,8 @@ export default function Home() {
 
                     <Button
                       onClick={() => setAbaSelecionada(2)}
-                      className="w-full rounded-lg font-bold py-4 text-white text-lg mt-4 shadow-md hover:shadow-lg transition-all"
+                      disabled={!podeAvancarAba1}
+                      className={`w-full rounded-lg font-bold py-4 text-white text-lg mt-4 shadow-md transition-all ${!podeAvancarAba1 ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg'}`}
                       style={{ background: SESCON_BLUE }}
                     >
                       Próximo
@@ -646,7 +722,7 @@ export default function Home() {
                                 exit={{ height: 0 }}
                                 className="overflow-hidden"
                               >
-                                <div className="px-6 py-4 bg-blue-50/30 text-sm leading-relaxed text-gray-700 border-t" style={{ borderColor: SESCON_LIGHT_BLUE }} dangerouslySetInnerHTML={{ __html: faq.resposta }} />
+                                <div className="px-6 py-4 bg-white text-sm leading-relaxed text-gray-700 border-t mx-4 my-2 rounded-lg border shadow-inner" style={{ borderColor: SESCON_LIGHT_BLUE }} dangerouslySetInnerHTML={{ __html: faq.resposta }} />
                               </motion.div>
                             )}
                           </AnimatePresence>
@@ -666,6 +742,51 @@ export default function Home() {
                   style={{ borderColor: SESCON_LIGHT_BLUE }}
                 >
                   <div className="space-y-8">
+                    <h2 className="text-2xl font-bold" style={{ color: SESCON_DARK_BLUE }}>Gestão de Clientes</h2>
+                    
+                    {/* Campo Atividade Principal */}
+                    <div className="p-6 rounded-xl border bg-gray-50/50" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+                      <label className="text-sm font-bold block mb-4" style={{ color: SESCON_DARK_BLUE }}>
+                        Atividade Principal <span className="text-red-500">*</span>
+                      </label>
+                      <div className="flex gap-6">
+                        <label className="flex items-center gap-2 cursor-pointer group">
+                          <div className="relative flex items-center justify-center">
+                            <input
+                              type="radio"
+                              name="atividadePrincipal"
+                              value="contabilidade"
+                              checked={atividadePrincipal === "contabilidade"}
+                              onChange={(e) => setAtividadePrincipal(e.target.value)}
+                              className="w-5 h-5 appearance-none border-2 rounded-full transition-all cursor-pointer"
+                              style={{ borderColor: atividadePrincipal === "contabilidade" ? SESCON_BLUE : "#cbd5e1" }}
+                            />
+                            {atividadePrincipal === "contabilidade" && (
+                              <div className="absolute w-2.5 h-2.5 rounded-full" style={{ background: SESCON_BLUE }}></div>
+                            )}
+                          </div>
+                          <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Contabilidade</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer group">
+                          <div className="relative flex items-center justify-center">
+                            <input
+                              type="radio"
+                              name="atividadePrincipal"
+                              value="outros"
+                              checked={atividadePrincipal === "outros"}
+                              onChange={(e) => setAtividadePrincipal(e.target.value)}
+                              className="w-5 h-5 appearance-none border-2 rounded-full transition-all cursor-pointer"
+                              style={{ borderColor: atividadePrincipal === "outros" ? SESCON_BLUE : "#cbd5e1" }}
+                            />
+                            {atividadePrincipal === "outros" && (
+                              <div className="absolute w-2.5 h-2.5 rounded-full" style={{ background: SESCON_BLUE }}></div>
+                            )}
+                          </div>
+                          <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Outros</span>
+                        </label>
+                      </div>
+                    </div>
+
                     {/* Seção de Importação */}
                     <div className="p-8 rounded-xl border-2 border-dashed bg-blue-50/30 transition-colors hover:bg-blue-50/60" style={{ borderColor: SESCON_BLUE }}>
                       <div className="flex flex-col items-center text-center mb-8">
