@@ -1,12 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Upload, CheckCircle, Mail, AlertCircle, FileText, Download, ChevronDown, ChevronUp, Loader2, Search, Save, RotateCcw, Eye, Clock, CheckCircle2, AlertTriangle, Send, FileDown, Download as DownloadIcon, Trash, Instagram, Facebook, Youtube, Linkedin, MessageCircle, Building, Users, FileJson } from "lucide-react";
+import { Plus, Trash2, Upload, CheckCircle, Mail, AlertCircle, FileText, Download, ChevronDown, ChevronUp, Loader2, Search, Save, RotateCcw, Eye, Clock, CheckCircle2, AlertTriangle, Send, FileDown, Download as DownloadIcon, Trash, Instagram, Facebook, Youtube, Linkedin, MessageCircle, Building, Users } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 // @ts-ignore
 import * as XLSX from 'xlsx';
-import { jsPDF } from 'jspdf';
 import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertDialog,
@@ -92,7 +91,7 @@ const faqs: FAQ[] = [
   },
   {
     pergunta: "Como saber quais são as categorias representadas pelo SESCON-SP?",
-    resposta: "O SESCON-SP representa 58 categorias econômicas, divididas entre Contábil e Assessoramento. Abaixo estão listados todos os CNAEs representados:<br/><br/>\n<ul>\n<li>02.30-6/00: Atividade de apoio à produção florestal</li>\n<li>52.29-0/02: Serviços de reboque de veículos</li>\n<li>52.29-0/99: Outras atividades auxiliares dos transportes terrestres não especificadas</li>\n<li>52.40-1/01: Operação dos aeroportos e campos de aterrissagem</li>\n<li>52.50-8/04: Organização logística do transporte de carga</li>\n<li>52.50-8/05: Operador de transporte multimodal - OTM</li>\n<li>64.61-1/00: Holdings de instituições financeiras</li>\n<li>64.62-0/00: Holdings de instituições não-financeiras</li>\n<li>64.63-8/00: Outras sociedades de participação, exceto holdings</li>\n<li>66.11-8/01: Bolsa de valores</li>\n<li>66.11-8/02: Bolsa de mercadorias</li>\n<li>66.11-8/03: Bolsa de mercadorias e futuros</li>\n<li>66.11-8/04: Administração de mercados de balcão organizados</li>\n<li>66.12-6/05: Agentes de investimentos em aplicações financeiras</li>\n<li>66.13-4/00: Administração de carteiras de crédito</li>\n<li>66.19-3/02: Correspondentes de instituições financeiras</li>\n<li>66.19-3/03: Representação de bancos</li>\n<li>66.19-3/99: Outras atividades auxiliares dos serviços financeiros não especificadas</li>\n<li>66.21-5/01: Peritos e avaliadores de seguros</li>\n<li>66.21-5/02: Auditoria e consultoria atuarial</li>\n<li>66.29-1/00: Atividades auxiliares dos seguros, da previdência complementar e dos planos</li>\n<li>66.30-4/00: Atividades de administração de fundos por contrato ou comissão</li>\n<li>68.10-2/02: Aluguel de imóveis próprios</li>\n<li>69.11-7/03: Atividades auxiliares da justiça: arbitragem, mediação, avaliações, perícia.</li>\n<li>69.11-7/20: Agente de propriedade industrial</li>\n<li>69.20-6/01: Atividades de contabilidade</li>\n<li>69.20-6/02: Atividades de consultoria e auditoria contábil e tributária</li>\n<li>70.20-4/00: Atividades de consultoria em gestão empresarial, exceto consultoria técnica</li>\n<li>71.19-7/01: Serviços de cartografia, topografia e geodésia</li>\n<li>71.19-7/02: Atividades de estudos geológicos (prospecção geológica)</li>\n<li>71.19-7/03: Serviços de desenho técnico relacionados à arquitetura e engenharia</li>\n<li>71.19-7/04: Serviços de perícia técnica relacionados à segurança do trabalho</li>\n<li>71.20-1/00: Testes e análises técnicas (ensaios de materiais e produtos, análise</li>\n<li>72.10-0/00: Pesquisa e desenvolvimento experimental em ciências físicas e naturais</li>\n<li>72.20-7/00: Pesquisa e desenvolvimento experimental em ciências sociais e humanas</li>\n<li>73.19-0/02: Promoção de Vendas</li>\n<li>73.19-0/04: Consultoria em publicidade</li>\n<li>73.20-3/00: Pesquisa de mercado e de opinião pública</li>\n<li>74.20-0/02: Atividades de produção de fotografias aéreas e submarinas</li>\n<li>74.20-0/05: Serviços de microfilmagem</li>\n<li>74.90-1/01: Serviços de Tradução, Interpretação e Similares</li>\n<li>74.90-1/03: Serviços de agronomia e de consultoria e de atividades agrícolas e pecuárias</li>\n<li>74.90-1/04: Atividades de intermediação e agenciamento de serviços e negócios em geral</li>\n<li>74.90-1/05: Agenciamento de profissionais para atividades esportivas, culturais</li>\n<li>74.90-1/99: Outras atividades profissionais, científicas e técnicas não especificadas</li>\n<li>77.40-3/00: Gestão de ativos intangíveis não-financeiros</li>\n<li>78.10-8/00: Seleção e Agenciamento de Mão de obra</li>\n<li>80.20-0/00: Atividades de monitoramento de sistemas de segurança</li>\n<li>82.11-3/00: Serviços combinados de escritório e apoio administrativo</li>\n<li>82.19-9/99: Preparação de documentos e serviços especializados de apoio administrativo</li>\n<li>82.99-7/99: Outras atividades de serviços prestados principalmente às empresas</li>\n<li>85.50-3/02: Atividades de apoio à educação, exceto caixas escolares</li>\n<li>85.99-6/04: Treinamento em desenvolvimento profissional e gerencial</li>\n<li>86.60-7/00: Atividades de apoio a gestão de saúde (exceto serviços privativos de médicos)</li>\n<li>94.11-1/00: Atividades de organizações associativas patronais e empresariais</li>\n<li>94.12-0/00: Atividades de organizações associativas profissionais</li>\n<li>94.30-8/00: Atividades de associações de defesa de direitos sociais</li>\n<li>94.91-0/00: Atividades de organizações religiosas</li>\n<li>94.99-5/00: Atividades associativas não especificadas anteriormente</li>\n</ul>"
+    resposta: "O SESCON-SP representa 58 categorias econômicas, divididas entre Contábil e Assessoramento. Abaixo estão listados todos os CNAEs representados:<br/><br/>\n<ul>\n<li>02.30-6/00: Atividade de apoio à produção florestal</li>\n<li>52.29-0/02: Serviços de reboque de veículos</li>\n<li>52.29-0/99: Outras atividades auxiliares dos transportes terrestres não especificadas</li>\n<li>52.40-1/01: Operação dos aeroportos e campos de aterrissagem</li>\n<li>52.50-8/04: Organização logística do transporte de carga</li>\n<li>52.50-8/05: Operador de transporte multimodal - OTM</li>\n<li>64.61-1/00: Holdings de instituições financeiras</li>\n<li>64.62-0/00: Holdings de instituições não-financeiras</li>\n<li>64.63-8/00: Outras sociedades de participação, exceto holdings</li>\n<li>66.11-8/01: Bolsa de valores</li>\n<li>66.11-8/02: Bolsa de mercadorias</li>\n<li>66.11-8/03: Bolsa de mercadorias e futuros</li>\n<li>66.11-8/04: Administração de mercados de balcão organizados</li>\n<li>66.12-6/05: Agentes de investimentos em aplicações financeiras</li>\n<li>66.13-4/00: Administração de cartões de crédito</li>\n<li>66.19-3/02: Correspondentes de instituições financeiras</li>\n<li>66.19-3/03: Representação de bancos</li>\n<li>66.19-3/99: Outras atividades auxiliares dos serviços financeiros não especificadas</li>\n<li>66.21-5/01: Peritos e avaliadores de seguros</li>\n<li>66.21-5/02: Auditoria e consultoria atuarial</li>\n<li>66.29-1/00: Atividades auxiliares dos seguros, da previdência complementar e dos planos</li>\n<li>66.30-4/00: Atividades de administração de fundos por contrato ou comissão</li>\n<li>68.10-2/02: Aluguel de imóveis próprios</li>\n<li>69.11-7/03: Atividades auxiliares da justiça: arbitragem, mediação, avaliações, perícia.</li>\n<li>69.11-7/20: Agente de propriedade industrial</li>\n<li>69.20-6/01: Atividades de contabilidade</li>\n<li>69.20-6/02: Atividades de consultoria e auditoria contábil e tributária</li>\n<li>70.20-4/00: Atividades de consultoria em gestão empresarial, exceto consultoria técnica</li>\n<li>71.19-7/01: Serviços de cartografia, topografia e geodésia</li>\n<li>71.19-7/02: Atividades de estudos geológicos (prospecção geológica)</li>\n<li>71.19-7/03: Serviços de desenho técnico relacionados à arquitetura e engenharia</li>\n<li>71.19-7/04: Serviços de perícia técnica relacionados à segurança do trabalho</li>\n<li>71.20-1/00: Testes e análises técnicas (ensaios de materiais e produtos, análise</li>\n<li>72.10-0/00: Pesquisa e desenvolvimento experimental em ciências físicas e naturais</li>\n<li>72.20-7/00: Pesquisa e desenvolvimento experimental em ciências sociais e humanas</li>\n<li>73.19-0/02: Promoção de Vendas</li>\n<li>73.19-0/04: Consultoria em publicidade</li>\n<li>73.20-3/00: Pesquisa de mercado e de opinião pública</li>\n<li>74.20-0/02: Atividades de produção de fotografias aéreas e submarinas</li>\n<li>74.20-0/05: Serviços de microfilmagem</li>\n<li>74.90-1/01: Serviços de Tradução, Interpretação e Similares</li>\n<li>74.90-1/03: Serviços de agronomia e de consultoria e de atividades agrícolas e pecuárias</li>\n<li>74.90-1/04: Atividades de intermediação e agenciamento de serviços e negócios em geral</li>\n<li>74.90-1/05: Agenciamento de profissionais para atividades esportivas, culturais</li>\n<li>74.90-1/99: Outras atividades profissionais, científicas e técnicas não especificadas</li>\n<li>77.40-3/00: Gestão de ativos intangíveis não-financeiros</li>\n<li>78.10-8/00: Seleção e Agenciamento de Mão de obra</li>\n<li>80.20-0/00: Atividades de monitoramento de sistemas de segurança</li>\n<li>82.11-3/00: Serviços combinados de escritório e apoio administrativo</li>\n<li>82.19-9/99: Preparação de documentos e serviços especializados de apoio administrativo</li>\n<li>82.99-7/99: Outras atividades de serviços prestados principalmente às empresas</li>\n<li>85.50-3/02: Atividades de apoio à educação, exceto caixas escolares</li>\n<li>85.99-6/04: Treinamento em desenvolvimento profissional e gerencial</li>\n<li>86.60-7/00: Atividades de apoio a gestão de saúde (exceto serviços privativos de médicos)</li>\n<li>94.11-1/00: Atividades de organizações associativas patronais e empresariais</li>\n<li>94.12-0/00: Atividades de organizações associativas profissionais</li>\n<li>94.30-8/00: Atividades de associações de defesa de direitos sociais</li>\n<li>94.91-0/00: Atividades de organizações religiosas</li>\n<li>94.99-5/00: Atividades associativas não especificadas anteriormente</li>\n</ul>"
   }
 ];
 
@@ -110,59 +109,6 @@ const fileToBase64 = (file: File): Promise<string> => {
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
-};
-
-// Função para validar CNPJ - CORRIGIDA
-const validarCNPJ = (cnpj: string): boolean => {
-  const cnpjLimpo = cnpj.replace(/\D/g, "");
-  if (cnpjLimpo.length !== 14) return false;
-  
-  // Rejeita sequências repetidas
-  if (/^(\d)\1{13}$/.test(cnpjLimpo)) return false;
-  
-  let tamanho = cnpjLimpo.length - 2;
-  let numeros = cnpjLimpo.substring(0, tamanho);
-  let digitos = cnpjLimpo.substring(tamanho);
-  let soma = 0;
-  let pos = 0;
-  let multiplicador = 2;
-
-  // Primeiro dígito
-  for (let i = tamanho - 1; i >= 0; i--) {
-    soma += parseInt(numeros.charAt(i)) * multiplicador;
-    multiplicador++;
-    if (multiplicador === 10) multiplicador = 2;
-  }
-
-  let resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-  if (resultado !== parseInt(digitos.charAt(0))) return false;
-
-  // Segundo dígito
-  tamanho = tamanho + 1;
-  numeros = cnpjLimpo.substring(0, tamanho);
-  soma = 0;
-  multiplicador = 2;
-
-  for (let i = tamanho - 1; i >= 0; i--) {
-    soma += parseInt(numeros.charAt(i)) * multiplicador;
-    multiplicador++;
-    if (multiplicador === 10) multiplicador = 2;
-  }
-
-  resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-  if (resultado !== parseInt(digitos.charAt(1))) return false;
-
-  return true;
-};
-
-// Função para formatar CNPJ
-const formatarCNPJ = (value: string): string => {
-  const cnpj = value.replace(/\D/g, "");
-  if (cnpj.length <= 2) return cnpj;
-  if (cnpj.length <= 5) return `${cnpj.slice(0, 2)}.${cnpj.slice(2)}`;
-  if (cnpj.length <= 8) return `${cnpj.slice(0, 2)}.${cnpj.slice(2, 5)}.${cnpj.slice(5)}`;
-  if (cnpj.length <= 12) return `${cnpj.slice(0, 2)}.${cnpj.slice(2, 5)}.${cnpj.slice(5, 8)}/${cnpj.slice(8)}`;
-  return `${cnpj.slice(0, 2)}.${cnpj.slice(2, 5)}.${cnpj.slice(5, 8)}/${cnpj.slice(8, 12)}-${cnpj.slice(12)}`;
 };
 
 export default function Home() {
@@ -183,46 +129,6 @@ export default function Home() {
   const [buscandoReceita, setBuscandoReceita] = useState(false);
   const [abaSelecionada, setAbaSelecionada] = useState(1);
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
-  const [atividadePrincipal, setAtividadePrincipal] = useState("contabilidade");
-  
-  // Estados de validação
-  const [erroEmail, setErroEmail] = useState("");
-  const [erroCNPJ, setErroCNPJ] = useState("");
-
-  // Função de validação de e-mail
-  const validarEmail = (email: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
-
-  // Validação em tempo real do CNPJ
-  useEffect(() => {
-    if (cnpjEscritorio) {
-      const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
-      if (cnpjLimpo.length > 0 && cnpjLimpo.length < 14) {
-        setErroCNPJ("CNPJ incompleto");
-      } else if (cnpjLimpo.length === 14 && !validarCNPJ(cnpjLimpo)) {
-        setErroCNPJ("CNPJ inválido");
-      } else {
-        setErroCNPJ("");
-      }
-    } else {
-      setErroCNPJ("");
-    }
-  }, [cnpjEscritorio]);
-
-  // Validação em tempo real do E-mail
-  useEffect(() => {
-    if (emailEscritorio) {
-      if (!validarEmail(emailEscritorio)) {
-        setErroEmail("E-mail inválido");
-      } else {
-        setErroEmail("");
-      }
-    } else {
-      setErroEmail("");
-    }
-  }, [emailEscritorio]);
   
   const [temRascunho, setTemRascunho] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -231,6 +137,7 @@ export default function Home() {
   const [statusUpload, setStatusUpload] = useState("");
   const [busca, setBusca] = useState("");
   const [buscaCarregando, setBuscaCarregando] = useState(false);
+  const [atividadePrincipal, setAtividadePrincipal] = useState("");
   const [mostrarModalClientes, setMostrarModalClientes] = useState(false);
   const [mostrarResumo, setMostrarResumo] = useState(false);
   const [mostrarConfirmacaoLimpar, setMostrarConfirmacaoLimpar] = useState(false);
@@ -248,163 +155,102 @@ export default function Home() {
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [cnpjEscritorio, razaoSocialEscritorio, clientes]);
 
-  // Buscar CNPJ do escritório via API
+  // Funções de utilidade
+  const formatarCNPJ = (v: string) => {
+    v = v.replace(/\D/g, "");
+    if (v.length <= 14) {
+      v = v.replace(/^(\d{2})(\d)/, "$1.$2");
+      v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+      v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
+      v = v.replace(/(\d{4})(\d)/, "$1-$2");
+    }
+    return v;
+  };
+
+  const validarCNPJ = (cnpj: string) => {
+    cnpj = cnpj.replace(/[^\d]+/g, "");
+    if (cnpj === "" || cnpj.length !== 14) return false;
+    if (/^(\d)\1+$/.test(cnpj)) return false;
+    let tamanho = cnpj.length - 2;
+    let numeros = cnpj.substring(0, tamanho);
+    let digitos = cnpj.substring(tamanho);
+    let soma = 0;
+    let pos = tamanho - 7;
+    for (let i = tamanho; i >= 1; i--) {
+      soma += parseInt(numeros.charAt(tamanho - i)) * pos--;
+      if (pos < 2) pos = 9;
+    }
+    let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+    if (resultado !== parseInt(digitos.charAt(0))) return false;
+    tamanho = tamanho + 1;
+    numeros = cnpj.substring(0, tamanho);
+    soma = 0;
+    pos = tamanho - 7;
+    for (let i = tamanho; i >= 1; i--) {
+      soma += parseInt(numeros.charAt(tamanho - i)) * pos--;
+      if (pos < 2) pos = 9;
+    }
+    resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+    if (resultado !== parseInt(digitos.charAt(1))) return false;
+    return true;
+  };
+
   const buscarCNPJEscritorio = async (cnpj: string) => {
+    const cnpjLimpo = cnpj.replace(/\D/g, "");
+    if (cnpjLimpo.length !== 14) return;
     setBuscandoReceita(true);
     try {
-      const cnpjLimpo = cnpj.replace(/\D/g, "");
-      
-      // Chamada à API da Receita Federal (via maCNPJ ou similar)
-      const response = await fetch(`https://www.receitaws.com.br/v1/cnpj/${cnpjLimpo}`);
-      
+      const response = await fetch(`https://publica.cnpj.ws/cnpj/${cnpjLimpo}`);
       if (response.ok) {
-        const dados = await response.json();
-        if (dados && !dados.status) {
-          setCnpjEscritorioValido(true);
-          setRazaoSocialEscritorio(dados.nome || "");
-          toast.success("CNPJ validado com sucesso!", { duration: 2000 });
-        } else {
-          setErroCNPJ("CNPJ não encontrado na Receita Federal");
-          toast.error("CNPJ não encontrado", { duration: 3000 });
-        }
-      } else {
-        throw new Error("Erro na busca");
+        const data = await response.json();
+        setRazaoSocialEscritorio(data.razao_social);
+        setCnpjEscritorioValido(true);
+        toast.success("Dados do escritório carregados!");
       }
     } catch (error) {
-      console.error("Erro ao buscar CNPJ:", error);
-      toast.error("Erro ao buscar CNPJ. Verifique a conexão.", { duration: 3000 });
+      console.error("Erro ao buscar CNPJ", error);
     } finally {
       setBuscandoReceita(false);
     }
   };
 
-  // Buscar CNPJ do cliente via API
   const buscarCNPJCliente = async (cnpj: string) => {
+    const cnpjLimpo = cnpj.replace(/\D/g, "");
+    if (cnpjLimpo.length !== 14) return;
     try {
-      const cnpjLimpo = cnpj.replace(/\D/g, "");
-      
-      const response = await fetch(`https://www.receitaws.com.br/v1/cnpj/${cnpjLimpo}`);
-      
+      const response = await fetch(`https://publica.cnpj.ws/cnpj/${cnpjLimpo}`);
       if (response.ok) {
-        const dados = await response.json();
-        if (dados && !dados.status) {
-          setNovoCliente({
-            ...novoCliente,
-            cnpjValido: true,
-            razaoSocial: dados.nome || "",
-            ehMatriz: dados.tipo === "Matriz" || false
-          });
-          toast.success("Dados carregados da Receita Federal!", { duration: 2000 });
-        }
+        const data = await response.json();
+        setNovoCliente({
+          ...novoCliente,
+          razaoSocial: data.razao_social,
+          cnpjValido: true,
+          ehMatriz: data.estabelecimento.tipo === "Matriz"
+        });
       }
     } catch (error) {
       console.error("Erro ao buscar CNPJ do cliente", error);
     }
   };
 
-  // Processar upload de CSV
-  const processarUploadCSV = (file: File, callback: (clientes: Cliente[]) => void) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const csv = e.target?.result as string;
-        const linhas = csv.split('\n').filter(l => l.trim());
-        const novosClientes: Cliente[] = [];
-        
-        linhas.forEach((linha, idx) => {
-          if (idx === 0) return; // Pular cabeçalho
-          const [cnpj, razaoSocial, email] = linha.split(',').map(s => s.trim());
-          if (cnpj && razaoSocial) {
-            const cnpjFormatado = formatarCNPJ(cnpj);
-            const cnpjLimpo = cnpj.replace(/\D/g, "");
-            novosClientes.push({
-              id: Math.random().toString(),
-              cnpj: cnpjFormatado,
-              razaoSocial,
-              emailPrincipal: !email,
-              emailCustomizado: email || "",
-              cnpjValido: validarCNPJ(cnpjLimpo),
-              ehMatriz: false
-            });
-          }
-        });
-        
-        callback(novosClientes);
-        toast.success(`${novosClientes.length} cliente(s) importado(s)!`, { duration: 3000 });
-      } catch (error) {
-        toast.error("Erro ao processar CSV", { duration: 3000 });
-      }
-    };
-    reader.readAsText(file);
-  };
-
-  // Processar upload de Excel
-  const processarUploadExcel = (file: File, callback: (clientes: Cliente[]) => void) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const dados = new Uint8Array(e.target?.result as ArrayBuffer);
-        const workbook = XLSX.read(dados, { type: 'array' });
-        const planilha = workbook.Sheets[workbook.SheetNames[0]];
-        const dados_json = XLSX.utils.sheet_to_json(planilha);
-        
-        const novosClientes: Cliente[] = dados_json.map((row: any) => {
-          const cnpjRaw = row.CNPJ || row.cnpj || "";
-          const cnpjFormatado = formatarCNPJ(cnpjRaw);
-          const cnpjLimpo = cnpjRaw.replace(/\D/g, "");
-          
-          return {
-            id: Math.random().toString(),
-            cnpj: cnpjFormatado,
-            razaoSocial: row["Razão Social"] || row["razao_social"] || row.razaoSocial || "",
-            emailPrincipal: !(row.Email || row.email),
-            emailCustomizado: row.Email || row.email || "",
-            cnpjValido: validarCNPJ(cnpjLimpo),
-            ehMatriz: false
-          };
-        }).filter((c: Cliente) => c.cnpj && c.razaoSocial);
-        
-        callback(novosClientes);
-        toast.success(`${novosClientes.length} cliente(s) importado(s)!`, { duration: 3000 });
-      } catch (error) {
-        toast.error("Erro ao processar Excel", { duration: 3000 });
-      }
-    };
-    reader.readAsArrayBuffer(file);
-  };
-
-  // Adicionar cliente manualmente
   const adicionarCliente = () => {
     if (!novoCliente.cnpj || !novoCliente.razaoSocial) {
-      toast.error("Preencha CNPJ e Razão Social", { duration: 2000 });
+      toast.error("Preencha o CNPJ e a Razão Social");
       return;
     }
 
-    const cnpjLimpo = novoCliente.cnpj.replace(/\D/g, "");
-    if (!validarCNPJ(cnpjLimpo)) {
-      toast.error("CNPJ inválido", { duration: 2000 });
-      return;
-    }
-
-    // Validar duplicatas
-    const clienteJaExiste = clientes.some(c => c.cnpj.replace(/\D/g, "") === cnpjLimpo);
-    if (clienteJaExiste) {
-      toast.error("Este cliente já foi adicionado à lista", { duration: 2000 });
-      return;
-    }
-
-    const novoClienteObj: Cliente = {
+    const cliente: Cliente = {
       id: Math.random().toString(),
       cnpj: novoCliente.cnpj,
       razaoSocial: novoCliente.razaoSocial,
       emailPrincipal: novoCliente.emailPrincipal,
       emailCustomizado: novoCliente.emailCustomizado,
+      contratosocial: novoCliente.contratosocial,
       cnpjValido: true,
-      ehMatriz: novoCliente.ehMatriz,
-      contratosocial: novoCliente.contratosocial
+      ehMatriz: novoCliente.ehMatriz
     };
 
-    setClientes([...clientes, novoClienteObj]);
+    setClientes([...clientes, cliente]);
     setNovoCliente({
       cnpj: "",
       razaoSocial: "",
@@ -420,7 +266,6 @@ export default function Home() {
   // Remover cliente
   const removerCliente = (id: string) => {
     setClientes(clientes.filter(c => c.id !== id));
-    toast.success("Cliente removido", { duration: 2000 });
   };
 
   // Enviar dados
@@ -456,7 +301,7 @@ export default function Home() {
           cnpj: c.cnpj,
           razaoSocial: c.razaoSocial,
           email: c.emailCustomizado || emailEscritorio,
-          contratoArquivo: arquivoData
+          contratosocial: arquivoData // Nome do campo esperado pelo Apps Script
         };
       }));
 
@@ -468,10 +313,9 @@ export default function Home() {
         dataEnvio: new Date().toISOString()
       };
 
-      // URL do Google Apps Script para enviar para Google Drive
       const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxR2MCXtsKqCO3cXC6NgAkntgt6E2N5eTFEAqbyw7YW9Q2lATMGOE1L-NI916Ofduio/exec";
       
-      const response = await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
+      await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
@@ -492,7 +336,6 @@ export default function Home() {
       setCnpjEscritorio("");
       setRazaoSocialEscritorio("");
       setEmailEscritorio("");
-      setCnpjEscritorioValido(false);
       setMostrarResumo(false);
       
       const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
@@ -542,6 +385,8 @@ export default function Home() {
     if (cnpjLimpo.length === 14) {
       const rascunhoSalvo = localStorage.getItem(`rascunho_pacc_${cnpjLimpo}`);
       if (rascunhoSalvo) {
+        // Se encontrou rascunho, pergunta se quer carregar (ou carrega silenciosamente se preferir)
+        // Aqui vamos carregar automaticamente apenas se os outros campos estiverem vazios
         if (!razaoSocialEscritorio && clientes.length === 0) {
           try {
             const dados = JSON.parse(rascunhoSalvo) as Rascunho;
@@ -592,13 +437,57 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [busca]);
 
-  const clientesFiltrados = clientes.filter((c: Cliente) =>
+  const clientesFiltrados = clientes.filter(c =>
     c.razaoSocial.toLowerCase().includes(busca.toLowerCase()) ||
     c.cnpj.includes(busca)
   );
 
-  // Verificar se pode ir para próxima aba
-  const podeIrProxima = cnpjEscritorio && razaoSocialEscritorio && emailEscritorio && !erroCNPJ && !erroEmail && cnpjEscritorioValido;
+  const processarUploadExcel = (file: File, callback: (clientes: Cliente[]) => void, progressCallback: (p: number, s: string) => void, emailPadrao: string) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = e.target?.result;
+      const workbook = XLSX.read(data, { type: 'binary' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(worksheet);
+      
+      const novosClientes: Cliente[] = json.map((row: any) => ({
+        id: Math.random().toString(),
+        cnpj: String(row["CNPJ"] || row["cnpj"] || ""),
+        razaoSocial: String(row["Razão Social"] || row["RazÃ£o Social"] || row["razao_social"] || row["Nome"] || ""),
+        emailPrincipal: true,
+        emailCustomizado: String(row["E-mail"] || row["Email"] || row["email"] || row["E-MAIL"] || emailPadrao),
+        cnpjValido: true
+      }));
+      callback(novosClientes);
+    };
+    reader.readAsBinaryString(file);
+  };
+
+  const processarUploadCSV = (file: File, callback: (clientes: Cliente[]) => void, progressCallback: (p: number, s: string) => void, emailPadrao: string) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      const lines = text.split('\n');
+      const headers = lines[0].split(',');
+      const novosClientes: Cliente[] = [];
+      
+      for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const cols = lines[i].split(',');
+        novosClientes.push({
+          id: Math.random().toString(),
+          cnpj: cols[0]?.trim() || "",
+          razaoSocial: cols[1]?.trim() || "",
+          emailPrincipal: true,
+          emailCustomizado: cols[2]?.trim() || emailPadrao,
+          cnpjValido: true
+        });
+      }
+      callback(novosClientes);
+    };
+    reader.readAsText(file);
+  };
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#f5f7fa" }}>
@@ -607,7 +496,7 @@ export default function Home() {
         <div className="px-8 py-6">
           <div className="flex items-center justify-between gap-6">
             <div className="flex items-center gap-6">
-              <img src="/logo-sescon-branco.png" alt="SESCON-SP" className="h-20 w-auto hidden md:block" />
+              <img src="/pacc-sescon-improved/logo-sescon-branco.png" alt="SESCON-SP" className="h-20 w-auto hidden md:block" />
               <div>
                 <h1 className="text-3xl font-extrabold text-white">Central de Atualização SESCON-SP</h1>
                 <p className="text-blue-100 text-base mt-1">Atualize as informações dos seus clientes representados de forma rápida e segura.</p>
@@ -677,515 +566,426 @@ export default function Home() {
               <div className="w-full bg-gray-200 rounded-full h-2.5">
                 <div 
                   className="h-2.5 rounded-full transition-all duration-500 ease-out" 
-                  style={{ 
-                    width: abaSelecionada === 1 ? "50%" : "90%", 
-                    background: SESCON_BLUE 
-                  }}
+                  style={{ width: abaSelecionada === 1 ? "50%" : "90%", background: SESCON_BLUE }}
                 ></div>
               </div>
               <p className="text-xs text-gray-500 mt-2">
-                {abaSelecionada === 1 
-                  ? "Passo 1 de 2: Identificação do Escritório" 
-                  : "Passo 2 de 2: Gestão de Clientes e Envio"}
+                Passo {abaSelecionada} de 2: {abaSelecionada === 1 ? "Identificação do Escritório" : "Gestão de Clientes"}
               </p>
             </div>
 
-            {/* Abas - Redesenhadas */}
+            {/* Abas de Navegação */}
             <div className="flex gap-6 border-b-2 mb-6" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-              <button
+              <button 
                 onClick={() => setAbaSelecionada(1)}
-                className={`pb-4 px-4 font-bold transition-all border-b-4 text-lg flex items-center gap-3 hover:text-blue-800`}
-                style={{
-                  color: abaSelecionada === 1 ? SESCON_BLUE : "#999",
-                  borderColor: abaSelecionada === 1 ? SESCON_BLUE : "transparent"
-                }}
+                className={`pb-4 px-2 font-bold transition-all flex items-center gap-2 ${abaSelecionada === 1 ? "border-b-4" : "text-gray-400"}`}
+                style={{ borderColor: abaSelecionada === 1 ? SESCON_BLUE : "transparent", color: abaSelecionada === 1 ? SESCON_BLUE : "" }}
               >
                 <Building className="w-5 h-5" />
                 Dados da Empresa
               </button>
-              <button
+              <button 
                 onClick={() => setAbaSelecionada(2)}
-                className={`pb-4 px-4 font-bold transition-all border-b-4 text-lg flex items-center gap-3 hover:text-blue-800`}
-                style={{
-                  color: abaSelecionada === 2 ? SESCON_BLUE : "#999",
-                  borderColor: abaSelecionada === 2 ? SESCON_BLUE : "transparent"
-                }}
+                className={`pb-4 px-2 font-bold transition-all flex items-center gap-2 ${abaSelecionada === 2 ? "border-b-4" : "text-gray-400"}`}
+                style={{ borderColor: abaSelecionada === 2 ? SESCON_BLUE : "transparent", color: abaSelecionada === 2 ? SESCON_BLUE : "" }}
               >
                 <Users className="w-5 h-5" />
                 Gestão de Clientes
               </button>
             </div>
 
-            {/* Conteúdo das Abas com Animação */}
             <AnimatePresence mode="wait">
               {abaSelecionada === 1 ? (
-                <motion.div
+                <motion.div 
                   key="aba1"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.3 }}
-                  className="rounded-lg p-8 shadow-sm border bg-white"
+                  className="bg-white rounded-lg p-8 shadow-sm border"
+                  style={{ borderColor: SESCON_LIGHT_BLUE }}
                 >
-                <h2 className="text-2xl font-bold mb-8" style={{ color: SESCON_DARK_BLUE }}>
-                  Identificação da Empresa
-                </h2>
+                  <h2 className="text-2xl font-bold mb-8" style={{ color: SESCON_DARK_BLUE }}>Identificação da Empresa</h2>
+                  
+                  <div className="space-y-6 max-w-2xl">
+                    <div>
+                      <label className="block text-sm font-semibold mb-3" style={{ color: SESCON_DARK_BLUE }}>
+                        CNPJ do Escritório *
+                      </label>
+                      <div className="flex gap-3 items-center">
+                        <Input 
+                          type="text" 
+                          placeholder="00.000.000/0000-00" 
+                          value={cnpjEscritorio}
+                          onChange={(e) => setCnpjEscritorio(formatarCNPJ(e.target.value))}
+                          onBlur={() => buscarCNPJEscritorio(cnpjEscritorio)}
+                          maxLength={18}
+                          className="flex-1 rounded-lg border-2 px-4 py-2 focus:ring-2"
+                          style={{ borderColor: SESCON_BLUE }}
+                        />
+                        {buscandoReceita && <Loader2 className="w-5 h-5 animate-spin" style={{ color: SESCON_BLUE }} />}
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">Os dados serão preenchidos automaticamente da Receita Federal</p>
+                    </div>
 
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-semibold mb-3" style={{ color: SESCON_DARK_BLUE }}>
-                      CNPJ do Escritório *
-                    </label>
-                    <div className="flex gap-3">
-                      <Input
-                        type="text"
-                        placeholder="00.000.000/0000-00"
-                        value={cnpjEscritorio}
-                        onChange={(e) => {
-                          const formatado = formatarCNPJ(e.target.value);
-                          setCnpjEscritorio(formatado);
-                        }}
-                        onBlur={() => {
-                          if (cnpjEscritorio.replace(/\D/g, "").length === 14) {
-                            buscarCNPJEscritorio(cnpjEscritorio);
-                          }
-                        }}
-                        maxLength={18}
-                        className={`flex-1 rounded-lg border-2 px-4 py-2 transition-colors ${erroCNPJ ? "border-red-500 focus:border-red-500" : "focus:border-blue-500 focus:ring-blue-500"}`}
+                    <div>
+                      <label className="block text-sm font-semibold mb-3" style={{ color: SESCON_DARK_BLUE }}>
+                        Nome do Escritório *
+                      </label>
+                      <Input 
+                        type="text" 
+                        placeholder="Será preenchido automaticamente"
+                        value={razaoSocialEscritorio}
+                        onChange={(e) => setRazaoSocialEscritorio(e.target.value)}
+                        className="rounded-lg border-2 px-4 py-2"
+                        style={{ borderColor: SESCON_BLUE }}
                       />
-                      {buscandoReceita && <Loader2 className="w-5 h-5 animate-spin" style={{ color: SESCON_BLUE }} />}
                     </div>
-                    {erroCNPJ && <p className="text-xs mt-1 text-red-500 font-semibold">{erroCNPJ}</p>}
-                    <p className="text-xs mt-2 text-gray-600">Os dados serão preenchidos automaticamente da Receita Federal</p>
-                  </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold mb-3" style={{ color: SESCON_DARK_BLUE }}>
-                      Nome do Escritório *
-                    </label>
-                    <Input
-                      type="text"
-                      placeholder="Será preenchido automaticamente"
-                      value={razaoSocialEscritorio}
-                      onChange={(e) => setRazaoSocialEscritorio(e.target.value)}
-                      className="rounded-lg border-2 px-4 py-2"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold mb-3" style={{ color: SESCON_DARK_BLUE }}>
-                      E-mail para Contato (Obrigatório) *
-                    </label>
-                    <Input
-                      type="email"
-                      placeholder="contato@empresa.com.br"
-                      value={emailEscritorio}
-                      onChange={(e) => setEmailEscritorio(e.target.value)}
-                      className={`rounded-lg border-2 px-4 py-2 ${erroEmail ? "border-red-500 focus:border-red-500" : ""}`}
-                    />
-                    {erroEmail && <p className="text-xs mt-1 text-red-500 font-semibold">{erroEmail}</p>}
-                    <p className="text-xs mt-2 text-gray-600">Este e-mail receberá a confirmação do envio</p>
-                  </div>
-
-                  {cnpjEscritorioValido && (
-                    <div 
-                      className="p-4 rounded-lg border-l-4 flex gap-3"
-                      style={{ background: "#e8f5e9", borderColor: "#4caf50" }}
-                    >
-                      <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                      <p className="text-sm text-green-800">CNPJ validado com sucesso. Dados carregados da Receita Federal.</p>
+                    <div>
+                      <label className="block text-sm font-semibold mb-3" style={{ color: SESCON_DARK_BLUE }}>
+                        E-mail para Contato (Obrigatório) *
+                      </label>
+                      <Input 
+                        type="email" 
+                        placeholder="contato@empresa.com.br"
+                        value={emailEscritorio}
+                        onChange={(e) => setEmailEscritorio(e.target.value)}
+                        className="rounded-lg border-2 px-4 py-2"
+                        style={{ borderColor: SESCON_BLUE }}
+                      />
+                      <p className="text-xs text-gray-500 mt-2">Este e-mail receberá a confirmação do envio</p>
                     </div>
-                  )}
 
-                  <div className="flex gap-3 pt-4">
-                    {temRascunho && (
-                      <Button
-                        onClick={() => setMostrarConfirmacaoLimpar(true)}
-                        variant="outline"
-                        className="rounded-lg border-2 font-semibold py-3 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 transition-colors"
-                      >
-                        <Trash2 className="w-5 h-5 mr-2" />
-                        Limpar Rascunho
-                      </Button>
-                    )}
-                    <Button
+                    <Button 
                       onClick={() => setAbaSelecionada(2)}
-                      disabled={!podeIrProxima}
-                      className="flex-1 rounded-lg font-bold py-3 text-white text-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      style={{ background: podeIrProxima ? SESCON_BLUE : "#ccc" }}
+                      className="w-full rounded-lg font-bold py-3 text-white shadow-md hover:shadow-lg transition-all"
+                      style={{ background: SESCON_BLUE }}
                     >
                       Próximo
                     </Button>
                   </div>
-                </div>
-                
-                {/* FAQ Section - Centralizado */}
-                <div className="mt-6 rounded-lg p-8 shadow-sm border" style={{ borderColor: SESCON_BLUE, background: SESCON_LIGHT_BLUE }}>
-                  <h2 className="text-2xl font-bold mb-6" style={{ color: SESCON_DARK_BLUE }}>
-                    Perguntas Frequentes
-                  </h2>
-                  <div className="space-y-3">
-                    {faqs.map((faq, i) => (
-                      <div key={i} className="border rounded-lg overflow-hidden shadow-sm" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-                        <button
-                          onClick={() => setExpandedFAQ(expandedFAQ === i ? null : i)}
-                          className="w-full p-4 text-left flex items-center justify-between bg-white hover:bg-gray-50 transition-colors"
-                        >
-                          <p className="font-semibold text-sm" style={{ color: SESCON_DARK_BLUE }}>{faq.pergunta}</p>
-                          {expandedFAQ === i ? (
-                            <ChevronUp className="w-5 h-5 flex-shrink-0" style={{ color: SESCON_BLUE }} />
-                          ) : (
-                            <ChevronDown className="w-5 h-5 flex-shrink-0" style={{ color: SESCON_BLUE }} />
-                          )}
-                        </button>
-                        {expandedFAQ === i && (
-                          <div className="p-4 bg-gray-50 border-t" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-                            <div className="text-sm text-gray-700 leading-relaxed space-y-2" dangerouslySetInnerHTML={{ __html: faq.resposta.replace(/(\d{2}\.\d{2}-\d\/\d{2})/g, `<strong style="color: ${SESCON_DARK_BLUE}; font-weight: 800;">$1</strong>`) }} />
-                          </div>
-                        )}
-                      </div>
-                    ))}
+
+                  {/* FAQ Integrado na Aba 1 */}
+                  <div className="mt-12 pt-12 border-t" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+                    <h3 className="text-xl font-bold mb-6" style={{ color: SESCON_DARK_BLUE }}>Perguntas Frequentes</h3>
+                    <div className="space-y-3">
+                      {faqs.map((faq, index) => (
+                        <div key={index} className="border rounded-lg overflow-hidden" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+                          <button
+                            onClick={() => setExpandedFAQ(expandedFAQ === index ? null : index)}
+                            className="w-full px-6 py-4 flex justify-between items-center text-left hover:bg-gray-50 transition-colors"
+                          >
+                            <span className="font-semibold text-sm" style={{ color: SESCON_DARK_BLUE }}>{faq.pergunta}</span>
+                            {expandedFAQ === index ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                          </button>
+                          <AnimatePresence>
+                            {expandedFAQ === index && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="px-6 py-4 bg-gray-50 text-sm text-gray-600 leading-relaxed border-t"
+                                style={{ borderColor: SESCON_LIGHT_BLUE }}
+                                dangerouslySetInnerHTML={{ __html: faq.resposta }}
+                              />
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ) : (
-                <motion.div
+                </motion.div>
+              ) : (
+                <motion.div 
                   key="aba2"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
                   className="bg-white rounded-lg p-8 shadow-sm border"
                   style={{ borderColor: SESCON_LIGHT_BLUE }}
                 >
-                <h2 className="text-2xl font-bold mb-8" style={{ color: SESCON_DARK_BLUE }}>
-                  Gestão de Clientes
-                </h2>
-
-                <div className="space-y-6">
-                  {/* Seleção de Atividade */}
-                  <div className="p-6 rounded-lg border bg-blue-50/30" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-                    <label className="block text-sm font-semibold mb-3" style={{ color: SESCON_DARK_BLUE }}>
-                      Atividade Principal *
-                    </label>
-                    <div className="flex gap-4">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="atividade"
-                          value="contabilidade"
-                          checked={atividadePrincipal === "contabilidade"}
-                          onChange={(e) => setAtividadePrincipal(e.target.value)}
-                          className="w-4 h-4 text-blue-600"
-                        />
-                        <span>Contabilidade</span>
+                  <h2 className="text-2xl font-bold mb-8" style={{ color: SESCON_DARK_BLUE }}>Gestão de Clientes</h2>
+                  
+                  <div className="space-y-6">
+                    {/* Seleção de Atividade */}
+                    <div className="p-6 rounded-lg border bg-blue-50/30" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+                      <label className="block text-sm font-semibold mb-3" style={{ color: SESCON_DARK_BLUE }}>
+                        Atividade Principal do Escritório *
                       </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="atividade"
-                          value="outros"
-                          checked={atividadePrincipal === "outros"}
-                          onChange={(e) => setAtividadePrincipal(e.target.value)}
-                          className="w-4 h-4 text-blue-600"
-                        />
-                        <span>Outros</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {atividadePrincipal === "outros" ? (
-                    <div className="p-8 rounded-xl border-2 border-dashed bg-blue-50/30 text-center" style={{ borderColor: SESCON_BLUE }}>
-                      <h3 className="text-xl font-bold mb-4" style={{ color: SESCON_DARK_BLUE }}>
-                        Atualização Cadastral
-                      </h3>
-                      <p className="text-gray-600 mb-6">
-                        Para outras atividades, por favor utilize o formulário específico de atualização cadastral.
-                      </p>
-                      <Button
-                        onClick={() => window.location.href = "https://sesconsp.github.io/atualizacao-cadastral/"}
-                        className="rounded-lg font-bold py-3 px-6 text-white text-lg hover:bg-blue-700 transition-colors"
-                        style={{ background: SESCON_BLUE }}
-                      >
-                        Ir para Atualização Cadastral
-                      </Button>
-                    </div>
-                  ) : (
-                    <>
-                      {/* Importação - Redesenhada */}
-                      <div className="p-8 rounded-xl border-2 border-dashed bg-blue-50/30 transition-colors hover:bg-blue-50/60" style={{ borderColor: SESCON_BLUE }}>
-                    <div className="flex flex-col items-center text-center mb-8">
-                      <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4 shadow-sm">
-                        <Upload className="w-8 h-8" style={{ color: SESCON_BLUE }} />
+                      <div className="flex gap-4">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="radio" 
+                            name="atividade" 
+                            value="contabilidade" 
+                            checked={atividadePrincipal === "contabilidade"}
+                            onChange={(e) => setAtividadePrincipal(e.target.value)}
+                            className="w-4 h-4"
+                          />
+                          <span className="text-sm font-medium">Contabilidade</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input 
+                            type="radio" 
+                            name="atividade" 
+                            value="outros" 
+                            checked={atividadePrincipal === "outros"}
+                            onChange={(e) => setAtividadePrincipal(e.target.value)}
+                            className="w-4 h-4"
+                          />
+                          <span className="text-sm font-medium">Outros</span>
+                        </label>
                       </div>
-                      <h3 className="text-xl font-bold mb-2" style={{ color: SESCON_DARK_BLUE }}>
-                        Importar Lista de Clientes
-                      </h3>
-                      <p className="text-sm text-gray-600 max-w-md leading-relaxed">
-                        Agilize o cadastro importando seus clientes via planilha.<br/>
-                        Aceitamos arquivos <strong>.CSV</strong> ou <strong>.Excel</strong> com as colunas: CNPJ, Razão Social e E-mail.
-                      </p>
                     </div>
 
-                    <div className="flex gap-4 max-w-xl mx-auto">
-                      <Button
-                        onClick={gerarModeloCSV}
-                        variant="outline"
-                        className="flex-1 rounded-lg border-2 py-6 hover:bg-blue-50 transition-colors h-auto flex flex-col gap-2"
-                        style={{ borderColor: SESCON_BLUE, color: SESCON_BLUE }}
-                      >
-                        <Download className="w-6 h-6" />
-                        <span className="font-bold">Baixar Modelo</span>
-                      </Button>
-                      <label className="flex-1">
-                        <input
-                          type="file"
-                          accept=".csv,.xlsx,.xls"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              if (file.name.endsWith('.csv')) {
-                                processarUploadCSV(file, (novosClientes) => {
-                                  setClientes([...clientes, ...novosClientes]);
-                                  setProgressoUpload(0);
-                                  // Mostrar modal de visualização automaticamente
-                                  setMostrarModalClientes(true);
-                                });
-                              } else {
-                                processarUploadExcel(file, (novosClientes) => {
-                                  setClientes([...clientes, ...novosClientes]);
-                                  setProgressoUpload(0);
-                                  // Mostrar modal de visualização automaticamente
-                                  setMostrarModalClientes(true);
-                                });
-                              }
-                            }
-                          }}
-                          className="hidden"
-                          id="file-upload"
-                        />
-                        <div
-                          className="flex-1 cursor-pointer"
+                    {atividadePrincipal === "outros" ? (
+                      <div className="p-12 text-center border-2 border-dashed rounded-xl" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+                        <AlertCircle className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                        <h3 className="text-xl font-bold mb-4" style={{ color: SESCON_DARK_BLUE }}>
+                          Atualização Cadastral
+                        </h3>
+                        <p className="text-gray-600 mb-6">
+                          Para outras atividades, por favor utilize o formulário específico de atualização cadastral.
+                        </p>
+                        <Button
+                          onClick={() => window.location.href = "https://sesconsp.github.io/atualizacao-cadastral/"}
+                          className="rounded-lg font-bold py-3 px-6 text-white text-lg hover:bg-blue-700 transition-colors"
+                          style={{ background: SESCON_BLUE }}
                         >
-                          <div className="flex items-center justify-center gap-2 p-6 rounded-lg border-2 border-dashed hover:bg-blue-50 transition-colors h-full" style={{ borderColor: SESCON_BLUE }}>
-                            <Upload className="w-6 h-6" style={{ color: SESCON_BLUE }} />
-                            <span className="font-bold" style={{ color: SESCON_BLUE }}>Selecionar Arquivo</span>
+                          Ir para Atualização Cadastral
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        {/* Importação - Redesenhada */}
+                        <div className="p-8 rounded-xl border-2 border-dashed bg-blue-50/30 transition-colors hover:bg-blue-50/60" style={{ borderColor: SESCON_BLUE }}>
+                          <div className="flex flex-col items-center text-center mb-8">
+                            <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4 shadow-sm">
+                              <Upload className="w-8 h-8" style={{ color: SESCON_BLUE }} />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2" style={{ color: SESCON_DARK_BLUE }}>
+                              Importar Lista de Clientes
+                            </h3>
+                            <p className="text-sm text-gray-600 max-w-md leading-relaxed">
+                              Agilize o cadastro importando seus clientes via planilha.<br/>
+                              Aceitamos arquivos <strong>.CSV</strong> ou <strong>.Excel</strong> com as colunas: CNPJ, Razão Social e E-mail.
+                            </p>
+                          </div>
+
+                          <div className="flex gap-4 max-w-xl mx-auto">
+                            <Button
+                              onClick={gerarModeloCSV}
+                              variant="outline"
+                              className="flex-1 rounded-lg border-2 py-6 hover:bg-blue-50 transition-colors h-auto flex flex-col gap-2"
+                              style={{ borderColor: SESCON_BLUE, color: SESCON_BLUE }}
+                            >
+                              <Download className="w-6 h-6" />
+                              <span className="font-bold">Baixar Modelo</span>
+                            </Button>
+                            <label className="flex-1">
+                              <input
+                                type="file"
+                                accept=".csv,.xlsx,.xls"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    if (file.name.endsWith('.csv')) {
+                                      processarUploadCSV(file, (novosClientes) => {
+                                        setClientes([...clientes, ...novosClientes]);
+                                        setProgressoUpload(0);
+                                        setStatusUpload("");
+                                        toast.success("Arquivo importado com sucesso!", { duration: 3000 });
+                                      }, (progresso, status) => {
+                                        setProgressoUpload(progresso);
+                                        setStatusUpload(status);
+                                      }, emailEscritorio);
+                                    } else {
+                                      processarUploadExcel(file, (novosClientes) => {
+                                        setClientes([...clientes, ...novosClientes]);
+                                        setProgressoUpload(0);
+                                        setStatusUpload("");
+                                        toast.success("Arquivo importado com sucesso!", { duration: 3000 });
+                                      }, (progresso, status) => {
+                                        setProgressoUpload(progresso);
+                                        setStatusUpload(status);
+                                      }, emailEscritorio);
+                                    }
+                                  }
+                                }}
+                                className="hidden"
+                              />
+                              <Button
+                                type="button"
+                                className="w-full rounded-lg font-bold py-6 text-white shadow-md hover:shadow-lg transition-all h-auto flex flex-col gap-2"
+                                style={{ background: SESCON_BLUE }}
+                                onClick={(e) => {
+                                  const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                                  input.click();
+                                }}
+                              >
+                                <Upload className="w-6 h-6" />
+                                <span>Selecionar Arquivo</span>
+                              </Button>
+                            </label>
                           </div>
                         </div>
-                      </label>
-                    </div>
-                      </div>
 
-                  {/* Adicionar Manual */}
-                  <div className="p-6 rounded-lg border-2" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-                    <p className="text-sm font-semibold mb-4" style={{ color: SESCON_DARK_BLUE }}>
-                      Adicionar Cliente Manualmente
-                    </p>
-                    <div className="space-y-3">
-                      <Input
-                        type="text"
-                        placeholder="CNPJ"
-                        value={novoCliente.cnpj}
-                        onChange={(e) => {
-                          const formatado = formatarCNPJ(e.target.value);
-                          setNovoCliente({ ...novoCliente, cnpj: formatado });
-                        }}
-                        onBlur={() => {
-                          if (novoCliente.cnpj.replace(/\D/g, "").length === 14) {
-                            buscarCNPJCliente(novoCliente.cnpj);
-                          }
-                        }}
-                        maxLength={18}
-                        className="rounded-lg border-2 px-4 py-2"
-                        style={{ borderColor: SESCON_BLUE }}
-                      />
-                      <Input
-                        type="text"
-                        placeholder="Razão Social"
-                        value={novoCliente.razaoSocial}
-                        onChange={(e) => setNovoCliente({ ...novoCliente, razaoSocial: e.target.value })}
-                        className="rounded-lg border-2 px-4 py-2"
-                        style={{ borderColor: SESCON_BLUE }}
-                      />
-                      <div className="space-y-2">
-                        <label className="block text-sm font-semibold" style={{ color: SESCON_DARK_BLUE }}>
-                          E-mail do Cliente
-                        </label>
-                        <div className="flex gap-2">
-                          <label className="flex items-center gap-2 flex-1 p-3 rounded-lg border-2 cursor-pointer" style={{ borderColor: novoCliente.emailPrincipal ? SESCON_BLUE : "#ddd", background: novoCliente.emailPrincipal ? SESCON_LIGHT_BLUE : "white" }}>
-                            <input
-                              type="radio"
-                              checked={novoCliente.emailPrincipal}
-                              onChange={() => setNovoCliente({ ...novoCliente, emailPrincipal: true, emailCustomizado: "" })}
-                              className="w-4 h-4"
-                            />
-                            <span className="text-sm" style={{ color: SESCON_DARK_BLUE }}>Usar e-mail da empresa</span>
-                          </label>
-                          <label className="flex items-center gap-2 flex-1 p-3 rounded-lg border-2 cursor-pointer" style={{ borderColor: !novoCliente.emailPrincipal ? SESCON_BLUE : "#ddd", background: !novoCliente.emailPrincipal ? SESCON_LIGHT_BLUE : "white" }}>
-                            <input
-                              type="radio"
-                              checked={!novoCliente.emailPrincipal}
-                              onChange={() => setNovoCliente({ ...novoCliente, emailPrincipal: false })}
-                              className="w-4 h-4"
-                            />
-                            <span className="text-sm" style={{ color: SESCON_DARK_BLUE }}>E-mail customizado</span>
-                          </label>
-                        </div>
-                        {!novoCliente.emailPrincipal && (
-                          <Input
-                            type="email"
-                            placeholder="email@cliente.com.br"
-                            value={novoCliente.emailCustomizado}
-                            onChange={(e) => setNovoCliente({ ...novoCliente, emailCustomizado: e.target.value })}
-                            className="rounded-lg border-2 px-4 py-2"
-                            style={{ borderColor: SESCON_BLUE }}
-                          />
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <label className="block text-sm font-semibold" style={{ color: SESCON_DARK_BLUE }}>
-                          Contrato Social (Opcional)
-                        </label>
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                if (file.type === 'application/pdf') {
-                                  setNovoCliente({ ...novoCliente, contratosocial: file });
-                                  toast.success(`Arquivo "${file.name}" selecionado!`, { duration: 2000 });
-                                } else {
-                                  toast.error('Apenas arquivos PDF são aceitos!', { duration: 3000 });
-                                  e.target.value = '';
-                                }
-                              }
-                            }}
-                            className="hidden"
-                            id="contrato-social-input"
-                          />
-                          <label
-                            htmlFor="contrato-social-input"
-                            className="flex-1 cursor-pointer"
-                          >
-                            <div className="flex items-center justify-center gap-2 p-3 rounded-lg border-2 border-dashed hover:bg-gray-50 transition-colors" style={{ borderColor: SESCON_BLUE }}>
-                              <FileText className="w-4 h-4" style={{ color: SESCON_BLUE }} />
-                              <span className="text-sm" style={{ color: SESCON_BLUE }}>
-                                {novoCliente.contratosocial ? novoCliente.contratosocial.name : 'Selecionar PDF'}
-                              </span>
+                        {progressoUpload > 0 && (
+                          <div className="space-y-2">
+                            <p className="text-xs text-gray-600">{statusUpload}</p>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div
+                                className="h-2 rounded-full transition-all"
+                                style={{ width: `${progressoUpload}%`, background: SESCON_BLUE }}
+                              ></div>
                             </div>
-                          </label>
-                          {novoCliente.contratosocial && (
-                            <Button
-                              onClick={() => {
-                                setNovoCliente({ ...novoCliente, contratosocial: undefined });
-                                const input = document.getElementById('contrato-social-input') as HTMLInputElement;
-                                if (input) input.value = '';
-                                toast.info('Arquivo removido', { duration: 2000 });
+                          </div>
+                        )}
+
+                        {/* Lista de Clientes */}
+                        <div>
+                          <p className="text-sm font-semibold mb-4" style={{ color: SESCON_DARK_BLUE }}>
+                            Clientes Adicionados ({clientes.length})
+                          </p>
+                          <div className="space-y-2 max-h-64 overflow-y-auto">
+                            {clientes.length > 0 ? (
+                              clientes.map((cliente) => (
+                                <div key={cliente.id} className="p-3 rounded-lg border flex justify-between items-start" style={{ borderColor: SESCON_LIGHT_BLUE, background: SESCON_LIGHT_BLUE }}>
+                                  <div className="flex-1">
+                                    <p className="font-semibold text-sm" style={{ color: SESCON_DARK_BLUE }}>{cliente.razaoSocial}</p>
+                                    <p className="text-xs text-gray-600">{cliente.cnpj}</p>
+                                  </div>
+                                  <Button
+                                    onClick={() => removerCliente(cliente.id)}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-red-600 hover:bg-red-50"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              ))
+                            ) : (
+                              <p className="text-center text-gray-500 text-sm py-8">Nenhum cliente adicionado ainda</p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Adicionar Manual */}
+                        <div className="p-6 rounded-lg border-2" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+                          <p className="text-sm font-semibold mb-4" style={{ color: SESCON_DARK_BLUE }}>
+                            Adicionar Cliente Manualmente
+                          </p>
+                          <div className="space-y-3">
+                            <Input
+                              type="text"
+                              placeholder="CNPJ"
+                              value={novoCliente.cnpj}
+                              onChange={(e) => {
+                                const formatado = formatarCNPJ(e.target.value);
+                                setNovoCliente({ ...novoCliente, cnpj: formatado });
                               }}
-                              variant="ghost"
-                              size="sm"
-                              className="text-red-600 hover:bg-red-50"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
-                        <p className="text-xs text-gray-600">Aceita apenas arquivos em formato PDF</p>
-                      </div>
-                      <Button
-                        onClick={adicionarCliente}
-                        className="w-full rounded-lg font-semibold py-2 text-white"
-                        style={{ background: SESCON_BLUE }}
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Adicionar Cliente
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Busca de Clientes */}
-                  {clientes.length > 0 && (
-                    <div className="p-6 rounded-lg border-2" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-                      <label className="block text-sm font-semibold mb-3" style={{ color: SESCON_DARK_BLUE }}>
-                        Pesquisar Clientes
-                      </label>
-                      <div className="flex gap-2">
-                        <Input
-                          type="text"
-                          placeholder="Buscar por nome ou CNPJ..."
-                          value={busca}
-                          onChange={(e) => setBusca(e.target.value)}
-                          className="flex-1 rounded-lg border-2 px-4 py-2"
-                          style={{ borderColor: SESCON_BLUE }}
-                        />
-                        {buscaCarregando && <Loader2 className="w-5 h-5 animate-spin" style={{ color: SESCON_BLUE }} />}
-                      </div>
-                      {busca && (
-                        <div className="mt-3 space-y-2 max-h-48 overflow-y-auto">
-                          {clientesFiltrados.length > 0 ? (
-                            clientesFiltrados.map((cliente) => (
-                              <div key={cliente.id} className="p-2 rounded bg-gray-50 border text-sm" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-                                <p className="font-semibold" style={{ color: SESCON_DARK_BLUE }}>{cliente.razaoSocial}</p>
-                                <p className="text-xs text-gray-600">CNPJ: {cliente.cnpj}</p>
+                              onBlur={() => {
+                                if (novoCliente.cnpj.replace(/\D/g, "").length === 14) {
+                                  buscarCNPJCliente(novoCliente.cnpj);
+                                }
+                              }}
+                              maxLength={18}
+                              className="rounded-lg border-2 px-4 py-2"
+                              style={{ borderColor: SESCON_BLUE }}
+                            />
+                            <Input
+                              type="text"
+                              placeholder="Razão Social"
+                              value={novoCliente.razaoSocial}
+                              onChange={(e) => setNovoCliente({ ...novoCliente, razaoSocial: e.target.value })}
+                              className="rounded-lg border-2 px-4 py-2"
+                              style={{ borderColor: SESCON_BLUE }}
+                            />
+                            <div className="space-y-2">
+                              <label className="block text-sm font-semibold" style={{ color: SESCON_DARK_BLUE }}>
+                                E-mail do Cliente
+                              </label>
+                              <div className="flex gap-2">
+                                <label className="flex items-center gap-2 flex-1 p-3 rounded-lg border-2 cursor-pointer" style={{ borderColor: novoCliente.emailPrincipal ? SESCON_BLUE : "#ddd", background: novoCliente.emailPrincipal ? SESCON_LIGHT_BLUE : "white" }}>
+                                  <input
+                                    type="radio"
+                                    checked={novoCliente.emailPrincipal}
+                                    onChange={() => setNovoCliente({ ...novoCliente, emailPrincipal: true, emailCustomizado: "" })}
+                                    className="w-4 h-4"
+                                  />
+                                  <span className="text-sm" style={{ color: SESCON_DARK_BLUE }}>Usar e-mail da empresa</span>
+                                </label>
+                                <label className="flex items-center gap-2 flex-1 p-3 rounded-lg border-2 cursor-pointer" style={{ borderColor: !novoCliente.emailPrincipal ? SESCON_BLUE : "#ddd", background: !novoCliente.emailPrincipal ? SESCON_LIGHT_BLUE : "white" }}>
+                                  <input
+                                    type="radio"
+                                    checked={!novoCliente.emailPrincipal}
+                                    onChange={() => setNovoCliente({ ...novoCliente, emailPrincipal: false })}
+                                    className="w-4 h-4"
+                                  />
+                                  <span className="text-sm" style={{ color: SESCON_DARK_BLUE }}>E-mail customizado</span>
+                                </label>
                               </div>
-                            ))
-                          ) : (
-                            <p className="text-sm text-gray-500">Nenhum cliente encontrado</p>
-                          )}
+                              {!novoCliente.emailPrincipal && (
+                                <Input
+                                  type="email"
+                                  placeholder="email@cliente.com.br"
+                                  value={novoCliente.emailCustomizado}
+                                  onChange={(e) => setNovoCliente({ ...novoCliente, emailCustomizado: e.target.value })}
+                                  className="rounded-lg border-2 px-4 py-2"
+                                  style={{ borderColor: SESCON_BLUE }}
+                                />
+                              )}
+                            </div>
+                            <div className="space-y-2">
+                              <label className="block text-sm font-semibold" style={{ color: SESCON_DARK_BLUE }}>
+                                Contrato Social (Opcional - PDF)
+                              </label>
+                              <Input
+                                type="file"
+                                accept=".pdf"
+                                onChange={(e) => setNovoCliente({ ...novoCliente, contratosocial: e.target.files?.[0] })}
+                                className="rounded-lg border-2 px-4 py-2"
+                                style={{ borderColor: SESCON_BLUE }}
+                              />
+                            </div>
+                            <Button
+                              onClick={adicionarCliente}
+                              className="w-full rounded-lg font-bold py-3 text-white shadow-md hover:shadow-lg transition-all"
+                              style={{ background: SESCON_BLUE }}
+                            >
+                              Adicionar Cliente à Lista
+                            </Button>
+                          </div>
                         </div>
-                      )}
-                    </div>
-                  )}
 
-                  <div className="flex flex-col gap-3 pt-4">
-                    {temRascunho && (
-                      <div className="flex items-center justify-center gap-2 text-sm text-gray-500 mb-2">
-                        <Clock className="w-4 h-4" />
-                        <span>Rascunho salvo automaticamente vinculado ao CNPJ</span>
-                      </div>
+                        {/* Botão de Envio Final */}
+                        <div className="pt-8 border-t" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+                          <Button
+                            onClick={enviarDados}
+                            disabled={isLoading}
+                            className="w-full py-6 text-xl font-bold text-white shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-3"
+                            style={{ background: SESCON_BLUE }}
+                          >
+                            {isLoading ? (
+                              <>
+                                <Loader2 className="w-6 h-6 animate-spin" />
+                                Enviando para SESCON-SP...
+                              </>
+                            ) : (
+                              <>
+                                <Send className="w-6 h-6" />
+                                Enviar Atualização para SESCON-SP
+                              </>
+                            )}
+                          </Button>
+                          <p className="text-center text-xs text-gray-500 mt-4">
+                            Ao clicar em enviar, você confirma que as informações prestadas são verdadeiras e de sua responsabilidade.
+                          </p>
+                        </div>
+                      </>
                     )}
-                    <div className="flex gap-3">
-                      <Button
-                        onClick={() => setAbaSelecionada(1)}
-                        variant="outline"
-                        className="flex-1 rounded-lg border-2 font-semibold py-2"
-                        style={{ borderColor: SESCON_BLUE, color: SESCON_BLUE }}
-                      >
-                        Voltar
-                      </Button>
-                      <Button
-                        onClick={salvarRascunho}
-                        className="flex-1 rounded-lg font-semibold py-2 text-white hover:bg-blue-700 transition-colors"
-                        style={{ background: SESCON_ACCENT }}
-                      >
-                        <Save className="w-4 h-4 mr-2" />
-                        Salvar Rascunho
-                      </Button>
-                      <Button
-                        onClick={() => setMostrarModalClientes(true)}
-                        disabled={clientes.length === 0}
-                        className="flex-1 rounded-lg font-semibold py-2 text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        style={{ background: clientes.length > 0 ? SESCON_ACCENT : "#ccc" }}
-                      >
-                        <Eye className="w-4 h-4 mr-2" />
-                        Visualizar Clientes
-                      </Button>
-                    </div>
-                    <Button
-                      onClick={enviarDados}
-                      disabled={isLoading || clientes.length === 0}
-                      className="flex-1 rounded-lg font-bold py-3 text-white text-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      style={{ background: clientes.length > 0 ? "#4CAF50" : "#ccc" }}
-                    >
-                      {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Send className="w-5 h-5 mr-2" />}
-                      {isLoading ? "Enviando..." : "Enviar Dados"}
-                    </Button>
                   </div>
-                    </>
-                  )}
-                </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -1193,68 +993,47 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Modal de Visualização de Clientes */}
-      {mostrarModalClientes && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-96 overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b p-6" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-              <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold" style={{ color: SESCON_DARK_BLUE }}>Visualizar Clientes</h3>
-                <button
-                  onClick={() => setMostrarModalClientes(false)}
-                  className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
-                >
-                  ✕
-                </button>
-              </div>
-              <p className="text-sm text-gray-600 mt-2">Total de clientes a enviar: <strong>{clientes.length}</strong></p>
-            </div>
-            <div className="p-6 space-y-3">
-              {clientes.map((cliente, idx) => (
-                <div key={cliente.id} className="p-4 rounded-lg border flex justify-between items-start" style={{ borderColor: SESCON_LIGHT_BLUE, background: SESCON_LIGHT_BLUE }}>
-                  <div className="flex-1">
-                    <p className="font-semibold text-sm" style={{ color: SESCON_DARK_BLUE }}>{idx + 1}. {cliente.razaoSocial}</p>
-                    <p className="text-xs text-gray-600 mt-1">CNPJ: {cliente.cnpj}</p>
-                    <p className="text-xs text-gray-600 mt-1">E-mail: {cliente.emailCustomizado || emailEscritorio}</p>
-                    {cliente.ehMatriz && (
-                      <p className="text-xs text-blue-600 mt-1 font-semibold">🏢 Matriz</p>
-                    )}
-                    {cliente.contratosocial && (
-                      <p className="text-xs text-green-600 mt-1 font-semibold">✓ Contrato Social anexado</p>
-                    )}
-                  </div>
-                  <Button
-                    onClick={() => removerCliente(cliente.id)}
-                    variant="ghost"
-                    size="sm"
-                    className="text-red-600 hover:bg-red-50"
-                  >
-                    <Trash className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))}
+      {/* Footer Corporativo */}
+      <footer className="pt-12 pb-8 px-8" style={{ background: "#003366" }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
+            <img src="/pacc-sescon-improved/logo-sescon-branco.png" alt="SESCON-SP" className="h-16 w-auto" />
+            <div className="flex gap-6">
+              <a href="#" className="text-white hover:text-blue-200 transition-colors"><Instagram className="w-6 h-6" /></a>
+              <a href="#" className="text-white hover:text-blue-200 transition-colors"><Facebook className="w-6 h-6" /></a>
+              <a href="#" className="text-white hover:text-blue-200 transition-colors"><Youtube className="w-6 h-6" /></a>
+              <a href="#" className="text-white hover:text-blue-200 transition-colors"><Linkedin className="w-6 h-6" /></a>
             </div>
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-white text-sm border-t border-white border-opacity-10 pt-8">
+            <div>
+              <h4 className="font-bold mb-4">SESCON-SP</h4>
+              <p className="opacity-70 leading-relaxed">
+                Sindicato das Empresas de Serviços Contábeis e das Empresas de Assessoramento, Perícias, Informações e Pesquisas no Estado de São Paulo.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-bold mb-4">Contato</h4>
+              <p className="opacity-70">Av. Tiradentes, 998 - Luz</p>
+              <p className="opacity-70">São Paulo - SP, 01102-000</p>
+              <p className="opacity-70">(11) 3304-4400</p>
+            </div>
+            <div>
+              <h4 className="font-bold mb-4">Links Úteis</h4>
+              <ul className="space-y-2 opacity-70">
+                <li><a href="https://www.sescon.org.br" className="hover:underline">Portal SESCON-SP</a></li>
+                <li><a href="#" className="hover:underline">Política de Privacidade</a></li>
+                <li><a href="#" className="hover:underline">Termos de Uso</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="text-center mt-12 pt-8 border-t border-white border-opacity-10">
+            <p className="text-white text-xs opacity-50">
+              © {new Date().getFullYear()} SESCON-SP. Todos os direitos reservados. CNPJ: 62.638.168/0001-84
+            </p>
+          </div>
         </div>
-      )}
-
-      {/* Modal de Confirmação - Limpar Rascunho */}
-      <AlertDialog open={mostrarConfirmacaoLimpar} onOpenChange={setMostrarConfirmacaoLimpar}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Limpar Rascunho</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja excluir o rascunho salvo para este CNPJ? Esta ação não pode ser desfeita.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={limparRascunho} className="bg-red-600 hover:bg-red-700">
-              Excluir Rascunho
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      </footer>
     </div>
   );
 }
