@@ -151,40 +151,56 @@ export default function Home() {
     return v;
   };
 
-  // Buscar CNPJ na Receita (Simulado)
+  // Buscar CNPJ na Receita Federal
   const buscarCNPJ = async (cnpj: string) => {
     const cnpjLimpo = cnpj.replace(/\D/g, "");
     if (cnpjLimpo.length !== 14) return;
 
     setBuscandoReceita(true);
     try {
-      // Simulação de API
-      await new Promise(r => setTimeout(r, 1000));
-      setRazaoSocialEscritorio("ARTDATA CONTABIL LTDA");
-      setCnpjEscritorioValido(true);
-      toast.success("Dados do escritório carregados!");
+      const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjLimpo}`);
+      if (response.ok) {
+        const data = await response.json();
+        setRazaoSocialEscritorio(data.razao_social || data.nome_fantasia || "");
+        setCnpjEscritorioValido(true);
+        toast.success("Dados do escritório carregados!");
+      } else {
+        toast.error("CNPJ não encontrado na Receita Federal");
+        setCnpjEscritorioValido(false);
+      }
     } catch (error) {
-      toast.error("Erro ao buscar CNPJ");
+      toast.error("Erro ao buscar CNPJ na Receita Federal");
+      setCnpjEscritorioValido(false);
     } finally {
       setBuscandoReceita(false);
     }
   };
 
-  // Buscar CNPJ do Cliente
+  // Buscar CNPJ do Cliente na Receita Federal
   const buscarCNPJCliente = async (cnpj: string) => {
     const cnpjLimpo = cnpj.replace(/\D/g, "");
     if (cnpjLimpo.length !== 14) return;
 
     try {
-      // Simulação de API
-      await new Promise(r => setTimeout(r, 800));
-      setNovoCliente(prev => ({
-        ...prev,
-        razaoSocial: "CLIENTE EXEMPLO LTDA",
-        cnpjValido: true
-      }));
+      const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjLimpo}`);
+      if (response.ok) {
+        const data = await response.json();
+        const ehMatriz = cnpjLimpo.endsWith("0001");
+        setNovoCliente(prev => ({
+          ...prev,
+          razaoSocial: data.razao_social || data.nome_fantasia || "",
+          cnpjValido: true,
+          ehMatriz: ehMatriz
+        }));
+        toast.success("Dados do cliente carregados!", { duration: 2000 });
+      } else {
+        toast.error("CNPJ não encontrado na Receita Federal", { duration: 2000 });
+        setNovoCliente(prev => ({ ...prev, cnpjValido: false }));
+      }
     } catch (error) {
       console.error("Erro ao buscar CNPJ do cliente");
+      toast.error("Erro ao buscar CNPJ", { duration: 2000 });
+      setNovoCliente(prev => ({ ...prev, cnpjValido: false }));
     }
   };
 
@@ -656,8 +672,9 @@ export default function Home() {
 
                   {/* FAQ Integrado na Aba 1 */}
                   <div className="mt-12 pt-12 border-t" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-                    <h3 className="text-xl font-bold mb-6" style={{ color: SESCON_DARK_BLUE }}>Perguntas Frequentes</h3>
-                    <div className="space-y-3">
+                    <div className="rounded-xl p-8" style={{ background: SESCON_LIGHT_BLUE }}>
+                      <h3 className="text-xl font-bold mb-6" style={{ color: SESCON_DARK_BLUE }}>Perguntas Frequentes</h3>
+                      <div className="space-y-3">
                       {faqs.map((faq, idx) => (
                         <div key={idx} className="border rounded-lg overflow-hidden" style={{ borderColor: SESCON_LIGHT_BLUE }}>
                           <button
@@ -681,6 +698,7 @@ export default function Home() {
                           </AnimatePresence>
                         </div>
                       ))}
+                      </div>
                     </div>
                   </div>
                 </motion.div>
