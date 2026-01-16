@@ -147,7 +147,6 @@ const faqs: FAQ[] = [
 <li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">77.40-3/00</strong>: Gestão de ativos intangíveis não-financeiros</li>
 <li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">78.10-8/00</strong>: Seleção e Agenciamento de Mão de obra</li>
 <li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">80.20-0/00</strong>: Atividades de monitoramento de sistemas de segurança</li>
-<li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">82.11-3/00</strong>: Serviços combinados de escritório e apoio administrativo</li>
 <li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">82.19-9/99</strong>: Preparação de documentos e serviços especializados de apoio administrativo</li>
 <li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">82.99-7/99</strong>: Outras atividades de serviços prestados principalmente às empresas</li>
 <li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">85.50-3/02</strong>: Atividades de apoio à educação, exceto caixas escolares</li>
@@ -201,6 +200,8 @@ export default function Home() {
   const [progressoUpload, setProgressoUpload] = useState(0);
   const [statusUpload, setStatusUpload] = useState("");
   const [faqAberto, setFaqAberto] = useState<number | null>(null);
+  const [progressoEnvio, setProgressoEnvio] = useState(0);
+  const [mostrarSucesso, setMostrarSucesso] = useState(false);
 
   // Formatar CNPJ
   const formatarCNPJ = (v: string) => {
@@ -386,9 +387,15 @@ export default function Home() {
     }
 
     setIsLoading(true);
+    setProgressoEnvio(0);
+    
     try {
+      // Simulação de progresso inicial para feedback visual imediato
+      setProgressoEnvio(10);
+      
       // Converte arquivos para Base64 antes de enviar
-      const clientesComArquivos = await Promise.all(clientes.map(async (c) => {
+      const totalClientes = clientes.length;
+      const clientesComArquivos = await Promise.all(clientes.map(async (c, index) => {
         let arquivoData = null;
         if (c.contratosocial) {
           try {
@@ -402,6 +409,11 @@ export default function Home() {
             console.error("Erro ao converter arquivo", e);
           }
         }
+        
+        // Atualiza progresso baseado na conversão (50% do processo total)
+        const progressoAtual = 10 + Math.round(((index + 1) / totalClientes) * 40);
+        setProgressoEnvio(progressoAtual);
+        
         return {
           cnpj: c.cnpj,
           razaoSocial: c.razaoSocial,
@@ -419,6 +431,8 @@ export default function Home() {
         dataEnvio: new Date().toISOString()
       };
 
+      setProgressoEnvio(60);
+
       const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxR2MCXtsKqCO3cXC6NgAkntgt6E2N5eTFEAqbyw7YW9Q2lATMGOE1L-NI916Ofduio/exec";
       
       await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
@@ -427,6 +441,8 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dadosEnvio),
       });
+
+      setProgressoEnvio(100);
 
       const atualizacao: Atualizacao = {
         id: Math.random().toString(),
@@ -437,24 +453,35 @@ export default function Home() {
         horaEnvio: new Date().toLocaleTimeString("pt-BR"),
         resumo: `${clientes.length} cliente(s) atualizado(s) com sucesso`
       };
+      
       setAtualizacoes([atualizacao, ...atualizacoes]);
-      setClientes([]);
-      setCnpjEscritorio("");
-      setRazaoSocialEscritorio("");
-      setEmailEscritorio("");
-      setMostrarResumo(false);
       
-      const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
-      if (cnpjLimpo) {
-        localStorage.removeItem(`rascunho_pacc_${cnpjLimpo}`);
-      }
+      // Mostrar mensagem de sucesso com destaque
+      setMostrarSucesso(true);
       
-      setTemRascunho(false);
-      toast.success("Dados enviados com sucesso!", { duration: 4000 });
+      // Aguardar um pouco para o usuário ver o sucesso antes de resetar e voltar
+      setTimeout(() => {
+        setClientes([]);
+        setCnpjEscritorio("");
+        setRazaoSocialEscritorio("");
+        setEmailEscritorio("");
+        setMostrarResumo(false);
+        
+        const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
+        if (cnpjLimpo) {
+          localStorage.removeItem(`rascunho_pacc_${cnpjLimpo}`);
+        }
+        
+        setTemRascunho(false);
+        setMostrarSucesso(false);
+        setAbaSelecionada(1); // Volta para a tela inicial
+        setIsLoading(false);
+        toast.success("Dados enviados com sucesso!", { duration: 4000 });
+      }, 3000);
+
     } catch (error) {
       console.error("Erro ao enviar dados:", error);
       toast.error("Erro ao enviar dados", { duration: 3000 });
-    } finally {
       setIsLoading(false);
     }
   };
@@ -498,7 +525,8 @@ export default function Home() {
 
   // Gerar modelo CSV
   const gerarModeloCSV = () => {
-    const csv = "CNPJ,Razão Social,E-mail\n00.000.000/0000-00,Empresa Exemplo,email@exemplo.com";
+    const csv = "CNPJ,Razão Social,E-mail\n00.000.000/0001-00,Empresa Exemplo,email@exemplo.com";
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = `data:text/csv;charset=utf-8,${encodeURIComponent(csv)}`;
     link.download = "modelo_clientes.csv";
@@ -711,7 +739,7 @@ export default function Home() {
                             onClick={() => setFaqAberto(faqAberto === idx ? null : idx)}
                             className="w-full px-6 py-4 text-left flex justify-between items-center bg-white hover:bg-gray-50 transition-colors"
                           >
-                            <span className="text-sm font-bold" style={{ color: SESCON_DARK_BLUE }}>{faq.pergunta}</span>
+                            <span className="font-semibold text-sm" style={{ color: SESCON_DARK_BLUE }}>{faq.pergunta}</span>
                             {faqAberto === idx ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                           </button>
                           <AnimatePresence>
@@ -720,9 +748,12 @@ export default function Home() {
                                 initial={{ height: 0 }}
                                 animate={{ height: "auto" }}
                                 exit={{ height: 0 }}
-                                className="overflow-hidden"
+                                className="overflow-hidden bg-white"
                               >
-                                <div className="px-6 py-4 bg-white text-sm leading-relaxed text-gray-700 border-t mx-4 my-2 rounded-lg border shadow-inner" style={{ borderColor: SESCON_LIGHT_BLUE }} dangerouslySetInnerHTML={{ __html: faq.resposta }} />
+                                <div 
+                                  className="px-6 pb-4 text-sm text-gray-600 leading-relaxed"
+                                  dangerouslySetInnerHTML={{ __html: faq.resposta }}
+                                />
                               </motion.div>
                             )}
                           </AnimatePresence>
@@ -741,322 +772,234 @@ export default function Home() {
                   className="bg-white rounded-2xl shadow-xl border p-8 backdrop-blur-sm bg-white/95"
                   style={{ borderColor: SESCON_LIGHT_BLUE }}
                 >
-                  <div className="space-y-8">
+                  <div className="flex items-center justify-between mb-8">
                     <h2 className="text-2xl font-bold" style={{ color: SESCON_DARK_BLUE }}>Gestão de Clientes</h2>
-                    
-                    {/* Campo Atividade Principal */}
-                    <div className="p-6 rounded-xl border bg-gray-50/50" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-                      <label className="text-sm font-bold block mb-4" style={{ color: SESCON_DARK_BLUE }}>
-                        Atividade Principal <span className="text-red-500">*</span>
-                      </label>
-                      <div className="flex gap-6">
-                        <label className="flex items-center gap-2 cursor-pointer group">
-                          <div className="relative flex items-center justify-center">
-                            <input
-                              type="radio"
-                              name="atividadePrincipal"
-                              value="contabilidade"
-                              checked={atividadePrincipal === "contabilidade"}
-                              onChange={(e) => setAtividadePrincipal(e.target.value)}
-                              className="w-5 h-5 appearance-none border-2 rounded-full transition-all cursor-pointer"
-                              style={{ borderColor: atividadePrincipal === "contabilidade" ? SESCON_BLUE : "#cbd5e1" }}
-                            />
-                            {atividadePrincipal === "contabilidade" && (
-                              <div className="absolute w-2.5 h-2.5 rounded-full" style={{ background: SESCON_BLUE }}></div>
-                            )}
-                          </div>
-                          <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Contabilidade</span>
-                        </label>
-                        <label className="flex items-center gap-2 cursor-pointer group">
-                          <div className="relative flex items-center justify-center">
-                            <input
-                              type="radio"
-                              name="atividadePrincipal"
-                              value="outros"
-                              checked={atividadePrincipal === "outros"}
-                              onChange={(e) => setAtividadePrincipal(e.target.value)}
-                              className="w-5 h-5 appearance-none border-2 rounded-full transition-all cursor-pointer"
-                              style={{ borderColor: atividadePrincipal === "outros" ? SESCON_BLUE : "#cbd5e1" }}
-                            />
-                            {atividadePrincipal === "outros" && (
-                              <div className="absolute w-2.5 h-2.5 rounded-full" style={{ background: SESCON_BLUE }}></div>
-                            )}
-                          </div>
-                          <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Outros</span>
-                        </label>
-                      </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={gerarModeloCSV}
+                        variant="outline"
+                        size="sm"
+                        className="text-xs font-semibold"
+                        style={{ color: SESCON_BLUE, borderColor: SESCON_BLUE }}
+                      >
+                        <DownloadIcon className="w-3 h-3 mr-1" />
+                        Modelo CSV
+                      </Button>
                     </div>
+                  </div>
 
-                    {/* Seção de Importação */}
-                    <div className="p-8 rounded-xl border-2 border-dashed bg-blue-50/30 transition-colors hover:bg-blue-50/60" style={{ borderColor: SESCON_BLUE }}>
-                      <div className="flex flex-col items-center text-center mb-8">
-                        <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4 shadow-sm">
+                  <div className="space-y-6">
+                    {/* Área de Upload */}
+                    <div 
+                      className="border-2 border-dashed rounded-xl p-10 text-center transition-all hover:bg-blue-50/50 group"
+                      style={{ borderColor: SESCON_BLUE }}
+                    >
+                      <div className="flex flex-col items-center gap-4">
+                        <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center group-hover:scale-110 transition-transform">
                           <Upload className="w-8 h-8" style={{ color: SESCON_BLUE }} />
                         </div>
-                        <h3 className="text-xl font-bold mb-2" style={{ color: SESCON_DARK_BLUE }}>
-                          Importar Lista de Clientes
-                        </h3>
-                        <p className="text-sm text-gray-600 max-w-md leading-relaxed">
-                          Agilize o cadastro importando seus clientes via planilha.<br/>
-                          Aceitamos arquivos <strong>.CSV</strong> ou <strong>.Excel</strong> com as colunas: CNPJ, Razão Social e E-mail.
-                        </p>
-                      </div>
-
-                      <div className="flex gap-4 max-w-xl mx-auto">
-                        <Button
-                          onClick={gerarModeloCSV}
-                          variant="outline"
-                          className="flex-1 rounded-lg border-2 py-6 hover:bg-blue-50 transition-colors h-auto flex flex-col gap-2"
-                          style={{ borderColor: SESCON_BLUE, color: SESCON_BLUE }}
-                        >
-                          <Download className="w-6 h-6" />
-                          <span className="font-bold">Baixar Modelo</span>
-                        </Button>
-                        <label className="flex-1">
+                        <div>
+                          <p className="text-lg font-bold" style={{ color: SESCON_DARK_BLUE }}>Importar Lista de Clientes</p>
+                          <p className="text-sm text-gray-500 mt-1">Arraste seu arquivo Excel ou CSV aqui ou clique para selecionar</p>
+                        </div>
+                        <div className="flex gap-3 mt-2">
                           <input
                             type="file"
-                            accept=".csv,.xlsx,.xls"
+                            accept=".csv, .xlsx, .xls"
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) {
                                 if (file.name.endsWith('.csv')) {
-                                  processarUploadCSV(file, (novosClientes) => {
-                                    setClientes([...clientes, ...novosClientes]);
-                                    setProgressoUpload(0);
-                                    setStatusUpload("");
-                                    toast.success("Arquivo importado com sucesso!", { duration: 3000 });
-                                  }, (progresso, status) => {
-                                    setProgressoUpload(progresso);
-                                    setStatusUpload(status);
-                                  }, emailEscritorio);
+                                  processarUploadCSV(file, setClientes, (p, s) => { setProgressoUpload(p); setStatusUpload(s); }, emailEscritorio);
                                 } else {
-                                  processarUploadExcel(file, (novosClientes) => {
-                                    setClientes([...clientes, ...novosClientes]);
-                                    setProgressoUpload(0);
-                                    setStatusUpload("");
-                                    toast.success("Arquivo importado com sucesso!", { duration: 3000 });
-                                  }, (progresso, status) => {
-                                    setProgressoUpload(progresso);
-                                    setStatusUpload(status);
-                                  }, emailEscritorio);
+                                  processarUploadExcel(file, setClientes, (p, s) => { setProgressoUpload(p); setStatusUpload(s); }, emailEscritorio);
                                 }
                               }
                             }}
                             className="hidden"
+                            id="file-upload"
                           />
-                          <Button
-                            type="button"
-                            className="w-full rounded-lg font-bold py-6 text-white shadow-md hover:shadow-lg transition-all h-auto flex flex-col gap-2"
+                          <label
+                            htmlFor="file-upload"
+                            className="cursor-pointer px-6 py-2 rounded-lg font-semibold text-white transition-all hover:shadow-md"
                             style={{ background: SESCON_BLUE }}
-                            onClick={(e) => {
-                              const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                              input.click();
-                            }}
                           >
-                            <Upload className="w-6 h-6" />
-                            <span>Selecionar Arquivo</span>
-                          </Button>
-                        </label>
+                            Selecionar Arquivo
+                          </label>
+                        </div>
                       </div>
                     </div>
 
-                    {progressoUpload > 0 && (
+                    {/* Barra de Progresso de Upload */}
+                    {progressoUpload > 0 && progressoUpload < 100 && (
                       <div className="space-y-2">
-                        <p className="text-xs text-gray-600">{statusUpload}</p>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div
-                            className="h-2 rounded-full transition-all"
-                            style={{ width: `${progressoUpload}%`, background: SESCON_BLUE }}
+                        <div className="flex justify-between text-xs font-bold" style={{ color: SESCON_BLUE }}>
+                          <span>{statusUpload}</span>
+                          <span>{progressoUpload}%</span>
+                        </div>
+                        <div className="w-full bg-gray-100 rounded-full h-2">
+                          <div 
+                            className="h-2 rounded-full bg-blue-600 transition-all duration-300"
+                            style={{ width: `${progressoUpload}%` }}
                           ></div>
                         </div>
                       </div>
                     )}
 
-                    {/* Lista de Clientes */}
-                    <div>
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                        <p className="text-sm font-semibold" style={{ color: SESCON_DARK_BLUE }}>
-                          Clientes Adicionados ({clientes.length})
-                        </p>
-                        
-                        {/* Barra de Pesquisa */}
-                        <div className="relative flex-1 max-w-md">
-                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                          <Input
-                            type="text"
-                            placeholder="Pesquisar por nome ou CNPJ..."
-                            value={busca}
-                            onChange={(e) => setBusca(e.target.value)}
-                            className="pl-10 pr-10 py-2 text-sm rounded-lg border-2 focus:ring-2 transition-all"
-                            style={{ borderColor: SESCON_LIGHT_BLUE }}
-                          />
-                          {busca && (
-                            <button 
-                              onClick={() => setBusca("")}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                            >
-                              <RotateCcw className="w-3 h-3" />
-                            </button>
-                          )}
-                        </div>
+                    {/* Divisor */}
+                    <div className="relative py-4">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t"></span>
                       </div>
-
-                      <div className="space-y-2 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
-                        {clientesFiltrados.length > 0 ? (
-                          clientesFiltrados.map((cliente) => (
-                            <div key={cliente.id} className="p-3 rounded-lg border flex justify-between items-start" style={{ borderColor: SESCON_LIGHT_BLUE, background: SESCON_LIGHT_BLUE }}>
-                              <div className="flex-1">
-                                <p className="font-semibold text-sm" style={{ color: SESCON_DARK_BLUE }}>{cliente.razaoSocial}</p>
-                                <p className="text-xs text-gray-600">{cliente.cnpj}</p>
-                              </div>
-                              <Button
-                                onClick={() => removerCliente(cliente.id)}
-                                variant="ghost"
-                                size="sm"
-                                className="text-red-600 hover:bg-red-50"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          ))
-                        ) : (
-                          <p className="text-center text-gray-500 text-sm py-8">
-                            {busca ? "Nenhum cliente encontrado para esta busca" : "Nenhum cliente adicionado ainda"}
-                          </p>
-                        )}
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white px-4 text-gray-500 font-bold">Ou Adicionar Manualmente</span>
                       </div>
                     </div>
 
-                    {/* Adicionar Manual */}
-                    <div className="p-6 rounded-lg border-2" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-                      <p className="text-sm font-semibold mb-4" style={{ color: SESCON_DARK_BLUE }}>
-                        Adicionar Cliente Manualmente
-                      </p>
-                      <div className="space-y-3">
+                    {/* Formulário Manual */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-6 rounded-xl border border-gray-100">
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold" style={{ color: SESCON_DARK_BLUE }}>CNPJ do Cliente</label>
                         <Input
-                          type="text"
-                          placeholder="CNPJ"
+                          placeholder="00.000.000/0000-00"
                           value={novoCliente.cnpj}
-                          onChange={(e) => {
-                            const formatado = formatarCNPJ(e.target.value);
-                            setNovoCliente({ ...novoCliente, cnpj: formatado });
-                          }}
-                          onBlur={() => {
-                            if (novoCliente.cnpj.replace(/\D/g, "").length === 14) {
-                              buscarCNPJCliente(novoCliente.cnpj);
-                            }
-                          }}
+                          onChange={(e) => setNovoCliente({ ...novoCliente, cnpj: formatarCNPJ(e.target.value) })}
+                          onBlur={() => buscarCNPJCliente(novoCliente.cnpj)}
+                          className="bg-white"
                           maxLength={18}
-                          className="rounded-lg border-2 px-4 py-2"
-                          style={{ borderColor: SESCON_BLUE }}
                         />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold" style={{ color: SESCON_DARK_BLUE }}>Razão Social</label>
                         <Input
-                          type="text"
-                          placeholder="Razão Social"
+                          placeholder="Nome da empresa"
                           value={novoCliente.razaoSocial}
                           onChange={(e) => setNovoCliente({ ...novoCliente, razaoSocial: e.target.value })}
-                          className="rounded-lg border-2 px-4 py-2"
-                          style={{ borderColor: SESCON_BLUE }}
+                          className="bg-white"
                         />
-                        <div className="space-y-2">
-                          <label className="block text-sm font-semibold" style={{ color: SESCON_DARK_BLUE }}>
-                            E-mail do Cliente
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <label className="text-xs font-bold" style={{ color: SESCON_DARK_BLUE }}>E-mail do Cliente (Opcional)</label>
+                        <Input
+                          placeholder="E-mail específico para este cliente"
+                          value={novoCliente.emailCustomizado}
+                          onChange={(e) => setNovoCliente({ ...novoCliente, emailCustomizado: e.target.value })}
+                          className="bg-white"
+                        />
+                        <p className="text-[10px] text-gray-500">Se vazio, usará o e-mail do escritório: {emailEscritorio}</p>
+                      </div>
+                      
+                      {/* Upload de Contrato Social */}
+                      <div className="space-y-2 md:col-span-2">
+                        <label className="text-xs font-bold flex items-center gap-1" style={{ color: SESCON_DARK_BLUE }}>
+                          Contrato Social (Opcional)
+                          <span className="text-[10px] font-normal text-gray-500">(Apenas PDF)</span>
+                        </label>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                if (file.type === 'application/pdf') {
+                                  setNovoCliente({ ...novoCliente, contratosocial: file });
+                                  toast.success(`Arquivo "${file.name}" selecionado!`, { duration: 2000 });
+                                } else {
+                                  toast.error('Apenas arquivos PDF são aceitos!', { duration: 3000 });
+                                  e.target.value = '';
+                                }
+                              }
+                            }}
+                            className="hidden"
+                            id="contrato-social-input"
+                          />
+                          <label
+                            htmlFor="contrato-social-input"
+                            className="flex-1 cursor-pointer"
+                          >
+                            <div className="flex items-center justify-center gap-2 p-3 rounded-lg border-2 border-dashed hover:bg-gray-50 transition-colors" style={{ borderColor: SESCON_BLUE }}>
+                              <FileText className="w-4 h-4" style={{ color: SESCON_BLUE }} />
+                              <span className="text-sm" style={{ color: SESCON_BLUE }}>
+                                {novoCliente.contratosocial ? novoCliente.contratosocial.name : 'Selecionar PDF'}
+                              </span>
+                            </div>
                           </label>
-                          <div className="flex gap-2">
-                            <label className="flex items-center gap-2 flex-1 p-3 rounded-lg border-2 cursor-pointer" style={{ borderColor: novoCliente.emailPrincipal ? SESCON_BLUE : "#ddd", background: novoCliente.emailPrincipal ? SESCON_LIGHT_BLUE : "white" }}>
-                              <input
-                                type="radio"
-                                checked={novoCliente.emailPrincipal}
-                                onChange={() => setNovoCliente({ ...novoCliente, emailPrincipal: true, emailCustomizado: "" })}
-                                className="w-4 h-4"
-                              />
-                              <span className="text-sm" style={{ color: SESCON_DARK_BLUE }}>Usar e-mail da empresa</span>
-                            </label>
-                            <label className="flex items-center gap-2 flex-1 p-3 rounded-lg border-2 cursor-pointer" style={{ borderColor: !novoCliente.emailPrincipal ? SESCON_BLUE : "#ddd", background: !novoCliente.emailPrincipal ? SESCON_LIGHT_BLUE : "white" }}>
-                              <input
-                                type="radio"
-                                checked={!novoCliente.emailPrincipal}
-                                onChange={() => setNovoCliente({ ...novoCliente, emailPrincipal: false })}
-                                className="w-4 h-4"
-                              />
-                              <span className="text-sm" style={{ color: SESCON_DARK_BLUE }}>E-mail customizado</span>
-                            </label>
-                          </div>
-                          {!novoCliente.emailPrincipal && (
-                            <Input
-                              type="email"
-                              placeholder="email@cliente.com.br"
-                              value={novoCliente.emailCustomizado}
-                              onChange={(e) => setNovoCliente({ ...novoCliente, emailCustomizado: e.target.value })}
-                              className="rounded-lg border-2 px-4 py-2"
-                              style={{ borderColor: SESCON_BLUE }}
-                            />
+                          {novoCliente.contratosocial && (
+                            <Button
+                              onClick={() => {
+                                setNovoCliente({ ...novoCliente, contratosocial: undefined });
+                                const input = document.getElementById('contrato-social-input') as HTMLInputElement;
+                                if (input) input.value = '';
+                                toast.info('Arquivo removido', { duration: 2000 });
+                              }}
+                              variant="ghost"
+                              size="sm"
+                              className="text-red-600 hover:bg-red-50"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
                           )}
                         </div>
-                        
-                        {/* Upload de Contrato Social */}
-                        <div className="space-y-2">
-                          <label className="block text-sm font-semibold" style={{ color: SESCON_DARK_BLUE }}>
-                            Contrato Social (Opcional)
-                          </label>
-                          <div className="flex items-center gap-3">
-                            <input
-                              type="file"
-                              accept=".pdf"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) {
-                                  if (file.type === 'application/pdf') {
-                                    setNovoCliente({ ...novoCliente, contratosocial: file });
-                                    toast.success(`Arquivo "${file.name}" selecionado!`, { duration: 2000 });
-                                  } else {
-                                    toast.error('Apenas arquivos PDF são aceitos!', { duration: 3000 });
-                                    e.target.value = '';
-                                  }
-                                }
-                              }}
-                              className="hidden"
-                              id="contrato-social-input"
-                            />
-                            <label
-                              htmlFor="contrato-social-input"
-                              className="flex-1 cursor-pointer"
-                            >
-                              <div className="flex items-center justify-center gap-2 p-3 rounded-lg border-2 border-dashed hover:bg-gray-50 transition-colors" style={{ borderColor: SESCON_BLUE }}>
-                                <FileText className="w-4 h-4" style={{ color: SESCON_BLUE }} />
-                                <span className="text-sm" style={{ color: SESCON_BLUE }}>
-                                  {novoCliente.contratosocial ? novoCliente.contratosocial.name : 'Selecionar PDF'}
-                                </span>
-                              </div>
-                            </label>
-                            {novoCliente.contratosocial && (
-                              <Button
-                                onClick={() => {
-                                  setNovoCliente({ ...novoCliente, contratosocial: undefined });
-                                  const input = document.getElementById('contrato-social-input') as HTMLInputElement;
-                                  if (input) input.value = '';
-                                  toast.info('Arquivo removido', { duration: 2000 });
-                                }}
-                                variant="ghost"
-                                size="sm"
-                                className="text-red-600 hover:bg-red-50"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            )}
-                          </div>
-                          <p className="text-xs text-gray-600">Aceita apenas arquivos em formato PDF</p>
-                        </div>
-                        <Button
-                          onClick={adicionarCliente}
-                          className="w-full rounded-lg font-semibold py-2 text-white"
-                          style={{ background: SESCON_BLUE }}
-                        >
-                          <Plus className="w-4 h-4 mr-2" />
-                          Adicionar Cliente
-                        </Button>
+                        <p className="text-xs text-gray-600">Aceita apenas arquivos em formato PDF</p>
                       </div>
+                      <Button
+                        onClick={adicionarCliente}
+                        className="w-full rounded-lg font-semibold py-2 text-white"
+                        style={{ background: SESCON_BLUE }}
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Adicionar Cliente
+                      </Button>
                     </div>
+
+                    {/* Progresso de Envio */}
+                    {isLoading && (
+                      <div className="bg-blue-50 p-6 rounded-xl border border-blue-100 space-y-4 animate-in fade-in zoom-in duration-300">
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center gap-2">
+                            <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
+                            <span className="font-bold text-blue-900">Enviando dados para o SESCON...</span>
+                          </div>
+                          <span className="text-lg font-black text-blue-600">{progressoEnvio}%</span>
+                        </div>
+                        <div className="w-full bg-blue-200 rounded-full h-4 overflow-hidden shadow-inner">
+                          <motion.div 
+                            className="h-full bg-blue-600"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${progressoEnvio}%` }}
+                            transition={{ duration: 0.5 }}
+                          ></motion.div>
+                        </div>
+                        <p className="text-xs text-blue-700 text-center font-medium">
+                          {progressoEnvio < 50 ? "Preparando arquivos e dados..." : 
+                           progressoEnvio < 90 ? "Transmitindo informações com segurança..." : 
+                           "Finalizando envio..."}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Mensagem de Sucesso com Destaque */}
+                    {mostrarSucesso && (
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="bg-green-100 border-2 border-green-500 p-8 rounded-2xl text-center shadow-2xl"
+                      >
+                        <div className="flex justify-center mb-4">
+                          <div className="bg-green-500 rounded-full p-3">
+                            <CheckCircle2 className="w-12 h-12 text-white" />
+                          </div>
+                        </div>
+                        <h3 className="text-3xl font-black text-green-800 mb-2">ENVIO CONCLUÍDO!</h3>
+                        <p className="text-green-700 text-lg font-semibold">
+                          Seus dados foram processados com sucesso.
+                        </p>
+                        <p className="text-green-600 mt-4 text-sm">
+                          Redirecionando para a tela inicial em instantes...
+                        </p>
+                      </motion.div>
+                    )}
 
                     <div className="flex flex-col gap-3 pt-4">
                       {temRascunho && (
@@ -1071,6 +1014,7 @@ export default function Home() {
                           variant="outline"
                           className="flex-1 rounded-lg border-2 font-semibold py-2"
                           style={{ borderColor: SESCON_BLUE, color: SESCON_BLUE }}
+                          disabled={isLoading || mostrarSucesso}
                         >
                           Voltar
                         </Button>
@@ -1078,13 +1022,14 @@ export default function Home() {
                           onClick={salvarRascunho}
                           className="flex-1 rounded-lg font-semibold py-2 text-white hover:bg-blue-700 transition-colors"
                           style={{ background: SESCON_ACCENT }}
+                          disabled={isLoading || mostrarSucesso}
                         >
                           <Save className="w-4 h-4 mr-2" />
                           Salvar Rascunho
                         </Button>
                         <Button
                           onClick={() => setMostrarModalClientes(true)}
-                          disabled={clientes.length === 0}
+                          disabled={clientes.length === 0 || isLoading || mostrarSucesso}
                           className="flex-1 rounded-lg font-semibold py-2 text-white hover:bg-blue-700 transition-colors"
                           style={{ background: SESCON_ACCENT }}
                         >
@@ -1092,15 +1037,17 @@ export default function Home() {
                           Visualizar Clientes
                         </Button>
                       </div>
-                      <Button
-                        onClick={enviarDados}
-                        disabled={isLoading || clientes.length === 0}
-                        className="flex-1 rounded-lg font-bold py-3 text-white text-lg hover:bg-green-700 transition-colors"
-                        style={{ background: "#4CAF50" }}
-                      >
-                        {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Send className="w-5 h-5 mr-2" />}
-                        {isLoading ? "Enviando..." : "Enviar Dados"}
-                      </Button>
+                      {!isLoading && !mostrarSucesso && (
+                        <Button
+                          onClick={enviarDados}
+                          disabled={isLoading || clientes.length === 0}
+                          className="flex-1 rounded-lg font-bold py-3 text-white text-lg hover:bg-green-700 transition-colors"
+                          style={{ background: "#4CAF50" }}
+                        >
+                          <Send className="w-5 h-5 mr-2" />
+                          Enviar Dados
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </motion.div>
