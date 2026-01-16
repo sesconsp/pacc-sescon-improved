@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Upload, CheckCircle, Mail, AlertCircle, FileText, Download, ChevronDown, ChevronUp, Loader2, Search, Save, RotateCcw, Eye, Clock, CheckCircle2, AlertTriangle, Send, FileDown, Download as DownloadIcon, Trash, Instagram, Facebook, Youtube, Linkedin, MessageCircle, Building, Users } from "lucide-react";
+import { Plus, Trash2, Upload, CheckCircle, Mail, AlertCircle, FileText, Download, ChevronDown, ChevronUp, Loader2, Search, Save, RotateCcw, Eye, Clock, CheckCircle2, AlertTriangle, Send, FileDown, Download as DownloadIcon, Trash, Instagram, Facebook, Youtube, Linkedin, MessageCircle, Building, Users, ShieldCheck } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 // @ts-ignore
@@ -477,7 +477,7 @@ export default function Home() {
         setAbaSelecionada(1); // Volta para a tela inicial
         setIsLoading(false);
         toast.success("Dados enviados com sucesso!", { duration: 4000 });
-      }, 3000);
+      }, 4000);
 
     } catch (error) {
       console.error("Erro ao enviar dados:", error);
@@ -953,51 +953,140 @@ export default function Home() {
                       </Button>
                     </div>
 
-                    {/* Progresso de Envio */}
-                    {isLoading && (
-                      <div className="bg-blue-50 p-6 rounded-xl border border-blue-100 space-y-4 animate-in fade-in zoom-in duration-300">
-                        <div className="flex justify-between items-center">
+                    {/* LISTA DE CLIENTES COM BUSCA */}
+                    {clientes.length > 0 && (
+                      <div className="mt-8 space-y-4 border rounded-xl overflow-hidden bg-white shadow-sm">
+                        <div className="bg-gray-50 p-4 border-b flex flex-col md:flex-row justify-between items-center gap-4">
                           <div className="flex items-center gap-2">
-                            <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-                            <span className="font-bold text-blue-900">Enviando dados para o SESCON...</span>
+                            <Users className="w-5 h-5 text-blue-900" />
+                            <h3 className="font-bold text-blue-900">Clientes Adicionados ({clientes.length})</h3>
                           </div>
-                          <span className="text-lg font-black text-blue-600">{progressoEnvio}%</span>
+                          <div className="relative w-full md:w-64">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <Input
+                              placeholder="Pesquisar cliente..."
+                              value={busca}
+                              onChange={(e) => setBusca(e.target.value)}
+                              className="pl-9 h-9 text-sm bg-white"
+                            />
+                          </div>
                         </div>
-                        <div className="w-full bg-blue-200 rounded-full h-4 overflow-hidden shadow-inner">
-                          <motion.div 
-                            className="h-full bg-blue-600"
-                            initial={{ width: 0 }}
-                            animate={{ width: `${progressoEnvio}%` }}
-                            transition={{ duration: 0.5 }}
-                          ></motion.div>
+                        
+                        <div className="max-h-80 overflow-y-auto">
+                          <table className="w-full text-sm text-left">
+                            <thead className="bg-gray-50 text-gray-600 font-bold sticky top-0 z-10">
+                              <tr>
+                                <th className="px-4 py-3 border-b">Razão Social</th>
+                                <th className="px-4 py-3 border-b">CNPJ</th>
+                                <th className="px-4 py-3 border-b">E-mail</th>
+                                <th className="px-4 py-3 border-b text-center">Ações</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y">
+                              {clientesFiltrados.length > 0 ? (
+                                clientesFiltrados.map((cliente) => (
+                                  <tr key={cliente.id} className="hover:bg-blue-50/30 transition-colors">
+                                    <td className="px-4 py-3 font-medium text-gray-900">
+                                      <div className="flex flex-col">
+                                        <span>{cliente.razaoSocial}</span>
+                                        {cliente.ehMatriz && <span className="text-[10px] text-blue-600 font-bold">🏢 MATRIZ</span>}
+                                      </div>
+                                    </td>
+                                    <td className="px-4 py-3 text-gray-600">{cliente.cnpj}</td>
+                                    <td className="px-4 py-3 text-gray-600 truncate max-w-[150px]">
+                                      {cliente.emailCustomizado || <span className="text-gray-400 italic">E-mail do Escritório</span>}
+                                    </td>
+                                    <td className="px-4 py-3 text-center">
+                                      <button 
+                                        onClick={() => removerCliente(cliente.id)}
+                                        className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                                        title="Remover Cliente"
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))
+                              ) : (
+                                <tr>
+                                  <td colSpan={4} className="px-4 py-10 text-center text-gray-500 italic">
+                                    Nenhum cliente encontrado para "{busca}"
+                                  </td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
                         </div>
-                        <p className="text-xs text-blue-700 text-center font-medium">
-                          {progressoEnvio < 50 ? "Preparando arquivos e dados..." : 
-                           progressoEnvio < 90 ? "Transmitindo informações com segurança..." : 
-                           "Finalizando envio..."}
-                        </p>
                       </div>
                     )}
 
-                    {/* Mensagem de Sucesso com Destaque */}
-                    {mostrarSucesso && (
-                      <motion.div 
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="bg-green-100 border-2 border-green-500 p-8 rounded-2xl text-center shadow-2xl"
-                      >
-                        <div className="flex justify-center mb-4">
-                          <div className="bg-green-500 rounded-full p-3">
-                            <CheckCircle2 className="w-12 h-12 text-white" />
+                    {/* Progresso de Envio - ESTILO INSTITUCIONAL */}
+                    {isLoading && !mostrarSucesso && (
+                      <div className="bg-white p-8 rounded-2xl border-2 border-blue-100 shadow-xl space-y-6 animate-in fade-in zoom-in duration-500">
+                        <div className="flex flex-col items-center text-center space-y-2">
+                          <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mb-2">
+                            <Loader2 className="w-6 h-6 animate-spin text-blue-900" />
+                          </div>
+                          <h3 className="text-xl font-bold text-blue-900">Processando Transmissão</h3>
+                          <p className="text-sm text-gray-500 max-w-md">
+                            Estamos enviando as informações dos seus clientes para a base de dados do SESCON-SP. Por favor, não feche esta janela.
+                          </p>
+                        </div>
+                        
+                        <div className="space-y-3">
+                          <div className="flex justify-between items-end">
+                            <span className="text-xs font-bold text-blue-900 uppercase tracking-wider">Status do Envio</span>
+                            <span className="text-2xl font-black text-blue-900">{progressoEnvio}%</span>
+                          </div>
+                          <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden border shadow-inner">
+                            <motion.div 
+                              className="h-full bg-blue-900"
+                              initial={{ width: 0 }}
+                              animate={{ width: `${progressoEnvio}%` }}
+                              transition={{ duration: 0.5 }}
+                            ></motion.div>
+                          </div>
+                          <div className="flex justify-center">
+                            <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+                              {progressoEnvio < 40 ? "PREPARANDO ARQUIVOS..." : 
+                               progressoEnvio < 80 ? "TRANSMITINDO DADOS..." : 
+                               "FINALIZANDO PROTOCOLO..."}
+                            </span>
                           </div>
                         </div>
-                        <h3 className="text-3xl font-black text-green-800 mb-2">ENVIO CONCLUÍDO!</h3>
-                        <p className="text-green-700 text-lg font-semibold">
-                          Seus dados foram processados com sucesso.
-                        </p>
-                        <p className="text-green-600 mt-4 text-sm">
-                          Redirecionando para a tela inicial em instantes...
-                        </p>
+                      </div>
+                    )}
+
+                    {/* Mensagem de Sucesso - ESTILO INSTITUCIONAL */}
+                    {mostrarSucesso && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-white border-2 border-green-600 p-10 rounded-2xl text-center shadow-2xl relative overflow-hidden"
+                      >
+                        <div className="absolute top-0 left-0 w-full h-2 bg-green-600"></div>
+                        <div className="flex justify-center mb-6">
+                          <div className="bg-green-50 rounded-full p-4 border-2 border-green-100">
+                            <ShieldCheck className="w-16 h-16 text-green-600" />
+                          </div>
+                        </div>
+                        <h3 className="text-2xl font-black text-gray-900 mb-3 uppercase tracking-tight">Protocolo de Envio Confirmado</h3>
+                        <div className="max-w-md mx-auto space-y-4">
+                          <p className="text-gray-600 leading-relaxed">
+                            A atualização cadastral de <strong className="text-green-700">{clientes.length} clientes</strong> foi realizada com sucesso em nossos servidores.
+                          </p>
+                          <div className="bg-green-50 p-3 rounded-lg border border-green-100 inline-block">
+                            <p className="text-xs font-bold text-green-800">
+                              Um e-mail de confirmação foi enviado para: {emailEscritorio}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="mt-8 pt-6 border-t flex flex-col items-center gap-2">
+                          <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                            Retornando ao painel principal...
+                          </p>
+                        </div>
                       </motion.div>
                     )}
 
@@ -1170,7 +1259,7 @@ export default function Home() {
 
             {/* Direita: Logo */}
             <div className="hidden md:flex justify-end">
-              <img src="/pacc-sescon-improved/logo-sescon-branco.png" alt="SESCON-SP" className="h-20 w-auto" />
+              <img src="/pasc-sescon-improved/logo-sescon-branco.png" alt="SESCON-SP" className="h-20 w-auto" />
             </div>
           </div>
 
