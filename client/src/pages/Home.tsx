@@ -476,8 +476,12 @@ export default function Home() {
         setMostrarSucesso(false);
         setAbaSelecionada(1); // Volta para a tela inicial
         setIsLoading(false);
+        
+        // Garantir scroll para o topo ao voltar
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
         toast.success("Dados enviados com sucesso!", { duration: 4000 });
-      }, 4000);
+      }, 5000);
 
     } catch (error) {
       console.error("Erro ao enviar dados:", error);
@@ -943,14 +947,16 @@ export default function Home() {
                         </div>
                         <p className="text-xs text-gray-600">Aceita apenas arquivos em formato PDF</p>
                       </div>
-                      <Button
-                        onClick={adicionarCliente}
-                        className="w-full rounded-lg font-semibold py-2 text-white"
-                        style={{ background: SESCON_BLUE }}
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Adicionar Cliente
-                      </Button>
+                      <div className="md:col-span-2 flex justify-center">
+                        <Button
+                          onClick={adicionarCliente}
+                          className="w-full md:w-1/2 rounded-lg font-semibold py-2 text-white"
+                          style={{ background: SESCON_BLUE }}
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Adicionar Cliente
+                        </Button>
+                      </div>
                     </div>
 
                     {/* LISTA DE CLIENTES COM BUSCA */}
@@ -1057,38 +1063,44 @@ export default function Home() {
                       </div>
                     )}
 
-                    {/* Mensagem de Sucesso - ESTILO INSTITUCIONAL */}
-                    {mostrarSucesso && (
-                      <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-white border-2 border-green-600 p-10 rounded-2xl text-center shadow-2xl relative overflow-hidden"
-                      >
-                        <div className="absolute top-0 left-0 w-full h-2 bg-green-600"></div>
-                        <div className="flex justify-center mb-6">
-                          <div className="bg-green-50 rounded-full p-4 border-2 border-green-100">
-                            <ShieldCheck className="w-16 h-16 text-green-600" />
-                          </div>
+                    {/* Mensagem de Sucesso - MODAL GIGANTE CENTRALIZADO */}
+                    <AnimatePresence>
+                      {mostrarSucesso && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                          <motion.div 
+                            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+                            className="bg-white border-4 border-green-600 p-12 rounded-3xl text-center shadow-[0_0_50px_rgba(0,0,0,0.3)] relative overflow-hidden max-w-2xl w-full"
+                          >
+                            <div className="absolute top-0 left-0 w-full h-4 bg-green-600"></div>
+                            <div className="flex justify-center mb-8">
+                              <div className="bg-green-50 rounded-full p-6 border-4 border-green-100">
+                                <ShieldCheck className="w-24 h-24 text-green-600" />
+                              </div>
+                            </div>
+                            <h3 className="text-4xl font-black text-gray-900 mb-4 uppercase tracking-tight">Envio Concluído com Sucesso!</h3>
+                            <div className="space-y-6">
+                              <p className="text-xl text-gray-600 leading-relaxed">
+                                A atualização cadastral de <strong className="text-green-700 text-2xl">{clientes.length} clientes</strong> foi processada e confirmada em nossos servidores.
+                              </p>
+                              <div className="bg-green-50 p-4 rounded-xl border-2 border-green-100 inline-block w-full">
+                                <p className="text-sm font-bold text-green-800">
+                                  Um protocolo de confirmação foi enviado para:<br/>
+                                  <span className="text-lg">{emailEscritorio}</span>
+                                </p>
+                              </div>
+                            </div>
+                            <div className="mt-12 pt-8 border-t flex flex-col items-center gap-3">
+                              <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                              <p className="text-xs text-gray-400 font-bold uppercase tracking-[0.2em]">
+                                Retornando ao painel principal em instantes...
+                              </p>
+                            </div>
+                          </motion.div>
                         </div>
-                        <h3 className="text-2xl font-black text-gray-900 mb-3 uppercase tracking-tight">Protocolo de Envio Confirmado</h3>
-                        <div className="max-w-md mx-auto space-y-4">
-                          <p className="text-gray-600 leading-relaxed">
-                            A atualização cadastral de <strong className="text-green-700">{clientes.length} clientes</strong> foi realizada com sucesso em nossos servidores.
-                          </p>
-                          <div className="bg-green-50 p-3 rounded-lg border border-green-100 inline-block">
-                            <p className="text-xs font-bold text-green-800">
-                              Um e-mail de confirmação foi enviado para: {emailEscritorio}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="mt-8 pt-6 border-t flex flex-col items-center gap-2">
-                          <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
-                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-                            Retornando ao painel principal...
-                          </p>
-                        </div>
-                      </motion.div>
-                    )}
+                      )}
+                    </AnimatePresence>
 
                     <div className="flex flex-col gap-3 pt-4">
                       {temRascunho && (
@@ -1257,9 +1269,9 @@ export default function Home() {
               <p className="text-xs mt-1">Para suporte, entre em contato: <a href="mailto:cadastro@sescon.org.br" className="underline hover:text-blue-200">cadastro@sescon.org.br</a></p>
             </div>
 
-            {/* Direita: Logo */}
+            {/* Direita: Logo Corrigido */}
             <div className="hidden md:flex justify-end">
-              <img src="/pasc-sescon-improved/logo-sescon-branco.png" alt="SESCON-SP" className="h-20 w-auto" />
+              <img src="/pacc-sescon-improved/logo-sescon-branco.png" alt="SESCON-SP" className="h-20 w-auto" />
             </div>
           </div>
 
