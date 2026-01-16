@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Upload, CheckCircle, Mail, AlertCircle, FileText, Download, ChevronDown, ChevronUp, Loader2, Search, Save, RotateCcw, Eye, Clock, CheckCircle2, AlertTriangle, Send, FileDown, Download as DownloadIcon, Trash, Instagram, Facebook, Youtube, Linkedin, MessageCircle, Building, Users, Globe, Phone, MapPin } from "lucide-react";
+import { Plus, Trash2, Upload, CheckCircle, Mail, AlertCircle, FileText, Download, ChevronDown, ChevronUp, Loader2, Search, Save, RotateCcw, Eye, Clock, CheckCircle2, AlertTriangle, Send, FileDown, Download as DownloadIcon, Trash, Instagram, Facebook, Youtube, Linkedin, MessageCircle, Building, Users } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 // @ts-ignore
@@ -86,7 +86,7 @@ const faqs: FAQ[] = [
     resposta: "A contabilidade atua como facilitadora no envio das informações, garantindo que os dados cadastrais e de contribuições estejam alinhados com as obrigações acessórias e a regularidade das empresas representadas."
   },
   {
-    pergunta: "Como saber quais são as categorias representadas pelo SESCON-SP?",
+    pergunta: "Como saber quais são las categorias representadas pelo SESCON-SP?",
     resposta: `O SESCON-SP representa 58 categorias econômicas, divididas entre Contábil e Assessoramento. Abaixo estão listados todos os CNAEs representados:<br/><br/>
 <ul style="list-style-type: none; padding-left: 0;">
 <li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">02.30-6/00</strong>: Atividade de apoio à produção florestal</li>
@@ -290,76 +290,68 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col font-sans text-slate-900 relative overflow-hidden bg-slate-50">
-      {/* Elementos Decorativos de Fundo */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-100/50 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-50/50 blur-[120px] pointer-events-none" />
-
-      {/* Header Institucional */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="bg-[#003b61] p-2 rounded-lg shadow-lg">
-              <Building className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-[#003b61] tracking-tight">SESCON-SP</h1>
-              <p className="text-xs text-slate-500 font-medium uppercase tracking-widest">Central de Atualização</p>
-            </div>
-          </div>
-          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
-            <a href="#" className="hover:text-[#003b61] transition-colors">Início</a>
-            <a href="#" className="hover:text-[#003b61] transition-colors">Sobre</a>
-            <a href="#" className="hover:text-[#003b61] transition-colors">Suporte</a>
-            <Button variant="outline" className="border-[#003b61] text-[#003b61] hover:bg-[#003b61] hover:text-white transition-all duration-300">
-              Acessar Portal
-            </Button>
-          </div>
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 relative overflow-hidden">
+      {/* Fundo Decorativo */}
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-blue-100/50 to-transparent pointer-events-none" />
+      
+      {/* Header com Logo */}
+      <header className="w-full py-6 px-8 flex justify-between items-center relative z-10">
+        <img 
+          src="https://sescon.org.br/wp-content/uploads/2020/09/logo-sescon-sp.png" 
+          alt="SESCON-SP" 
+          className="h-16 object-contain"
+        />
+        <div className="text-right hidden md:block">
+          <h1 className="text-xl font-bold text-[#003b61]">Central de Atualização</h1>
+          <p className="text-xs text-slate-500 uppercase tracking-widest">Sindicato das Empresas de Serviços Contábeis</p>
         </div>
       </header>
 
-      <main className="flex-grow max-w-5xl mx-auto w-full px-4 py-12 relative z-10">
-        {/* Barra de Progresso Estilizada */}
-        <div className="mb-12">
-          <div className="flex justify-between items-end mb-3">
-            <div>
-              <h2 className="text-2xl font-bold text-slate-800">Atualização Cadastral</h2>
-              <p className="text-slate-500 text-sm">Passo {abaAtiva === "empresa" ? "1" : "2"} de 2</p>
-            </div>
+      <main className="flex-grow max-w-5xl mx-auto w-full px-4 py-8 relative z-10">
+        {/* Barra de Progresso */}
+        <div className="mb-10">
+          <div className="flex justify-between items-end mb-2">
+            <span className="text-sm font-bold text-[#003b61]">Progresso do Cadastro</span>
             <span className="text-sm font-bold text-[#003b61]">{abaAtiva === "empresa" ? "50%" : "100%"}</span>
           </div>
-          <div className="h-3 w-full bg-slate-200 rounded-full overflow-hidden shadow-inner">
+          <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: abaAtiva === "empresa" ? "50%" : "100%" }}
-              className="h-full bg-gradient-to-r from-[#003b61] to-[#00568c] shadow-lg"
+              className="h-full bg-[#003b61]"
             />
           </div>
         </div>
 
-        {/* Tabs de Navegação */}
-        <div className="flex gap-2 mb-8 p-1 bg-slate-200/50 rounded-xl backdrop-blur-sm w-fit mx-auto">
+        {/* Tabs */}
+        <div className="flex border-b border-slate-200 mb-8">
           <button
             onClick={() => setAbaAtiva("empresa")}
-            className={`px-8 py-3 rounded-lg text-sm font-bold transition-all duration-300 flex items-center gap-2 ${
-              abaAtiva === "empresa" 
-              ? "bg-white text-[#003b61] shadow-md scale-105" 
-              : "text-slate-500 hover:text-slate-700"
+            className={`px-8 py-4 text-sm font-bold transition-all relative ${
+              abaAtiva === "empresa" ? "text-[#003b61]" : "text-slate-400 hover:text-slate-600"
             }`}
           >
-            <Building className="w-4 h-4" />
-            Dados da Empresa
+            <div className="flex items-center gap-2">
+              <Building className="w-4 h-4" />
+              Dados da Empresa
+            </div>
+            {abaAtiva === "empresa" && (
+              <motion.div layoutId="tab-active" className="absolute bottom-0 left-0 w-full h-1 bg-[#003b61]" />
+            )}
           </button>
           <button
             onClick={() => setAbaAtiva("clientes")}
-            className={`px-8 py-3 rounded-lg text-sm font-bold transition-all duration-300 flex items-center gap-2 ${
-              abaAtiva === "clientes" 
-              ? "bg-white text-[#003b61] shadow-md scale-105" 
-              : "text-slate-500 hover:text-slate-700"
+            className={`px-8 py-4 text-sm font-bold transition-all relative ${
+              abaAtiva === "clientes" ? "text-[#003b61]" : "text-slate-400 hover:text-slate-600"
             }`}
           >
-            <Users className="w-4 h-4" />
-            Gestão de Clientes
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4" />
+              Gestão de Clientes
+            </div>
+            {abaAtiva === "clientes" && (
+              <motion.div layoutId="tab-active" className="absolute bottom-0 left-0 w-full h-1 bg-[#003b61]" />
+            )}
           </button>
         </div>
 
@@ -367,63 +359,49 @@ export default function Home() {
           {abaAtiva === "empresa" ? (
             <motion.div
               key="empresa"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              exit={{ opacity: 0, y: -10 }}
             >
-              <Card className="border-none shadow-2xl shadow-slate-200/50 bg-white/80 backdrop-blur-xl overflow-hidden">
-                <div className="h-2 bg-[#003b61]" />
-                <CardHeader className="pb-8 pt-10 px-10">
+              <Card className="border-none shadow-xl bg-white/90 backdrop-blur-sm">
+                <CardHeader className="pb-4">
                   <CardTitle className="text-2xl text-[#003b61]">Identificação da Empresa</CardTitle>
-                  <CardDescription className="text-slate-500">
-                    Inicie o processo validando os dados do seu escritório contábil.
-                  </CardDescription>
+                  <CardDescription>Valide os dados do seu escritório para prosseguir.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-8 px-10 pb-12">
-                  <div className="grid gap-8">
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                        CNPJ do Escritório <span className="text-red-500">*</span>
-                      </label>
-                      <div className="relative group">
-                        <Input
-                          placeholder="00.000.000/0000-00"
-                          value={cnpjEscritorio}
-                          onChange={(e) => {
-                            setCnpjEscritorio(e.target.value);
-                            buscarCNPJ(e.target.value);
-                          }}
-                          className="h-14 px-5 text-lg border-slate-200 focus:border-[#003b61] focus:ring-[#003b61]/10 transition-all rounded-xl group-hover:border-slate-300"
-                        />
-                        {razaoSocialEscritorio && (
-                          <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                            <CheckCircle2 className="w-6 h-6 text-green-500" />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700">Nome do Escritório</label>
+                      <label className="text-sm font-bold text-slate-700">CNPJ do Escritório *</label>
                       <Input
-                        value={razaoSocialEscritorio}
-                        readOnly
-                        placeholder="Preenchido automaticamente"
-                        className="h-14 px-5 bg-slate-50 border-slate-200 text-slate-600 rounded-xl"
+                        placeholder="00.000.000/0000-00"
+                        value={cnpjEscritorio}
+                        onChange={(e) => {
+                          setCnpjEscritorio(e.target.value);
+                          buscarCNPJ(e.target.value);
+                        }}
+                        className="h-12 border-slate-200 focus:border-[#003b61] focus:ring-[#003b61]/10"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                        E-mail para Contato <span className="text-red-500">*</span>
-                      </label>
+                      <label className="text-sm font-bold text-slate-700">Nome do Escritório *</label>
+                      <Input
+                        value={razaoSocialEscritorio}
+                        readOnly
+                        placeholder="Preenchido automaticamente"
+                        className="h-12 bg-slate-50 border-slate-200"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-slate-700">E-mail para Contato *</label>
                       <Input
                         type="email"
                         placeholder="contato@escritorio.com.br"
                         value={emailEscritorio}
                         disabled={!razaoSocialEscritorio}
                         onChange={(e) => setEmailEscritorio(e.target.value)}
-                        className="h-14 px-5 text-lg border-slate-200 focus:border-[#003b61] focus:ring-[#003b61]/10 transition-all rounded-xl disabled:opacity-50"
+                        className="h-12 border-slate-200 focus:border-[#003b61] focus:ring-[#003b61]/10"
                       />
                     </div>
                   </div>
@@ -431,9 +409,9 @@ export default function Home() {
                   <Button
                     onClick={() => setAbaAtiva("clientes")}
                     disabled={!cnpjEscritorio || !razaoSocialEscritorio || !emailEscritorio}
-                    className="w-full h-16 text-lg font-bold bg-[#003b61] hover:bg-[#00568c] shadow-lg shadow-[#003b61]/20 transition-all duration-300 rounded-xl mt-4"
+                    className="w-full h-14 text-lg font-bold bg-[#003b61] hover:bg-[#00568c] transition-all"
                   >
-                    Próximo Passo
+                    Próximo
                   </Button>
                 </CardContent>
               </Card>
@@ -441,75 +419,67 @@ export default function Home() {
           ) : (
             <motion.div
               key="clientes"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-8"
+              exit={{ opacity: 0, y: -10 }}
+              className="space-y-6"
             >
-              <Card className="border-none shadow-2xl shadow-slate-200/50 bg-white/80 backdrop-blur-xl overflow-hidden">
-                <div className="h-2 bg-[#003b61]" />
-                <CardHeader className="px-10 pt-10">
+              <Card className="border-none shadow-xl bg-white/90 backdrop-blur-sm">
+                <CardHeader>
                   <CardTitle className="text-2xl text-[#003b61]">Gestão de Clientes</CardTitle>
-                  <CardDescription>Adicione ou importe a lista de empresas que seu escritório representa.</CardDescription>
                 </CardHeader>
-                <CardContent className="px-10 pb-12 space-y-10">
+                <CardContent className="space-y-8">
                   {/* Atividade Principal */}
-                  <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                    <label className="text-sm font-bold text-slate-700 mb-4 block">Atividade Principal do Escritório</label>
-                    <div className="flex flex-wrap gap-6">
-                      <label className="flex items-center gap-3 cursor-pointer group">
+                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                    <label className="text-sm font-bold text-slate-700 mb-3 block">Atividade Principal *</label>
+                    <div className="flex gap-6">
+                      <label className="flex items-center gap-2 cursor-pointer">
                         <input
                           type="radio"
                           name="atividade"
                           value="contabilidade"
                           checked={atividadePrincipal === "contabilidade"}
                           onChange={(e) => setAtividadePrincipal(e.target.value)}
-                          className="w-5 h-5 text-[#003b61] focus:ring-[#003b61]"
+                          className="w-4 h-4 text-[#003b61]"
                         />
-                        <span className="text-slate-700 font-medium group-hover:text-[#003b61] transition-colors">Contabilidade</span>
+                        <span className="text-sm font-medium">Contabilidade</span>
                       </label>
-                      <label className="flex items-center gap-3 cursor-pointer group">
+                      <label className="flex items-center gap-2 cursor-pointer">
                         <input
                           type="radio"
                           name="atividade"
                           value="outros"
                           checked={atividadePrincipal === "outros"}
                           onChange={(e) => setAtividadePrincipal(e.target.value)}
-                          className="w-5 h-5 text-[#003b61] focus:ring-[#003b61]"
+                          className="w-4 h-4 text-[#003b61]"
                         />
-                        <span className="text-slate-700 font-medium group-hover:text-[#003b61] transition-colors">Outros (Redirecionar)</span>
+                        <span className="text-sm font-medium">Outros</span>
                       </label>
                     </div>
                   </div>
 
                   {/* Importação e Adição */}
-                  <div className="grid md:grid-cols-2 gap-8">
+                  <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                       <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                        <Upload className="w-5 h-5 text-[#003b61]" /> Importar Planilha
+                        <Upload className="w-4 h-4" /> Importar Planilha
                       </h3>
-                      <div className="border-2 border-dashed border-slate-200 rounded-2xl p-8 text-center hover:border-[#003b61] hover:bg-blue-50/30 transition-all cursor-pointer relative group">
+                      <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:border-[#003b61] transition-all cursor-pointer relative">
                         <input
                           type="file"
                           accept=".xlsx, .xls"
                           onChange={handleFileUpload}
                           className="absolute inset-0 opacity-0 cursor-pointer"
                         />
-                        <div className="space-y-3">
-                          <div className="w-12 h-12 bg-blue-100 text-[#003b61] rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
-                            <FileDown className="w-6 h-6" />
-                          </div>
-                          <p className="text-sm font-medium text-slate-600">Arraste sua planilha ou clique para selecionar</p>
-                          <p className="text-xs text-slate-400">Formatos aceitos: .xlsx, .xls</p>
-                        </div>
+                        <p className="text-sm text-slate-500">Clique ou arraste sua planilha aqui</p>
                       </div>
                     </div>
 
                     <div className="space-y-4">
                       <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                        <Plus className="w-5 h-5 text-[#003b61]" /> Adicionar Manualmente
+                        <Plus className="w-4 h-4" /> Adicionar Manual
                       </h3>
-                      <div className="space-y-3">
+                      <div className="space-y-2">
                         <Input
                           placeholder="CNPJ do Cliente"
                           value={novoCliente.cnpj}
@@ -517,19 +487,19 @@ export default function Home() {
                             setNovoCliente(prev => ({ ...prev, cnpj: e.target.value }));
                             buscarCNPJCliente(e.target.value);
                           }}
-                          className="h-12 rounded-xl border-slate-200"
+                          className="h-10"
                         />
                         <Input
                           placeholder="Razão Social"
                           value={novoCliente.razaoSocial}
                           onChange={(e) => setNovoCliente(prev => ({ ...prev, razaoSocial: e.target.value }))}
-                          className="h-12 rounded-xl border-slate-200"
+                          className="h-10"
                         />
                         <Button 
                           onClick={adicionarCliente}
-                          className="w-full h-12 bg-slate-800 hover:bg-slate-900 rounded-xl font-bold"
+                          className="w-full h-10 bg-slate-800 hover:bg-slate-900"
                         >
-                          Adicionar à Lista
+                          Adicionar
                         </Button>
                       </div>
                     </div>
@@ -538,68 +508,44 @@ export default function Home() {
                   {/* Lista de Clientes */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                        <Users className="w-5 h-5 text-[#003b61]" /> Clientes Adicionados ({clientes.length})
-                      </h3>
+                      <h3 className="font-bold text-slate-800">Clientes Adicionados ({clientes.length})</h3>
                       <div className="relative w-64">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <Input
-                          placeholder="Pesquisar na lista..."
+                          placeholder="Pesquisar..."
                           value={termoBusca}
                           onChange={(e) => setTermoBusca(e.target.value)}
-                          className="pl-10 h-10 rounded-lg border-slate-200 text-sm"
+                          className="pl-10 h-9 text-sm"
                         />
                       </div>
                     </div>
 
-                    <div className="max-h-[400px] overflow-y-auto rounded-2xl border border-slate-100 bg-slate-50/50 p-2 space-y-2">
-                      {clientesFiltrados.length > 0 ? (
-                        clientesFiltrados.map((cliente) => (
-                          <div key={cliente.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex items-center justify-between group hover:border-[#003b61]/30 transition-all">
-                            <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-[#003b61] font-bold text-xs">
-                                {cliente.razaoSocial.substring(0, 2).toUpperCase()}
-                              </div>
-                              <div>
-                                <p className="font-bold text-slate-800 text-sm">{cliente.razaoSocial}</p>
-                                <p className="text-xs text-slate-500">{cliente.cnpj}</p>
-                              </div>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => removerCliente(cliente.id)}
-                              className="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                    <div className="max-h-64 overflow-y-auto rounded-xl border border-slate-100 bg-slate-50 p-2 space-y-2">
+                      {clientesFiltrados.map((cliente) => (
+                        <div key={cliente.id} className="bg-white p-3 rounded-lg shadow-sm flex items-center justify-between group">
+                          <div>
+                            <p className="font-bold text-slate-800 text-sm">{cliente.razaoSocial}</p>
+                            <p className="text-xs text-slate-500">{cliente.cnpj}</p>
                           </div>
-                        ))
-                      ) : (
-                        <div className="py-12 text-center text-slate-400">
-                          <Users className="w-12 h-12 mx-auto mb-3 opacity-20" />
-                          <p>Nenhum cliente encontrado</p>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removerCliente(cliente.id)}
+                            className="text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
-                      )}
+                      ))}
                     </div>
                   </div>
 
                   <Button
                     onClick={enviarDados}
                     disabled={isLoading || clientes.length === 0}
-                    className="w-full h-16 text-lg font-bold bg-[#003b61] hover:bg-[#00568c] shadow-lg shadow-[#003b61]/20 transition-all duration-300 rounded-xl"
+                    className="w-full h-14 text-lg font-bold bg-[#003b61] hover:bg-[#00568c] transition-all"
                   >
-                    {isLoading ? (
-                      <div className="flex items-center gap-3">
-                        <Loader2 className="w-6 h-6 animate-spin" />
-                        Enviando Dados...
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-3">
-                        <Send className="w-5 h-5" />
-                        Finalizar e Enviar Atualização
-                      </div>
-                    )}
+                    {isLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : "Enviar Atualização"}
                   </Button>
                 </CardContent>
               </Card>
@@ -607,22 +553,19 @@ export default function Home() {
           )}
         </AnimatePresence>
 
-        {/* FAQ Section */}
-        <section className="mt-20 space-y-8">
-          <div className="text-center space-y-2">
-            <h2 className="text-3xl font-bold text-[#003b61]">Dúvidas Frequentes</h2>
-            <p className="text-slate-500">Tudo o que você precisa saber sobre a atualização cadastral.</p>
-          </div>
-          <div className="bg-[#eef6fb] p-8 rounded-[2rem] border border-blue-100 shadow-xl shadow-blue-900/5">
-            <div className="space-y-3">
+        {/* FAQ */}
+        <section className="mt-16 space-y-6">
+          <h2 className="text-2xl font-bold text-[#003b61] text-center">Perguntas Frequentes</h2>
+          <div className="bg-[#eef6fb] p-6 rounded-2xl border border-blue-100">
+            <div className="space-y-2">
               {faqs.map((faq, index) => (
-                <div key={index} className="bg-white rounded-2xl overflow-hidden border border-blue-50 shadow-sm">
+                <div key={index} className="bg-white rounded-xl overflow-hidden border border-blue-50">
                   <button
                     onClick={() => setFaqAberto(faqAberto === index ? null : index)}
-                    className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"
+                    className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"
                   >
-                    <span className="font-bold text-slate-700">{faq.pergunta}</span>
-                    {faqAberto === index ? <ChevronUp className="w-5 h-5 text-[#003b61]" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
+                    <span className="font-bold text-slate-700 text-sm">{faq.pergunta}</span>
+                    {faqAberto === index ? <ChevronUp className="w-4 h-4 text-[#003b61]" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
                   </button>
                   <AnimatePresence>
                     {faqAberto === index && (
@@ -630,9 +573,9 @@ export default function Home() {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        className="px-6 pb-6"
+                        className="px-6 pb-4"
                       >
-                        <div className="p-5 bg-slate-50 rounded-xl border border-slate-100 text-slate-600 text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: faq.resposta }} />
+                        <div className="p-4 bg-slate-50 rounded-lg border border-slate-100 text-slate-600 text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: faq.resposta }} />
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -643,73 +586,41 @@ export default function Home() {
         </section>
       </main>
 
-      {/* Rodapé Institucional */}
-      <footer className="bg-[#003b61] text-white pt-20 pb-10 mt-20 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-400/30 to-transparent" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-12 mb-16">
-            <div className="col-span-2 space-y-6">
-              <div className="flex items-center gap-4">
-                <div className="bg-white p-2 rounded-lg">
-                  <Building className="w-8 h-8 text-[#003b61]" />
-                </div>
-                <h2 className="text-2xl font-bold tracking-tighter">SESCON-SP</h2>
-              </div>
-              <p className="text-blue-100/70 max-w-md leading-relaxed">
-                Sindicato das Empresas de Serviços Contábeis e das Empresas de Assessoramento, Perícias, Informações e Pesquisas no Estado de São Paulo.
-              </p>
-              <div className="flex gap-4">
-                <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-[#003b61] transition-all duration-300"><Instagram className="w-5 h-5" /></a>
-                <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-[#003b61] transition-all duration-300"><Facebook className="w-5 h-5" /></a>
-                <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-[#003b61] transition-all duration-300"><Linkedin className="w-5 h-5" /></a>
-                <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-[#003b61] transition-all duration-300"><Youtube className="w-5 h-5" /></a>
-              </div>
-            </div>
-            
-            <div className="space-y-6">
-              <h3 className="text-lg font-bold border-b border-white/10 pb-2">Contato</h3>
-              <ul className="space-y-4 text-sm text-blue-100/70">
-                <li className="flex items-center gap-3"><Phone className="w-4 h-4" /> (11) 3304-4400</li>
-                <li className="flex items-center gap-3"><Mail className="w-4 h-4" /> cadastro@sescon.org.br</li>
-                <li className="flex items-start gap-3"><MapPin className="w-4 h-4 mt-1" /> Av. Tiradentes, 998 - Luz<br/>São Paulo - SP</li>
-              </ul>
-            </div>
-
-            <div className="space-y-6">
-              <h3 className="text-lg font-bold border-b border-white/10 pb-2">Links Úteis</h3>
-              <ul className="space-y-3 text-sm text-blue-100/70">
-                <li><a href="#" className="hover:text-white transition-colors">Portal do Associado</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Cursos e Eventos</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Convenções Coletivas</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Política de Privacidade</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="pt-8 border-t border-white/10 text-center text-xs text-blue-100/40">
-            <p>© 2026 SESCON-SP. Todos os direitos reservados. Desenvolvido para excelência no setor contábil.</p>
+      {/* Rodapé com Logo */}
+      <footer className="w-full py-12 px-8 bg-white border-t border-slate-200 mt-12 flex flex-col items-center gap-6 relative z-10">
+        <img 
+          src="https://sescon.org.br/wp-content/uploads/2020/09/logo-sescon-sp.png" 
+          alt="SESCON-SP" 
+          className="h-12 object-contain opacity-50 grayscale hover:grayscale-0 transition-all"
+        />
+        <div className="text-center space-y-2">
+          <p className="text-xs text-slate-400 font-medium">© 2026 SESCON-SP. Todos os direitos reservados.</p>
+          <div className="flex gap-4 justify-center text-slate-400">
+            <Instagram className="w-4 h-4 cursor-pointer hover:text-[#003b61]" />
+            <Facebook className="w-4 h-4 cursor-pointer hover:text-[#003b61]" />
+            <Linkedin className="w-4 h-4 cursor-pointer hover:text-[#003b61]" />
           </div>
         </div>
       </footer>
 
-      {/* Dialog de Confirmação Final */}
+      {/* Dialog de Sucesso */}
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <AlertDialogContent className="bg-white rounded-3xl border-none shadow-2xl p-8">
-          <AlertDialogHeader className="items-center text-center space-y-4">
-            <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-2">
-              <CheckCircle className="w-10 h-10" />
+        <AlertDialogContent className="bg-white rounded-2xl border-none shadow-2xl">
+          <AlertDialogHeader className="items-center text-center">
+            <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle className="w-8 h-8" />
             </div>
-            <AlertDialogTitle className="text-2xl font-bold text-slate-800">Envio Concluído!</AlertDialogTitle>
-            <AlertDialogDescription className="text-slate-600 text-lg">
-              Sua atualização cadastral foi recebida com sucesso. Um e-mail de confirmação foi enviado para <strong>{emailEscritorio}</strong>.
+            <AlertDialogTitle className="text-xl font-bold text-slate-800">Dados Enviados!</AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-600">
+              Sua atualização foi processada. Um e-mail de confirmação foi enviado para o endereço informado.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="mt-8">
+          <AlertDialogFooter className="mt-6">
             <AlertDialogAction 
               onClick={() => window.location.reload()}
-              className="w-full h-14 bg-[#003b61] hover:bg-[#00568c] text-lg font-bold rounded-xl"
+              className="w-full h-12 bg-[#003b61] hover:bg-[#00568c] font-bold rounded-lg"
             >
-              Entendido
+              Concluir
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
