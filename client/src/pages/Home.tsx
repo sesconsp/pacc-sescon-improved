@@ -60,40 +60,36 @@ const SESCON_ACCENT = "#00568c";
 
 const faqs: FAQ[] = [
   {
-    pergunta: "Por que preciso informar todos os meus clientes?",
-    resposta: "O SESCON está modernizando sua base de dados. Ao informar todos os seus clientes atuais, garantimos que apenas empresas que você realmente representa receberão nossas comunicações."
+    pergunta: "Por que é importante manter o cadastro dos meus clientes atualizados?",
+    resposta: "O SESCON está modernizando sua base de dados. Manter o cadastro dos seus clientes atualizado garante que nossas comunicações sejam direcionadas apenas às empresas que você efetivamente representa, assegurando informações corretas, atualizadas e relevantes. "
   },
   {
     pergunta: "Posso usar o mesmo e-mail para vários clientes?",
-    resposta: "Sim, você pode usar o mesmo e-mail para vários clientes. Se não informar um e-mail específico, será utilizado o e-mail do seu escritório."
+    resposta: "Sim. É possível utilizar o mesmo e-mail para mais de um cliente. Caso não seja informado um e-mail específico, será considerado o e-mail do seu escritório como contato padrão."
   },
   {
-    pergunta: "O contrato social é obrigatório?",
-    resposta: "Não, o contrato social é opcional. Você pode enviar o formulário sem anexar. Se desejar, aceita apenas arquivos em PDF."
+    pergunta: "Para a atualização cadastral, é obrigatório o envio de documentos como o contrato social?",
+    resposta: "Não. Para a atualização dos dados de contato, não é necessário o envio de documentos, e o formulário pode ser enviado sem anexos. O contrato social é exigido apenas nos casos de análise de enquadramento sindical."
   },
   {
-    pergunta: "Posso atualizar minha lista depois?",
-    resposta: "Sim, você pode atualizar sua lista a qualquer momento preenchendo o formulário novamente. A nova lista substituirá a anterior."
+    pergunta: "Existe algum comprovante de envio dos dados?",
+    resposta: "Sim. Após o envio do formulário, você receberá um e-mail de confirmação com um link para baixar o comprovante em PDF contendo todos os dados informados."
   },
   {
     pergunta: "Como baixo os dados que enviei?",
     resposta: "Após enviar, você receberá um e-mail de confirmação com um link para baixar um comprovante em PDF com todos os dados."
   },
   {
-    pergunta: "Quanto tempo leva para processar?",
-    resposta: "A atualização é processada imediatamente após o envio. Você receberá um e-mail de confirmação em poucos minutos."
+    pergunta: "Qual o prazo de atualização?",
+    resposta: "A atualização é processada imediatamente após o envio do formulário. Você receberá um e-mail de confirmação em poucos minutos."
   },
   {
-    pergunta: "O que fazer se cometer um erro?",
+    pergunta: "Qual é a responsabilidade da contabilidade sobre as informações?",
     resposta: "Você pode enviar os dados novamente. A nova lista substituirá a anterior. Se precisar de ajuda, entre em contato conosco."
   },
   {
-    pergunta: "Como valido meu CNPJ?",
-    resposta: "O sistema valida automaticamente o CNPJ quando você digita. Se válido, aparecerá uma mensagem de confirmação."
-  },
-  {
     pergunta: "Qual a responsabilidade da contabilidade sobre as informações?",
-    resposta: "A contabilidade atua como facilitadora no envio das informações, garantindo que os dados cadastrais e de contribuições estejam alinhados com as obrigações acessórias e a regularidade das empresas representadas."
+    resposta: "A contabilidade atua como facilitadora no envio das informações do Sescon-SP aos seus clientes, assegurando que os dados cadastrais e de contribuições estejam corretos e alinhados à regularidade das empresas representadas. "
   },
   {
     pergunta: "Como saber quais são as categorias representadas pelo SESCON-SP?",
