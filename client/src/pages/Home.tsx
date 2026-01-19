@@ -84,10 +84,6 @@ const faqs: FAQ[] = [
     resposta: "A atualização é processada imediatamente após o envio do formulário. Você receberá um e-mail de confirmação em poucos minutos."
   },
   {
-    pergunta: "Qual é a responsabilidade da contabilidade sobre as informações?",
-    resposta: "Você pode enviar os dados novamente. A nova lista substituirá a anterior. Se precisar de ajuda, entre em contato conosco."
-  },
-  {
     pergunta: "Qual a responsabilidade da contabilidade sobre as informações?",
     resposta: "A contabilidade atua como facilitadora no envio das informações do Sescon-SP aos seus clientes, assegurando que os dados cadastrais e de contribuições estejam corretos e alinhados à regularidade das empresas representadas. "
   },
