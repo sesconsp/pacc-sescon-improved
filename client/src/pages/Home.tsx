@@ -92,7 +92,7 @@ const faqs: FAQ[] = [
     resposta: "A contabilidade atua como facilitadora no envio das informações do Sescon-SP aos seus clientes, assegurando que os dados cadastrais e de contribuições estejam corretos e alinhados à regularidade das empresas representadas. "
   },
   {
-    pergunta: "Como saber quais são as categorias representadas pelo SESCON-SP?",
+    pergunta: "Quais são as categorias econômicas representadas pelo SESCON-SP",
     resposta: `O SESCON-SP representa 58 categorias econômicas, divididas entre Contábil e Assessoramento. Abaixo estão listados todos os CNAEs representados:<br/><br/>
 <ul style="list-style-type: none; padding-left: 0;">
 <li style="margin-bottom: 8px;"><strong style="color: ${SESCON_DARK_BLUE}">02.30-6/00</strong>: Atividade de apoio à produção florestal</li>
