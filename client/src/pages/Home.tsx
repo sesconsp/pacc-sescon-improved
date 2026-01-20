@@ -28,7 +28,10 @@ interface Cliente {
   funcionarios?: string;
   emailEmpresa?: string;
   telefoneEmpresa?: string;
-  contratosocial?: File;
+  contratosocial?: {
+    name: string;
+    data: string; // Base64
+  };
   cnpjValido?: boolean;
   ehMatriz?: boolean;
 }
@@ -146,6 +149,7 @@ const faqs: FAQ[] = [
 </ul>`
   }
 ];
+
 export default function Home() {
   const [abaSelecionada, setAbaSelecionada] = useState(1);
   const [cnpjEscritorio, setCnpjEscritorio] = useState("");
@@ -313,7 +317,8 @@ export default function Home() {
           faturamento: c.faturamento,
           funcionarios: c.funcionarios,
           emailEmpresa: c.emailEmpresa,
-          telefoneEmpresa: c.telefoneEmpresa
+          telefoneEmpresa: c.telefoneEmpresa,
+          contratosocial: c.contratosocial // Já está em Base64
         })),
         dataEnvio: new Date().toISOString()
       };
@@ -801,7 +806,7 @@ export default function Home() {
                             </div>
                           </div>
 
-                          {/* CAMPO DE CONTRATO SOCIAL RESTAURADO */}
+                          {/* CAMPO DE CONTRATO SOCIAL RESTAURADO COM CONVERSÃO PARA BASE64 */}
                           <div className="space-y-2">
                             <label className="text-xs font-bold" style={{ color: SESCON_DARK_BLUE }}>Contrato Social (Opcional)</label>
                             <div className="flex items-center gap-3">
@@ -812,8 +817,19 @@ export default function Home() {
                                   const file = e.target.files?.[0];
                                   if (file) {
                                     if (file.type === 'application/pdf') {
-                                      setNovoCliente({ ...novoCliente, contratosocial: file });
-                                      toast.success(`Arquivo "${file.name}" selecionado!`, { duration: 2000 });
+                                      const reader = new FileReader();
+                                      reader.onload = (event) => {
+                                        const base64 = event.target?.result as string;
+                                        setNovoCliente({ 
+                                          ...novoCliente, 
+                                          contratosocial: {
+                                            name: file.name,
+                                            data: base64
+                                          }
+                                        });
+                                        toast.success(`Arquivo "${file.name}" selecionado!`, { duration: 2000 });
+                                      };
+                                      reader.readAsDataURL(file);
                                     } else {
                                       toast.error('Apenas arquivos PDF são aceitos!', { duration: 3000 });
                                       e.target.value = '';
