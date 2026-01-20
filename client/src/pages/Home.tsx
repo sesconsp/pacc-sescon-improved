@@ -152,37 +152,31 @@ export default function Home() {
   const [cnpjEscritorio, setCnpjEscritorio] = useState("");
   const [razaoSocialEscritorio, setRazaoSocialEscritorio] = useState("");
   const [emailEscritorio, setEmailEscritorio] = useState("");
-  const [cnpjEscritorioValido, setCnpjEscritorioValido] = useState(false);
-  const [buscandoReceita, setBuscandoReceita] = useState(false);
   const [atividadePrincipal, setAtividadePrincipal] = useState("contabilidade");
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [novoCliente, setNovoCliente] = useState<Partial<Cliente>>({
     cnpj: "",
     razaoSocial: "",
+    emailPrincipal: true,
+    emailCustomizado: "",
     faturamento: "",
     funcionarios: "",
     emailEmpresa: "",
-    telefoneEmpresa: "",
-    emailCustomizado: ""
+    telefoneEmpresa: ""
   });
   const [isLoading, setIsLoading] = useState(false);
   const [progressoEnvio, setProgressoEnvio] = useState(0);
   const [faqAberto, setFaqAberto] = useState<number | null>(null);
-  const [mostrarModalClientes, setMostrarModalClientes] = useState(false);
   const [busca, setBusca] = useState("");
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const [temRascunho, setTemRascunho] = useState(false);
+  const [buscaCarregando, setBuscaCarregando] = useState(false);
+  const [buscandoReceita, setBuscandoReceita] = useState(false);
+  const [cnpjEscritorioValido, setCnpjEscritorioValido] = useState(false);
+  const [mostrarModalClientes, setMostrarModalClientes] = useState(false);
   const [mostrarConfirmacaoLimpar, setMostrarConfirmacaoLimpar] = useState(false);
+  const [temRascunho, setTemRascunho] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
-  useEffect(() => {
-    const rascunhoSalvo = localStorage.getItem(`rascunho_sescon_${cnpjEscritorio.replace(/\D/g, "")}`);
-    if (rascunhoSalvo && cnpjEscritorioValido) {
-      setTemRascunho(true);
-    } else {
-      setTemRascunho(false);
-    }
-  }, [cnpjEscritorio, cnpjEscritorioValido]);
-
+  // Máscaras
   const formatarCNPJ = (v: string) => {
     v = v.replace(/\D/g, "");
     if (v.length <= 14) {
@@ -209,65 +203,168 @@ export default function Home() {
     return v;
   };
 
+  // Buscar CNPJ na Receita Federal (BrasilAPI)
   const buscarCNPJ = async (cnpj: string, isCliente = false) => {
     const cnpjLimpo = cnpj.replace(/\D/g, "");
     if (cnpjLimpo.length !== 14) return;
 
     setBuscandoReceita(true);
     try {
-      const response = await fetch(`https://publica.cnpj.ws/cnpj/${cnpjLimpo}`);
-      const data = await response.json();
-      
-      if (isCliente) {
-        setNovoCliente(prev => ({
-          ...prev,
-          razaoSocial: data.razao_social,
-          emailEmpresa: data.estabelecimento.email,
-          telefoneEmpresa: `(${data.estabelecimento.ddd1}) ${data.estabelecimento.telefone1}`
-        }));
-      } else {
-        setRazaoSocialEscritorio(data.razao_social);
-        setCnpjEscritorioValido(true);
-        
-        const rascunhoSalvo = localStorage.getItem(`rascunho_sescon_${cnpjLimpo}`);
-        if (rascunhoSalvo) {
-          const rascunho: Rascunho = JSON.parse(rascunhoSalvo);
-          setEmailEscritorio(rascunho.emailEscritorio);
-          setClientes(rascunho.clientes as Cliente[]);
-          toast.info("Rascunho carregado automaticamente!");
+      const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjLimpo}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (isCliente) {
+          setNovoCliente(prev => ({ ...prev, razaoSocial: data.razao_social }));
+          toast.success("Cliente localizado!");
+        } else {
+          setRazaoSocialEscritorio(data.razao_social);
+          setCnpjEscritorioValido(true);
+          toast.success("Escritório localizado!");
+          verificarRascunho(cnpjLimpo);
         }
+      } else {
+        if (!isCliente) setCnpjEscritorioValido(false);
+        toast.error("CNPJ não localizado na Receita Federal");
       }
     } catch (error) {
-      toast.error("Erro ao buscar CNPJ. Verifique os dados.");
+      toast.error("Erro ao conectar com a Receita Federal");
     } finally {
       setBuscandoReceita(false);
     }
   };
 
+  // Lógica de Rascunho
+  const verificarRascunho = (cnpj: string) => {
+    const rascunho = localStorage.getItem(`rascunho_${cnpj}`);
+    if (rascunho) {
+      setTemRascunho(true);
+      toast.info("Rascunho encontrado para este CNPJ!", {
+        action: {
+          label: "Carregar",
+          onClick: () => carregarRascunho(cnpj)
+        },
+        duration: 5000
+      });
+    }
+  };
+
+  const carregarRascunho = (cnpj: string) => {
+    const rascunhoStr = localStorage.getItem(`rascunho_${cnpj}`);
+    if (rascunhoStr) {
+      const rascunho: Rascunho = JSON.parse(rascunhoStr);
+      setRazaoSocialEscritorio(rascunho.nomeEscritorio);
+      setEmailEscritorio(rascunho.emailEscritorio);
+      setClientes(rascunho.clientes as Cliente[]);
+      toast.success("Rascunho carregado com sucesso!");
+    }
+  };
+
+  const salvarRascunho = () => {
+    if (!cnpjEscritorioValido) {
+      toast.error("Valide o CNPJ do escritório primeiro");
+      return;
+    }
+    const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
+    const rascunho: Rascunho = {
+      nomeEscritorio: razaoSocialEscritorio,
+      cnpjEscritorio: cnpjEscritorio,
+      emailEscritorio: emailEscritorio,
+      clientes: clientes.map(({ contratosocial, ...rest }) => rest),
+      dataSalva: new Date().toISOString()
+    };
+    localStorage.setItem(`rascunho_${cnpjLimpo}`, JSON.stringify(rascunho));
+    setTemRascunho(true);
+    toast.success("Rascunho salvo com sucesso!");
+  };
+
+  const limparRascunho = () => {
+    const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
+    localStorage.removeItem(`rascunho_${cnpjLimpo}`);
+    setTemRascunho(false);
+    toast.success("Rascunho excluído");
+  };
+
+  const resetForm = () => {
+    setCnpjEscritorio("");
+    setRazaoSocialEscritorio("");
+    setEmailEscritorio("");
+    setAtividadePrincipal("contabilidade");
+    setClientes([]);
+    setAbaSelecionada(1);
+    setProgressoEnvio(0);
+    setShowSuccessDialog(false);
+    setCnpjEscritorioValido(false);
+    setTemRascunho(false);
+  };
+
+  const enviarDados = async () => {
+    setIsLoading(true);
+    setProgressoEnvio(10);
+    
+    try {
+      const dadosEnvio = {
+        escritorioCnpj: cnpjEscritorio,
+        escritorioRazao: razaoSocialEscritorio,
+        escritorioEmail: emailEscritorio,
+        atividadePrincipal: atividadePrincipal,
+        clientes: clientes.map(c => ({
+          cnpj: c.cnpj,
+          razaoSocial: c.razaoSocial,
+          email: c.emailPrincipal ? emailEscritorio : c.emailCustomizado,
+          faturamento: c.faturamento,
+          funcionarios: c.funcionarios,
+          emailEmpresa: c.emailEmpresa,
+          telefoneEmpresa: c.telefoneEmpresa
+        })),
+        dataEnvio: new Date().toISOString()
+      };
+
+      setProgressoEnvio(40);
+
+      const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxR2MCXtsKqCO3cXC6NgAkntgt6E2N5eTFEAqbyw7YW9Q2lATMGOE1L-NI916Ofduio/exec";
+      
+      setProgressoEnvio(70);
+
+      await fetch(WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify(dadosEnvio),
+      });
+
+      setProgressoEnvio(100);
+      setShowSuccessDialog(true);
+      
+      const cnpjLimpo = cnpjEscritorio.replace(/\D/g, "");
+      localStorage.removeItem(`rascunho_${cnpjLimpo}`);
+    } catch (error) {
+      toast.error("Erro ao enviar dados. Tente novamente.");
+      setProgressoEnvio(0);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const adicionarCliente = () => {
     if (!novoCliente.cnpj || !novoCliente.razaoSocial) {
-      toast.error("CNPJ e Razão Social são obrigatórios");
+      toast.error("Preencha o CNPJ e a Razão Social do cliente");
       return;
     }
     const cliente: Cliente = {
       id: Math.random().toString(36).substr(2, 9),
-      cnpj: novoCliente.cnpj!,
-      razaoSocial: novoCliente.razaoSocial!,
-      emailPrincipal: !novoCliente.emailCustomizado,
-      ...novoCliente
-    } as Cliente;
-
+      cnpj: novoCliente.cnpj,
+      razaoSocial: novoCliente.razaoSocial,
+      emailPrincipal: novoCliente.emailPrincipal || false,
+      emailCustomizado: novoCliente.emailPrincipal ? emailEscritorio : novoCliente.emailCustomizado,
+      faturamento: novoCliente.faturamento,
+      funcionarios: novoCliente.funcionarios,
+      emailEmpresa: novoCliente.emailEmpresa,
+      telefoneEmpresa: novoCliente.telefoneEmpresa,
+      contratosocial: novoCliente.contratosocial,
+      cnpjValido: true
+    };
     setClientes([...clientes, cliente]);
-    setNovoCliente({
-      cnpj: "",
-      razaoSocial: "",
-      faturamento: "",
-      funcionarios: "",
-      emailEmpresa: "",
-      telefoneEmpresa: "",
-      emailCustomizado: ""
-    });
-    toast.success("Cliente adicionado com sucesso!");
+    setNovoCliente({ cnpj: "", razaoSocial: "", emailPrincipal: true, emailCustomizado: "", faturamento: "", funcionarios: "", emailEmpresa: "", telefoneEmpresa: "" });
+    toast.success("Cliente adicionado à lista!");
   };
 
   const removerCliente = (id: string) => {
@@ -281,237 +378,178 @@ export default function Home() {
 
     const reader = new FileReader();
     reader.onload = (evt) => {
-      const bstr = evt.target?.result;
-      const wb = XLSX.read(bstr, { type: 'binary' });
-      const wsname = wb.SheetNames[0];
-      const ws = wb.Sheets[wsname];
-      const data = XLSX.utils.sheet_to_json(ws) as any[];
+      try {
+        const bstr = evt.target?.result;
+        const wb = XLSX.read(bstr, { type: 'binary' });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
 
-      const novosClientes = data.map((row: any) => ({
-        id: Math.random().toString(36).substr(2, 9),
-        cnpj: formatarCNPJ(String(row.CNPJ || row.cnpj || "")),
-        razaoSocial: String(row['Razão Social'] || row.razaoSocial || ""),
-        emailCustomizado: String(row['E-mail Contabilidade'] || row.email || ""),
-        faturamento: String(row.Faturamento || row.faturamento || ""),
-        funcionarios: String(row.Funcionários || row.funcionarios || ""),
-        emailEmpresa: String(row['E-mail Empresa'] || row.emailEmpresa || ""),
-        telefoneEmpresa: String(row['Telefone Empresa'] || row.telefoneEmpresa || ""),
-        emailPrincipal: !row['E-mail Contabilidade']
-      }));
+        const novosClientes: Cliente[] = data.map((row: any) => ({
+          id: Math.random().toString(36).substr(2, 9),
+          cnpj: formatarCNPJ(String(row.CNPJ || row.cnpj || "")),
+          razaoSocial: String(row.RazaoSocial || row.razaoSocial || row.Nome || ""),
+          emailPrincipal: !row.Email,
+          emailCustomizado: row.Email || emailEscritorio,
+          faturamento: String(row.Faturamento || row.faturamento || ""),
+          funcionarios: String(row.Funcionarios || row.funcionarios || ""),
+          emailEmpresa: String(row.EmailEmpresa || row.emailEmpresa || ""),
+          telefoneEmpresa: formatarTelefone(String(row.Telefone || row.telefone || "")),
+          cnpjValido: true
+        })).filter(c => c.cnpj && c.razaoSocial);
 
-      setClientes([...clientes, ...novosClientes]);
-      toast.success(`${novosClientes.length} clientes importados!`);
+        setClientes([...clientes, ...novosClientes]);
+        toast.success(`${novosClientes.length} clientes importados com sucesso!`);
+      } catch (err) {
+        toast.error("Erro ao processar planilha. Verifique o formato.");
+      }
     };
     reader.readAsBinaryString(file);
   };
 
   const baixarModelo = () => {
-    const modelo = [
-      {
-        'CNPJ': '00.000.000/0000-00',
-        'Razão Social': 'Exemplo Empresa LTDA',
-        'E-mail Contabilidade': 'contato@contabil.com.br',
-        'Faturamento': 'R$ 100.000,00',
-        'Funcionários': '10',
-        'E-mail Empresa': 'empresa@gmail.com',
-        'Telefone Empresa': '(11) 99999-9999'
-      }
-    ];
-    const ws = XLSX.utils.json_to_sheet(modelo);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Modelo");
-    XLSX.writeFile(wb, "modelo_clientes_sescon.xlsx");
+    const headers = ["CNPJ", "RazaoSocial", "Email", "Faturamento", "Funcionarios", "EmailEmpresa", "Telefone"];
+    const csv = headers.join(",") + "\n00.000.000/0000-00,Exemplo Empresa LTDA,email@contabilidade.com,R$ 1.000.000,00,10,contato@empresa.com,(11) 99999-9999";
+    const link = document.createElement("a");
+    link.href = `data:text/csv;charset=utf-8,${encodeURIComponent(csv)}`;
+    link.download = "modelo_clientes.csv";
+    link.click();
+    document.body.removeChild(link);
   };
 
-  const baixarExcel = () => {
+  const baixarExcelClientes = () => {
     if (clientes.length === 0) {
-      toast.error("Não há clientes para baixar.");
+      toast.error("Adicione clientes antes de baixar o Excel");
       return;
     }
-    const dataParaExportar = clientes.map(c => ({
-      'CNPJ Cliente': c.cnpj,
-      'Razão Social': c.razaoSocial,
-      'E-mail Contabilidade / Responsável': c.emailCustomizado || emailEscritorio,
-      'Faturamento': c.faturamento,
-      'Funcionários': c.funcionarios,
-      'E-mail Empresa': c.emailEmpresa,
-      'Telefone Empresa': c.telefoneEmpresa
+    const data = clientes.map(c => ({
+      CNPJ: c.cnpj,
+      RazaoSocial: c.razaoSocial,
+      Email: c.emailPrincipal ? emailEscritorio : c.emailCustomizado,
+      Faturamento: c.faturamento,
+      Funcionarios: c.funcionarios,
+      EmailEmpresa: c.emailEmpresa,
+      Telefone: c.telefoneEmpresa
     }));
-
-    const ws = XLSX.utils.json_to_sheet(dataParaExportar);
+    const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Meus Clientes");
-    XLSX.writeFile(wb, `Meus_Clientes_${cnpjEscritorio.replace(/\D/g, "")}.xlsx`);
-    toast.success("Planilha gerada com sucesso!");
+    XLSX.writeFile(wb, "meus_clientes.xlsx");
+    toast.success("Excel gerado com sucesso!");
   };
 
-  const salvarRascunho = () => {
-    if (!cnpjEscritorioValido) {
-      toast.error("Informe um CNPJ válido para salvar o rascunho.");
+  useEffect(() => {
+    if (!busca) {
+      setBuscaCarregando(false);
       return;
     }
-    const rascunho: Rascunho = {
-      nomeEscritorio: razaoSocialEscritorio,
-      cnpjEscritorio: cnpjEscritorio,
-      emailEscritorio: emailEscritorio,
-      clientes: clientes.map(({ contratosocial, ...rest }) => rest),
-      dataSalva: new Date().toISOString()
-    };
-    localStorage.setItem(`rascunho_sescon_${cnpjEscritorio.replace(/\D/g, "")}`, JSON.stringify(rascunho));
-    setTemRascunho(true);
-    toast.success("Rascunho salvo com sucesso!");
-  };
+    setBuscaCarregando(true);
+    const timer = setTimeout(() => {
+      setBuscaCarregando(false);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [busca]);
 
-  const limparRascunho = () => {
-    localStorage.removeItem(`rascunho_sescon_${cnpjEscritorio.replace(/\D/g, "")}`);
-    setClientes([]);
-    setTemRascunho(false);
-    setMostrarConfirmacaoLimpar(false);
-    toast.info("Rascunho excluído.");
-  };
-
-  const enviarDados = async () => {
-    setIsLoading(true);
-    setProgressoEnvio(10);
-    
-    const payload = {
-      escritorioCnpj: cnpjEscritorio,
-      escritorioRazao: razaoSocialEscritorio,
-      escritorioEmail: emailEscritorio,
-      clientes: clientes.map(c => ({
-        cnpj: c.cnpj,
-        razaoSocial: c.razaoSocial,
-        email: c.emailCustomizado || emailEscritorio,
-        faturamento: c.faturamento,
-        funcionarios: c.funcionarios,
-        emailEmpresa: c.emailEmpresa,
-        telefoneEmpresa: c.telefoneEmpresa
-      }))
-    };
-
-    try {
-      setProgressoEnvio(50);
-      // Substitua pela sua URL do AppScript
-      const response = await fetch('https://script.google.com/macros/s/AKfycbz_m_X_fW_Z_Z_Z_Z_Z_Z_Z_Z_Z_Z_Z_Z_Z_Z_Z_Z_Z_Z_Z/exec', {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify(payload)
-      });
-      
-      setProgressoEnvio(100);
-      setShowSuccessDialog(true);
-      localStorage.removeItem(`rascunho_sescon_${cnpjEscritorio.replace(/\D/g, "")}`);
-    } catch (error) {
-      toast.error("Erro ao enviar dados.");
-    } finally {
-      setIsLoading(false);
-      setProgressoEnvio(0);
-    }
-  };
-
-  const resetForm = () => {
-    setAbaSelecionada(1);
-    setCnpjEscritorio("");
-    setRazaoSocialEscritorio("");
-    setEmailEscritorio("");
-    setClientes([]);
-    setShowSuccessDialog(false);
-  };
-
-  const clientesFiltrados = clientes.filter(c => 
-    c.razaoSocial.toLowerCase().includes(busca.toLowerCase()) || 
+  const clientesFiltrados = clientes.filter(c =>
+    c.razaoSocial.toLowerCase().includes(busca.toLowerCase()) ||
     c.cnpj.includes(busca)
   );
 
-  const podeAvancarAba1 = cnpjEscritorioValido && emailEscritorio.includes("@");
+  useEffect(() => {
+    if (atividadePrincipal === "outros") {
+      window.location.href = "https://sesconsp.github.io/atualizacao-cadastral/";
+    }
+  }, [atividadePrincipal]);
+
+  const podeAvancarAba1 = cnpjEscritorioValido && razaoSocialEscritorio && emailEscritorio.includes("@");
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b sticky top-0 z-40 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-blue-900 rounded-xl flex items-center justify-center shadow-lg">
-              <Building className="text-white w-7 h-7" />
-            </div>
-            <div>
-              <h1 className="text-xl font-black tracking-tight" style={{ color: SESCON_DARK_BLUE }}>SESCON-SP</h1>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Atualização Cadastral 2026</p>
+    <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ background: "#f8fafc" }}>
+      <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-blue-50 rounded-full blur-3xl -z-10 opacity-50 translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-blue-50 rounded-full blur-3xl -z-10 opacity-30 -translate-x-1/4 translate-y-1/4"></div>
+      <div className="absolute top-1/2 left-1/2 w-full h-full bg-white/40 -z-20 -translate-x-1/2 -translate-y-1/2"></div>
+
+      <header className="border-b" style={{ background: SESCON_BLUE, borderColor: SESCON_DARK_BLUE }}>
+        <div className="px-8 py-6">
+          <div className="flex items-center justify-between gap-6">
+            <div className="flex items-center gap-6">
+              <img src="/pacc-sescon-improved/logo-sescon-branco.png" alt="SESCON-SP" className="h-20 w-auto hidden md:block" />
+              <div>
+                <h1 className="text-3xl font-extrabold text-white">Central de Atualização SESCON-SP</h1>
+                <p className="text-blue-100 text-base mt-1">Atualize as informações dos seus clientes representados de forma rápida e segura.</p>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <main className="flex-1 px-8 py-8">
+        <div className="grid grid-cols-4 gap-8 h-full">
           <div className="col-span-1 space-y-6">
-            <div className="bg-white rounded-2xl p-8 shadow-xl border-t-4" style={{ borderColor: SESCON_BLUE }}>
-              <h2 className="text-xl font-bold mb-4" style={{ color: SESCON_DARK_BLUE }}>Central de Atualização</h2>
-              <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                Mantenha a base de dados do seu escritório e de seus clientes atualizada para garantir todos os benefícios e representatividade do SESCON-SP.
-              </p>
+            <div 
+              className="rounded-lg p-6 text-white shadow-lg"
+              style={{ background: `linear-gradient(135deg, ${SESCON_BLUE} 0%, ${SESCON_DARK_BLUE} 100%)` }}
+            >
+              <h3 className="text-lg font-bold mb-6 pb-4 border-b border-white border-opacity-30">Como Funciona</h3>
               <div className="space-y-4">
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50">
-                  <CheckCircle2 className="w-5 h-5 text-blue-600 mt-0.5" />
-                  <div>
-                    <p className="text-xs font-bold" style={{ color: SESCON_DARK_BLUE }}>Segurança de Dados</p>
-                    <p className="text-[10px] text-gray-500">Ambiente criptografado e seguro</p>
+                {[
+                  { num: 1, text: "Preencha os dados do seu escritório" },
+                  { num: 2, text: "Importe ou adicione todos os seus clientes" },
+                  { num: 3, text: "Revise as informações" },
+                  { num: 4, text: "Envie para processamento" }
+                ].map(step => (
+                  <div key={step.num} className="flex gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white flex items-center justify-center font-bold text-sm" style={{ color: SESCON_DARK_BLUE }}>
+                      {step.num}
+                    </div>
+                    <p className="text-sm leading-relaxed">{step.text}</p>
                   </div>
-                </div>
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-green-50">
-                  <Clock className="w-5 h-5 text-green-600 mt-0.5" />
-                  <div>
-                    <p className="text-xs font-bold" style={{ color: SESCON_DARK_BLUE }}>Processamento Rápido</p>
-                    <p className="text-[10px] text-gray-500">Atualização em tempo real</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
-            {/* CAIXA DE VISUALIZAÇÃO DE CLIENTES - SEMPRE VISÍVEL */}
-            <div className="bg-white rounded-2xl shadow-xl border overflow-hidden" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-              <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
-                <h3 className="font-bold text-sm flex items-center gap-2" style={{ color: SESCON_DARK_BLUE }}>
-                  <Users className="w-4 h-4" />
-                  Clientes Adicionados ({clientes.length})
-                </h3>
+            <div 
+              className="rounded-lg p-6 border-l-4 shadow-sm"
+              style={{ background: "#eef6fb", borderColor: SESCON_DARK_BLUE, borderWidth: '0 0 0 6px' }}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <AlertTriangle className="w-5 h-5 flex-shrink-0 text-yellow-500 fill-yellow-500" />
+                <p className="text-lg font-bold" style={{ color: SESCON_DARK_BLUE }}>
+                  Importante
+                </p>
               </div>
-              <div className="max-h-[400px] overflow-y-auto p-4 space-y-3">
+              <p className="text-sm leading-relaxed" style={{ color: SESCON_DARK_BLUE }}>
+                A base anterior será excluída. Apenas os clientes que você enviar serão mantidos.
+              </p>
+            </div>
+
+            {/* CAIXA DE VISUALIZAR CLIENTES - SEMPRE VISÍVEL */}
+            <div className="rounded-lg p-6 border-2 shadow-sm bg-white" style={{ borderColor: SESCON_BLUE }}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold" style={{ color: SESCON_DARK_BLUE }}>Visualizar Clientes</h3>
+                <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded-full">{clientes.length}</span>
+              </div>
+              <div className="max-h-60 overflow-y-auto space-y-2 mb-4">
                 {clientes.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Users className="w-12 h-12 text-gray-200 mx-auto mb-2" />
-                    <p className="text-xs text-gray-400">Nenhum cliente adicionado ainda.</p>
-                  </div>
+                  <p className="text-xs text-gray-500 italic">Nenhum cliente adicionado ainda.</p>
                 ) : (
-                  clientes.map((c, idx) => (
-                    <div key={c.id} className="p-3 rounded-lg border bg-white hover:border-blue-200 transition-colors group relative">
-                      <button 
-                        onClick={() => removerCliente(c.id)}
-                        className="absolute top-2 right-2 p-1 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                      <p className="text-[10px] font-bold text-blue-600">{c.cnpj}</p>
-                      <p className="text-xs font-bold truncate pr-6" style={{ color: SESCON_DARK_BLUE }}>{idx + 1}. {c.razaoSocial}</p>
-                      <p className="text-[10px] text-gray-500 truncate mt-1">
-                        <Mail className="w-3 h-3 inline mr-1" />
-                        {c.emailCustomizado || "E-mail do Escritório"}
-                      </p>
+                  clientes.slice(0, 5).map((c, i) => (
+                    <div key={c.id} className="text-xs p-2 rounded bg-gray-50 border border-gray-100 truncate">
+                      {i+1}. {c.razaoSocial}
                     </div>
                   ))
                 )}
+                {clientes.length > 5 && <p className="text-[10px] text-center text-gray-400">... e mais {clientes.length - 5} clientes</p>}
               </div>
-              {clientes.length > 0 && (
-                <div className="p-3 bg-gray-50 border-t">
-                  <Button 
-                    onClick={() => setMostrarModalClientes(true)}
-                    variant="ghost" 
-                    className="w-full text-xs font-bold h-8"
-                    style={{ color: SESCON_BLUE }}
-                  >
-                    <Eye className="w-3 h-3 mr-2" /> Ver Detalhes / Pesquisar
-                  </Button>
-                </div>
-              )}
+              <Button
+                onClick={() => setMostrarModalClientes(true)}
+                disabled={clientes.length === 0}
+                className="w-full rounded-lg font-semibold py-2 text-white text-xs"
+                style={{ background: SESCON_ACCENT }}
+              >
+                <Eye className="w-3 h-3 mr-2" />
+                Abrir Lista Completa
+              </Button>
             </div>
           </div>
 
@@ -747,19 +785,6 @@ export default function Home() {
                             style={{ borderColor: SESCON_BLUE }}
                           />
                           
-                          {/* CAMPO DE E-MAIL DA CONTABILIDADE MELHORADO */}
-                          <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-gray-500 uppercase">E-mail do Responsável / Contabilidade</label>
-                            <Input
-                              placeholder="Ex: joao@contabil.com; maria@contabil.com"
-                              value={novoCliente.emailCustomizado}
-                              onChange={(e) => setNovoCliente({ ...novoCliente, emailCustomizado: e.target.value })}
-                              className="rounded-lg border-2"
-                              style={{ borderColor: SESCON_BLUE }}
-                            />
-                            <p className="text-[9px] text-gray-400">Para múltiplos e-mails, separe por ponto e vírgula (;)</p>
-                          </div>
-
                           <div className="grid grid-cols-2 gap-2">
                             <div className="relative">
                               <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -787,7 +812,7 @@ export default function Home() {
                             <div className="relative">
                               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                               <Input
-                                placeholder="E-mail Empresa"
+                                placeholder="E-mail Empresa (Pode separar por ;)"
                                 value={novoCliente.emailEmpresa}
                                 onChange={(e) => setNovoCliente({ ...novoCliente, emailEmpresa: e.target.value })}
                                 className="rounded-lg border-2 pl-9"
@@ -851,24 +876,23 @@ export default function Home() {
                         >
                           Voltar
                         </Button>
-                        
-                        {/* OPÇÃO DE BAIXAR EXCEL NO LUGAR DE SALVAR RASCUNHO */}
                         <Button
-                          onClick={baixarExcel}
+                          onClick={baixarExcelClientes}
+                          disabled={clientes.length === 0}
                           className="flex-1 rounded-lg font-semibold py-2 text-white hover:bg-blue-700 transition-colors"
                           style={{ background: SESCON_ACCENT }}
                         >
                           <Download className="w-4 h-4 mr-2" />
                           Baixar meus Clientes (Excel)
                         </Button>
-
                         <Button
-                          onClick={salvarRascunho}
-                          variant="ghost"
-                          className="flex-1 rounded-lg font-semibold py-2 border hover:bg-gray-50"
+                          onClick={() => setMostrarModalClientes(true)}
+                          disabled={clientes.length === 0}
+                          className="flex-1 rounded-lg font-semibold py-2 text-white hover:bg-blue-700 transition-colors"
+                          style={{ background: SESCON_ACCENT }}
                         >
-                          <Save className="w-4 h-4 mr-2" />
-                          Salvar Rascunho
+                          <Eye className="w-4 h-4 mr-2" />
+                          Visualizar Clientes
                         </Button>
                       </div>
                       <Button
