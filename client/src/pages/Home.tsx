@@ -146,7 +146,6 @@ const faqs: FAQ[] = [
 </ul>`
   }
 ];
-
 export default function Home() {
   const [abaSelecionada, setAbaSelecionada] = useState(1);
   const [cnpjEscritorio, setCnpjEscritorio] = useState("");
@@ -522,35 +521,6 @@ export default function Home() {
                 A base anterior será excluída. Apenas os clientes que você enviar serão mantidos.
               </p>
             </div>
-
-            {/* CAIXA DE VISUALIZAR CLIENTES - SEMPRE VISÍVEL */}
-            <div className="rounded-lg p-6 border-2 shadow-sm bg-white" style={{ borderColor: SESCON_BLUE }}>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold" style={{ color: SESCON_DARK_BLUE }}>Visualizar Clientes</h3>
-                <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded-full">{clientes.length}</span>
-              </div>
-              <div className="max-h-60 overflow-y-auto space-y-2 mb-4">
-                {clientes.length === 0 ? (
-                  <p className="text-xs text-gray-500 italic">Nenhum cliente adicionado ainda.</p>
-                ) : (
-                  clientes.slice(0, 5).map((c, i) => (
-                    <div key={c.id} className="text-xs p-2 rounded bg-gray-50 border border-gray-100 truncate">
-                      {i+1}. {c.razaoSocial}
-                    </div>
-                  ))
-                )}
-                {clientes.length > 5 && <p className="text-[10px] text-center text-gray-400">... e mais {clientes.length - 5} clientes</p>}
-              </div>
-              <Button
-                onClick={() => setMostrarModalClientes(true)}
-                disabled={clientes.length === 0}
-                className="w-full rounded-lg font-semibold py-2 text-white text-xs"
-                style={{ background: SESCON_ACCENT }}
-              >
-                <Eye className="w-3 h-3 mr-2" />
-                Abrir Lista Completa
-              </Button>
-            </div>
           </div>
 
           <div className="col-span-3 space-y-6">
@@ -831,6 +801,57 @@ export default function Home() {
                             </div>
                           </div>
 
+                          {/* CAMPO DE CONTRATO SOCIAL RESTAURADO */}
+                          <div className="space-y-2">
+                            <label className="text-xs font-bold" style={{ color: SESCON_DARK_BLUE }}>Contrato Social (Opcional)</label>
+                            <div className="flex items-center gap-3">
+                              <input
+                                type="file"
+                                accept=".pdf"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    if (file.type === 'application/pdf') {
+                                      setNovoCliente({ ...novoCliente, contratosocial: file });
+                                      toast.success(`Arquivo "${file.name}" selecionado!`, { duration: 2000 });
+                                    } else {
+                                      toast.error('Apenas arquivos PDF são aceitos!', { duration: 3000 });
+                                      e.target.value = '';
+                                    }
+                                  }
+                                }}
+                                className="hidden"
+                                id="contrato-social-input"
+                              />
+                              <label
+                                htmlFor="contrato-social-input"
+                                className="flex-1 cursor-pointer"
+                              >
+                                <div className="flex items-center justify-center gap-2 p-3 rounded-lg border-2 border-dashed hover:bg-gray-50 transition-colors" style={{ borderColor: SESCON_BLUE }}>
+                                  <FileText className="w-4 h-4" style={{ color: SESCON_BLUE }} />
+                                  <span className="text-sm" style={{ color: SESCON_BLUE }}>
+                                    {novoCliente.contratosocial ? novoCliente.contratosocial.name : 'Selecionar PDF'}
+                                  </span>
+                                </div>
+                              </label>
+                              {novoCliente.contratosocial && (
+                                <Button
+                                  onClick={() => {
+                                    setNovoCliente({ ...novoCliente, contratosocial: undefined });
+                                    const input = document.getElementById('contrato-social-input') as HTMLInputElement;
+                                    if (input) input.value = '';
+                                    toast.info('Arquivo removido', { duration: 2000 });
+                                  }}
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-red-600 hover:bg-red-50"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+
                           <Button
                             onClick={adicionarCliente}
                             className="w-full rounded-lg font-semibold py-2 text-white"
@@ -844,6 +865,52 @@ export default function Home() {
                     </div>
 
                     <div className="flex flex-col gap-3 pt-4">
+                      {/* CAIXA DE VISUALIZAR CLIENTES - POSICIONADA ACIMA DOS BOTÕES */}
+                      <div className="rounded-lg p-6 border-2 shadow-sm bg-white mb-4" style={{ borderColor: SESCON_BLUE }}>
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-lg font-bold" style={{ color: SESCON_DARK_BLUE }}>Visualizar Clientes</h3>
+                          <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded-full">{clientes.length}</span>
+                        </div>
+                        
+                        {/* CAMPO DE PESQUISA NA CAIXA */}
+                        <div className="relative mb-4">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                          <Input
+                            placeholder="Pesquisar na lista..."
+                            value={busca}
+                            onChange={(e) => setBusca(e.target.value)}
+                            className="pl-10 text-sm"
+                          />
+                        </div>
+
+                        <div className="max-h-60 overflow-y-auto space-y-2 mb-4">
+                          {clientesFiltrados.length === 0 ? (
+                            <p className="text-xs text-gray-500 italic">Nenhum cliente encontrado.</p>
+                          ) : (
+                            clientesFiltrados.map((c, i) => (
+                              <div key={c.id} className="text-xs p-3 rounded bg-gray-50 border border-gray-100 flex justify-between items-center group">
+                                <span className="truncate flex-1 font-medium">{i+1}. {c.razaoSocial}</span>
+                                <button 
+                                  onClick={() => removerCliente(c.id)}
+                                  className="text-red-400 hover:text-red-600 ml-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                        <Button
+                          onClick={() => setMostrarModalClientes(true)}
+                          disabled={clientes.length === 0}
+                          className="w-full rounded-lg font-semibold py-2 text-white text-xs"
+                          style={{ background: SESCON_ACCENT }}
+                        >
+                          <Eye className="w-3 h-3 mr-2" />
+                          Abrir Lista Completa
+                        </Button>
+                      </div>
+
                       {temRascunho && (
                         <div className="flex items-center justify-center gap-2 text-sm text-gray-500 mb-2">
                           <Clock className="w-4 h-4" />
