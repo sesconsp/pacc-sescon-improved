@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Upload, CheckCircle, Mail, AlertCircle, FileText, Download, ChevronDown, ChevronUp, Loader2, Search, Save, RotateCcw, Eye, Clock, CheckCircle2, AlertTriangle, Send, FileDown, Download as DownloadIcon, Trash, Instagram, Facebook, Youtube, Linkedin, MessageCircle, Building, Users, DollarSign } from "lucide-react";
+import { Plus, Trash2, Upload, CheckCircle, Mail, AlertCircle, FileText, Download, ChevronDown, ChevronUp, Loader2, Search, Save, RotateCcw, Eye, Clock, CheckCircle2, AlertTriangle, Send, FileDown, Download as DownloadIcon, Trash, Instagram, Facebook, Youtube, Linkedin, MessageCircle, Building, Users, DollarSign, Phone } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 // @ts-ignore
@@ -26,7 +26,8 @@ interface Cliente {
   emailCustomizado?: string;
   faturamento?: string;
   funcionarios?: string;
-  contatoEmpresa?: string;
+  emailEmpresa?: string;
+  telefoneEmpresa?: string;
   contratosocial?: File;
   cnpjValido?: boolean;
   ehMatriz?: boolean;
@@ -160,7 +161,8 @@ export default function Home() {
     emailCustomizado: "",
     faturamento: "",
     funcionarios: "",
-    contatoEmpresa: ""
+    emailEmpresa: "",
+    telefoneEmpresa: ""
   });
   const [isLoading, setIsLoading] = useState(false);
   const [progressoEnvio, setProgressoEnvio] = useState(0);
@@ -174,7 +176,7 @@ export default function Home() {
   const [temRascunho, setTemRascunho] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
-  // Formatação de CNPJ
+  // Máscaras
   const formatarCNPJ = (v: string) => {
     v = v.replace(/\D/g, "");
     if (v.length <= 14) {
@@ -182,6 +184,21 @@ export default function Home() {
       v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
       v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
       v = v.replace(/(\d{4})(\d)/, "$1-$2");
+    }
+    return v;
+  };
+
+  const formatarMoeda = (v: string) => {
+    v = v.replace(/\D/g, "");
+    v = (Number(v) / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    return v;
+  };
+
+  const formatarTelefone = (v: string) => {
+    v = v.replace(/\D/g, "");
+    if (v.length <= 11) {
+      v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
+      v = v.replace(/(\d)(\d{4})$/, "$1-$2");
     }
     return v;
   };
@@ -296,7 +313,8 @@ export default function Home() {
           email: c.emailPrincipal ? emailEscritorio : c.emailCustomizado,
           faturamento: c.faturamento,
           funcionarios: c.funcionarios,
-          contatoEmpresa: c.contatoEmpresa
+          emailEmpresa: c.emailEmpresa,
+          telefoneEmpresa: c.telefoneEmpresa
         })),
         dataEnvio: new Date().toISOString()
       };
@@ -339,12 +357,13 @@ export default function Home() {
       emailCustomizado: novoCliente.emailPrincipal ? emailEscritorio : novoCliente.emailCustomizado,
       faturamento: novoCliente.faturamento,
       funcionarios: novoCliente.funcionarios,
-      contatoEmpresa: novoCliente.contatoEmpresa,
+      emailEmpresa: novoCliente.emailEmpresa,
+      telefoneEmpresa: novoCliente.telefoneEmpresa,
       contratosocial: novoCliente.contratosocial,
       cnpjValido: true
     };
     setClientes([...clientes, cliente]);
-    setNovoCliente({ cnpj: "", razaoSocial: "", emailPrincipal: true, emailCustomizado: "", faturamento: "", funcionarios: "", contatoEmpresa: "" });
+    setNovoCliente({ cnpj: "", razaoSocial: "", emailPrincipal: true, emailCustomizado: "", faturamento: "", funcionarios: "", emailEmpresa: "", telefoneEmpresa: "" });
     toast.success("Cliente adicionado à lista!");
   };
 
@@ -374,7 +393,8 @@ export default function Home() {
           emailCustomizado: row.Email || emailEscritorio,
           faturamento: String(row.Faturamento || row.faturamento || ""),
           funcionarios: String(row.Funcionarios || row.funcionarios || ""),
-          contatoEmpresa: String(row.Contato || row.contato || ""),
+          emailEmpresa: String(row.EmailEmpresa || row.emailEmpresa || ""),
+          telefoneEmpresa: formatarTelefone(String(row.Telefone || row.telefone || "")),
           cnpjValido: true
         })).filter(c => c.cnpj && c.razaoSocial);
 
@@ -388,8 +408,8 @@ export default function Home() {
   };
 
   const baixarModelo = () => {
-    const headers = ["CNPJ", "RazaoSocial", "Email", "Faturamento", "Funcionarios", "Contato"];
-    const csv = headers.join(",") + "\n00.000.000/0000-00,Exemplo Empresa LTDA,email@exemplo.com,1000000,10,João Silva";
+    const headers = ["CNPJ", "RazaoSocial", "Email", "Faturamento", "Funcionarios", "EmailEmpresa", "Telefone"];
+    const csv = headers.join(",") + "\n00.000.000/0000-00,Exemplo Empresa LTDA,email@contabilidade.com,R$ 1.000.000,00,10,contato@empresa.com,(11) 99999-9999";
     const link = document.createElement("a");
     link.href = `data:text/csv;charset=utf-8,${encodeURIComponent(csv)}`;
     link.download = "modelo_clientes.csv";
@@ -715,14 +735,13 @@ export default function Home() {
                             style={{ borderColor: SESCON_BLUE }}
                           />
                           
-                          {/* Novos Campos Solicitados */}
                           <div className="grid grid-cols-2 gap-2">
                             <div className="relative">
                               <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                               <Input
                                 placeholder="Faturamento Anual"
                                 value={novoCliente.faturamento}
-                                onChange={(e) => setNovoCliente({ ...novoCliente, faturamento: e.target.value })}
+                                onChange={(e) => setNovoCliente({ ...novoCliente, faturamento: formatarMoeda(e.target.value) })}
                                 className="rounded-lg border-2 pl-9"
                                 style={{ borderColor: SESCON_BLUE }}
                               />
@@ -732,21 +751,34 @@ export default function Home() {
                               <Input
                                 placeholder="Nº Funcionários"
                                 value={novoCliente.funcionarios}
-                                onChange={(e) => setNovoCliente({ ...novoCliente, funcionarios: e.target.value })}
+                                onChange={(e) => setNovoCliente({ ...novoCliente, funcionarios: e.target.value.replace(/\D/g, "") })}
                                 className="rounded-lg border-2 pl-9"
                                 style={{ borderColor: SESCON_BLUE }}
                               />
                             </div>
                           </div>
-                          <div className="relative">
-                            <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                            <Input
-                              placeholder="Contato Direto na Empresa (Nome/Cargo)"
-                              value={novoCliente.contatoEmpresa}
-                              onChange={(e) => setNovoCliente({ ...novoCliente, contatoEmpresa: e.target.value })}
-                              className="rounded-lg border-2 pl-9"
-                              style={{ borderColor: SESCON_BLUE }}
-                            />
+                          
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="relative">
+                              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                              <Input
+                                placeholder="E-mail Empresa"
+                                value={novoCliente.emailEmpresa}
+                                onChange={(e) => setNovoCliente({ ...novoCliente, emailEmpresa: e.target.value })}
+                                className="rounded-lg border-2 pl-9"
+                                style={{ borderColor: SESCON_BLUE }}
+                              />
+                            </div>
+                            <div className="relative">
+                              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                              <Input
+                                placeholder="Telefone Empresa"
+                                value={novoCliente.telefoneEmpresa}
+                                onChange={(e) => setNovoCliente({ ...novoCliente, telefoneEmpresa: formatarTelefone(e.target.value) })}
+                                className="rounded-lg border-2 pl-9"
+                                style={{ borderColor: SESCON_BLUE }}
+                              />
+                            </div>
                           </div>
 
                           <div className="space-y-2">
@@ -913,7 +945,10 @@ export default function Home() {
                       <p className="text-xs text-gray-500">Fat: {cliente.faturamento || "N/A"}</p>
                       <p className="text-xs text-gray-500">Func: {cliente.funcionarios || "N/A"}</p>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">Contato: {cliente.contatoEmpresa || "N/A"}</p>
+                    <div className="grid grid-cols-2 gap-x-4 mt-1">
+                      <p className="text-xs text-gray-500">E-mail: {cliente.emailEmpresa || "N/A"}</p>
+                      <p className="text-xs text-gray-500">Tel: {cliente.telefoneEmpresa || "N/A"}</p>
+                    </div>
                   </div>
                   <Button
                     onClick={() => removerCliente(cliente.id)}
