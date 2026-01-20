@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Upload, CheckCircle, Mail, AlertCircle, FileText, Download, ChevronDown, ChevronUp, Loader2, Search, Save, RotateCcw, Eye, Clock, CheckCircle2, AlertTriangle, Send, FileDown, Download as DownloadIcon, Trash, Instagram, Facebook, Youtube, Linkedin, MessageCircle, Building, Users, DollarSign, Phone, FileUp } from "lucide-react";
+import { Plus, Trash2, Upload, CheckCircle, Mail, AlertCircle, FileText, Download, ChevronDown, ChevronUp, Loader2, Search, Save, RotateCcw, Eye, Clock, CheckCircle2, AlertTriangle, Send, FileDown, Download as DownloadIcon, Trash, Instagram, Facebook, Youtube, Linkedin, MessageCircle, Building, Users, DollarSign, Phone } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 // @ts-ignore
@@ -22,16 +22,14 @@ interface Cliente {
   id: string;
   cnpj: string;
   razaoSocial: string;
-  emailResponsavel: string;
+  emailPrincipal: boolean;
+  emailCustomizado?: string;
   faturamento?: string;
   funcionarios?: string;
   emailEmpresa?: string;
   telefoneEmpresa?: string;
-  contratosocial?: {
-    name: string;
-    data: string;
-  };
   cnpjValido?: boolean;
+  ehMatriz?: boolean;
 }
 
 interface FAQ {
@@ -145,26 +143,23 @@ export default function Home() {
   const [cnpjEscritorio, setCnpjEscritorio] = useState("");
   const [razaoSocialEscritorio, setRazaoSocialEscritorio] = useState("");
   const [emailEscritorio, setEmailEscritorio] = useState("");
+  const [cnpjEscritorioValido, setCnpjEscritorioValido] = useState(false);
+  const [buscandoReceita, setBuscandoReceita] = useState(false);
   const [atividadePrincipal, setAtividadePrincipal] = useState("contabilidade");
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [novoCliente, setNovoCliente] = useState<Partial<Cliente>>({
     cnpj: "",
     razaoSocial: "",
-    emailResponsavel: "",
     faturamento: "",
     funcionarios: "",
     emailEmpresa: "",
-    telefoneEmpresa: ""
+    telefoneEmpresa: "",
+    emailCustomizado: ""
   });
   const [isLoading, setIsLoading] = useState(false);
   const [progressoEnvio, setProgressoEnvio] = useState(0);
   const [faqAberto, setFaqAberto] = useState<number | null>(null);
-  const [busca, setBusca] = useState("");
-  const [buscandoReceita, setBuscandoReceita] = useState(false);
-  const [cnpjEscritorioValido, setCnpjEscritorioValido] = useState(false);
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
-  // Máscaras
   const formatarCNPJ = (v: string) => {
     v = v.replace(/\D/g, "");
     if (v.length <= 14) {
@@ -194,87 +189,54 @@ export default function Home() {
   const buscarCNPJ = async (cnpj: string, isCliente = false) => {
     const cnpjLimpo = cnpj.replace(/\D/g, "");
     if (cnpjLimpo.length !== 14) return;
+
     setBuscandoReceita(true);
     try {
-      const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjLimpo}`);
-      if (response.ok) {
-        const data = await response.json();
-        if (isCliente) {
-          setNovoCliente(prev => ({ ...prev, razaoSocial: data.razao_social }));
-          toast.success("Cliente localizado!");
-        } else {
-          setRazaoSocialEscritorio(data.razao_social);
-          setCnpjEscritorioValido(true);
-          toast.success("Escritório localizado!");
-        }
+      const response = await fetch(`https://publica.cnpj.ws/cnpj/${cnpjLimpo}`);
+      const data = await response.json();
+      
+      if (isCliente) {
+        setNovoCliente(prev => ({
+          ...prev,
+          razaoSocial: data.razao_social,
+          emailEmpresa: data.estabelecimento.email,
+          telefoneEmpresa: `(${data.estabelecimento.ddd1}) ${data.estabelecimento.telefone1}`
+        }));
       } else {
-        if (!isCliente) setCnpjEscritorioValido(false);
-        toast.error("CNPJ não localizado");
+        setRazaoSocialEscritorio(data.razao_social);
+        setCnpjEscritorioValido(true);
       }
     } catch (error) {
-      toast.error("Erro ao conectar com a Receita Federal");
+      toast.error("Erro ao buscar CNPJ. Verifique os dados.");
     } finally {
       setBuscandoReceita(false);
     }
   };
 
-  const resetForm = () => {
-    setCnpjEscritorio("");
-    setRazaoSocialEscritorio("");
-    setEmailEscritorio("");
-    setAtividadePrincipal("contabilidade");
-    setClientes([]);
-    setAbaSelecionada(1);
-    setProgressoEnvio(0);
-    setShowSuccessDialog(false);
-    setCnpjEscritorioValido(false);
-  };
-
-  const enviarDados = async () => {
-    setIsLoading(true);
-    setProgressoEnvio(10);
-    try {
-      const dadosEnvio = {
-        escritorioCnpj: cnpjEscritorio,
-        escritorioRazao: razaoSocialEscritorio,
-        escritorioEmail: emailEscritorio,
-        atividadePrincipal: atividadePrincipal,
-        clientes: clientes,
-        dataEnvio: new Date().toISOString()
-      };
-      setProgressoEnvio(40);
-      const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxR2MCXtsKqCO3cXC6NgAkntgt6E2N5eTFEAqbyw7YW9Q2lATMGOE1L-NI916Ofduio/exec";
-      await fetch(WEBHOOK_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(dadosEnvio) });
-      setProgressoEnvio(100);
-      setShowSuccessDialog(true);
-    } catch (error) {
-      toast.error("Erro ao enviar dados.");
-      setProgressoEnvio(0);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const adicionarCliente = () => {
     if (!novoCliente.cnpj || !novoCliente.razaoSocial) {
-      toast.error("Preencha o CNPJ e a Razão Social");
+      toast.error("CNPJ e Razão Social são obrigatórios");
       return;
     }
     const cliente: Cliente = {
       id: Math.random().toString(36).substr(2, 9),
       cnpj: novoCliente.cnpj!,
       razaoSocial: novoCliente.razaoSocial!,
-      emailResponsavel: novoCliente.emailResponsavel || emailEscritorio,
-      faturamento: novoCliente.faturamento,
-      funcionarios: novoCliente.funcionarios,
-      emailEmpresa: novoCliente.emailEmpresa,
-      telefoneEmpresa: novoCliente.telefoneEmpresa,
-      contratosocial: novoCliente.contratosocial,
-      cnpjValido: true
-    };
+      emailPrincipal: !novoCliente.emailCustomizado,
+      ...novoCliente
+    } as Cliente;
+
     setClientes([...clientes, cliente]);
-    setNovoCliente({ cnpj: "", razaoSocial: "", emailResponsavel: "", faturamento: "", funcionarios: "", emailEmpresa: "", telefoneEmpresa: "" });
-    toast.success("Cliente adicionado!");
+    setNovoCliente({
+      cnpj: "",
+      razaoSocial: "",
+      faturamento: "",
+      funcionarios: "",
+      emailEmpresa: "",
+      telefoneEmpresa: "",
+      emailCustomizado: ""
+    });
+    toast.success("Cliente adicionado com sucesso!");
   };
 
   const removerCliente = (id: string) => {
@@ -285,246 +247,351 @@ export default function Home() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     const reader = new FileReader();
     reader.onload = (evt) => {
-      try {
-        const bstr = evt.target?.result;
-        const wb = XLSX.read(bstr, { type: 'binary' });
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const data = XLSX.utils.sheet_to_json(ws);
-        const novosClientes: Cliente[] = data.map((row: any) => ({
-          id: Math.random().toString(36).substr(2, 9),
-          cnpj: formatarCNPJ(String(row.CNPJ || row.cnpj || "")),
-          razaoSocial: String(row.RazaoSocial || row.razaoSocial || ""),
-          emailResponsavel: row.EmailResponsavel || row.emailResponsavel || emailEscritorio,
-          faturamento: String(row.Faturamento || row.faturamento || ""),
-          funcionarios: String(row.Funcionarios || row.funcionarios || ""),
-          emailEmpresa: String(row.EmailEmpresa || row.emailEmpresa || ""),
-          telefoneEmpresa: formatarTelefone(String(row.Telefone || row.telefone || "")),
-          cnpjValido: true
-        })).filter(c => c.cnpj && c.razaoSocial);
-        setClientes([...clientes, ...novosClientes]);
-        toast.success(`${novosClientes.length} clientes importados!`);
-      } catch (err) {
-        toast.error("Erro ao processar planilha.");
-      }
+      const bstr = evt.target?.result;
+      const wb = XLSX.read(bstr, { type: 'binary' });
+      const wsname = wb.SheetNames[0];
+      const ws = wb.Sheets[wsname];
+      const data = XLSX.utils.sheet_to_json(ws) as any[];
+
+      const novosClientes = data.map((row: any) => ({
+        id: Math.random().toString(36).substr(2, 9),
+        cnpj: formatarCNPJ(String(row.CNPJ || row.cnpj || "")),
+        razaoSocial: String(row['Razão Social'] || row.razaoSocial || ""),
+        emailCustomizado: String(row['E-mail Contabilidade'] || row.email || ""),
+        faturamento: String(row.Faturamento || row.faturamento || ""),
+        funcionarios: String(row.Funcionários || row.funcionarios || ""),
+        emailEmpresa: String(row['E-mail Empresa'] || row.emailEmpresa || ""),
+        telefoneEmpresa: String(row['Telefone Empresa'] || row.telefoneEmpresa || ""),
+        emailPrincipal: !row['E-mail Contabilidade']
+      }));
+
+      setClientes([...clientes, ...novosClientes]);
+      toast.success(`${novosClientes.length} clientes importados!`);
     };
     reader.readAsBinaryString(file);
   };
 
-  const exportarExcel = () => {
+  const baixarExcel = () => {
     if (clientes.length === 0) {
-      toast.error("Não há clientes para exportar");
+      toast.error("Não há clientes para baixar.");
       return;
     }
-    const data = clientes.map(c => ({
-      "CNPJ": c.cnpj,
-      "Razão Social": c.razaoSocial,
-      "E-mail Responsável": c.emailResponsavel,
-      "Faturamento": c.faturamento,
-      "Funcionários": c.funcionarios,
-      "E-mail Empresa": c.emailEmpresa,
-      "Telefone Empresa": c.telefoneEmpresa
+    const dataParaExportar = clientes.map(c => ({
+      'CNPJ Cliente': c.cnpj,
+      'Razão Social': c.razaoSocial,
+      'E-mail Contabilidade / Responsável': c.emailCustomizado || emailEscritorio,
+      'Faturamento': c.faturamento,
+      'Funcionários': c.funcionarios,
+      'E-mail Empresa': c.emailEmpresa,
+      'Telefone Empresa': c.telefoneEmpresa
     }));
-    const ws = XLSX.utils.json_to_sheet(data);
+
+    const ws = XLSX.utils.json_to_sheet(dataParaExportar);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Clientes");
-    XLSX.writeFile(wb, "Lista_Clientes_SESCON.xlsx");
-    toast.success("Lista exportada com sucesso!");
+    XLSX.utils.book_append_sheet(wb, ws, "Meus Clientes");
+    XLSX.writeFile(wb, `Meus_Clientes_${cnpjEscritorio.replace(/\D/g, "")}.xlsx`);
+    toast.success("Planilha gerada com sucesso!");
   };
 
-  const handlePDFUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && file.type === "application/pdf") {
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        setNovoCliente({
-          ...novoCliente,
-          contratosocial: {
-            name: file.name,
-            data: evt.target?.result as string
-          }
-        });
-        toast.success("PDF anexado com sucesso!");
-      };
-      reader.readAsDataURL(file);
-    } else {
-      toast.error("Por favor, selecione um arquivo PDF.");
+  const enviarDados = async () => {
+    setIsLoading(true);
+    setProgressoEnvio(10);
+    
+    const payload = {
+      escritorioCnpj: cnpjEscritorio,
+      escritorioRazao: razaoSocialEscritorio,
+      escritorioEmail: emailEscritorio,
+      clientes: clientes.map(c => ({
+        cnpj: c.cnpj,
+        razaoSocial: c.razaoSocial,
+        email: c.emailCustomizado || emailEscritorio,
+        faturamento: c.faturamento,
+        funcionarios: c.funcionarios,
+        emailEmpresa: c.emailEmpresa,
+        telefoneEmpresa: c.telefoneEmpresa
+      }))
+    };
+
+    try {
+      setProgressoEnvio(50);
+      // Substitua pela sua URL do AppScript
+      const response = await fetch('SUA_URL_DO_APPSCRIPT_AQUI', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      
+      setProgressoEnvio(100);
+      toast.success("Dados enviados com sucesso!");
+      setAbaSelecionada(1);
+      setClientes([]);
+    } catch (error) {
+      toast.error("Erro ao enviar dados.");
+    } finally {
+      setIsLoading(false);
+      setProgressoEnvio(0);
     }
   };
 
-  useEffect(() => {
-    if (atividadePrincipal === "outros") {
-      window.location.href = "https://sesconsp.github.io/atualizacao-cadastral/";
-    }
-  }, [atividadePrincipal]);
-
-  const podeAvancarAba1 = cnpjEscritorioValido && razaoSocialEscritorio && emailEscritorio.includes("@");
+  const podeAvancarAba1 = cnpjEscritorioValido && emailEscritorio.includes("@");
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#f8fafc" }}>
-      <header className="border-b" style={{ background: SESCON_BLUE }}>
-        <div className="px-8 py-6 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <img src="/pacc-sescon-improved/logo-sescon-branco.png" alt="SESCON-SP" className="h-16 w-auto" />
+    <div className="min-h-screen bg-slate-50 pb-20">
+      {/* Header */}
+      <header className="bg-white border-b sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-blue-900 rounded-xl flex items-center justify-center shadow-lg">
+              <Building className="text-white w-7 h-7" />
+            </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">Central de Atualização SESCON-SP</h1>
-              <p className="text-blue-100 text-sm">Sindicato das Empresas de Serviços Contábeis</p>
+              <h1 className="text-xl font-black tracking-tight" style={{ color: SESCON_DARK_BLUE }}>SESCON-SP</h1>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Atualização Cadastral 2026</p>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 px-8 py-8">
-        <div className="grid grid-cols-4 gap-8">
-          <div className="col-span-1 space-y-6">
-            <div className="rounded-lg p-6 text-white shadow-lg" style={{ background: SESCON_BLUE }}>
-              <h3 className="text-lg font-bold mb-4 border-b border-white/30 pb-2">Como Funciona</h3>
-              <div className="space-y-4 text-sm">
-                <p>1. Identifique seu escritório</p>
-                <p>2. Adicione seus clientes (Manual ou Planilha)</p>
-                <p>3. Revise e envie os dados</p>
+      <main className="max-w-6xl mx-auto px-4 pt-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Coluna Esquerda: Info */}
+          <div className="lg:col-span-1 space-y-6">
+            <div className="bg-white rounded-2xl p-8 shadow-xl border-t-4" style={{ borderColor: SESCON_BLUE }}>
+              <h2 className="text-xl font-bold mb-4" style={{ color: SESCON_DARK_BLUE }}>Central de Atualização</h2>
+              <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                Mantenha a base de dados do seu escritório e de seus clientes atualizada para garantir todos os benefícios e representatividade do SESCON-SP.
+              </p>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50">
+                  <CheckCircle2 className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-bold" style={{ color: SESCON_DARK_BLUE }}>Segurança de Dados</p>
+                    <p className="text-[10px] text-gray-500">Ambiente criptografado e seguro</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-green-50">
+                  <Clock className="w-5 h-5 text-green-600 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-bold" style={{ color: SESCON_DARK_BLUE }}>Processamento Rápido</p>
+                    <p className="text-[10px] text-gray-500">Atualização em tempo real</p>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="rounded-lg p-6 border-l-4 bg-yellow-50 border-yellow-400">
-              <p className="text-sm font-bold text-yellow-800 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> Importante</p>
-              <p className="text-xs text-yellow-700 mt-2">A nova lista enviada substituirá integralmente a base anterior.</p>
+
+            {/* CAIXA DE VISUALIZAÇÃO DE CLIENTES (Sempre visível se houver clientes) */}
+            <div className="bg-white rounded-2xl shadow-xl border overflow-hidden" style={{ borderColor: SESCON_LIGHT_BLUE }}>
+              <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
+                <h3 className="font-bold text-sm flex items-center gap-2" style={{ color: SESCON_DARK_BLUE }}>
+                  <Users className="w-4 h-4" />
+                  Clientes Adicionados ({clientes.length})
+                </h3>
+              </div>
+              <div className="max-h-[400px] overflow-y-auto p-4 space-y-3">
+                {clientes.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Users className="w-12 h-12 text-gray-200 mx-auto mb-2" />
+                    <p className="text-xs text-gray-400">Nenhum cliente adicionado ainda.</p>
+                  </div>
+                ) : (
+                  clientes.map((c) => (
+                    <div key={c.id} className="p-3 rounded-lg border bg-white hover:border-blue-200 transition-colors group relative">
+                      <button 
+                        onClick={() => removerCliente(c.id)}
+                        className="absolute top-2 right-2 p-1 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                      <p className="text-[10px] font-bold text-blue-600">{c.cnpj}</p>
+                      <p className="text-xs font-bold truncate pr-6" style={{ color: SESCON_DARK_BLUE }}>{c.razaoSocial}</p>
+                      <p className="text-[10px] text-gray-500 truncate mt-1">
+                        <Mail className="w-3 h-3 inline mr-1" />
+                        {c.emailCustomizado || "E-mail do Escritório"}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="col-span-3 space-y-6">
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+          {/* Coluna Direita: Formulário */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-white rounded-xl p-4 shadow-md border" style={{ borderColor: SESCON_LIGHT_BLUE }}>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-xs font-bold text-gray-500 uppercase">Passo {abaSelecionada} de 2</span>
-                <span className="text-xs font-bold" style={{ color: SESCON_BLUE }}>{abaSelecionada === 1 ? '50%' : '100%'}</span>
+                <span className="text-sm font-semibold" style={{ color: SESCON_DARK_BLUE }}>Progresso</span>
+                <span className="text-xs font-bold" style={{ color: SESCON_BLUE }}>Passo {abaSelecionada} de 2</span>
               </div>
-              <div className="w-full bg-gray-100 rounded-full h-2">
-                <div className="h-2 rounded-full transition-all duration-500" style={{ width: abaSelecionada === 1 ? '50%' : '100%', background: SESCON_BLUE }}></div>
+              <div className="w-full bg-gray-100 rounded-full h-2.5">
+                <div 
+                  className="h-2.5 rounded-full transition-all duration-500"
+                  style={{ width: abaSelecionada === 1 ? '50%' : '100%', background: SESCON_BLUE }}
+                ></div>
               </div>
             </div>
 
             <AnimatePresence mode="wait">
               {abaSelecionada === 1 ? (
-                <motion.div key="aba1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                  <h2 className="text-xl font-bold mb-6" style={{ color: SESCON_DARK_BLUE }}>Identificação do Escritório</h2>
-                  <div className="space-y-4">
-                    <div className="space-y-1">
-                      <label className="text-xs font-bold text-gray-600">CNPJ DO ESCRITÓRIO *</label>
+                <motion.div
+                  key="aba1"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  className="bg-white rounded-2xl shadow-xl border p-8"
+                >
+                  <h2 className="text-2xl font-bold mb-8" style={{ color: SESCON_DARK_BLUE }}>Identificação do Escritório</h2>
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold" style={{ color: SESCON_DARK_BLUE }}>CNPJ do Escritório *</label>
                       <div className="relative">
-                        <Input placeholder="00.000.000/0000-00" value={cnpjEscritorio} onChange={(e) => setCnpjEscritorio(formatarCNPJ(e.target.value))} onBlur={() => buscarCNPJ(cnpjEscritorio)} className="border-2" style={{ borderColor: SESCON_BLUE }} />
-                        {buscandoReceita && <Loader2 className="absolute right-3 top-3 w-4 h-4 animate-spin text-blue-600" />}
+                        <Input
+                          placeholder="00.000.000/0000-00"
+                          value={cnpjEscritorio}
+                          onChange={(e) => setCnpjEscritorio(formatarCNPJ(e.target.value))}
+                          onBlur={() => buscarCNPJ(cnpjEscritorio)}
+                          className="rounded-lg border-2 py-6 text-lg"
+                          style={{ borderColor: SESCON_BLUE }}
+                        />
+                        {buscandoReceita && <Loader2 className="absolute right-3 top-4 w-5 h-5 animate-spin text-blue-600" />}
                       </div>
                     </div>
-                    <div className="space-y-1">
-                      <label className="text-xs font-bold text-gray-600">RAZÃO SOCIAL</label>
-                      <Input value={razaoSocialEscritorio} readOnly className="bg-gray-50" />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs font-bold text-gray-600">E-MAIL PARA CONTATO *</label>
-                      <Input type="email" placeholder="contato@escritorio.com.br" value={emailEscritorio} onChange={(e) => setEmailEscritorio(e.target.value)} className="border-2" style={{ borderColor: SESCON_BLUE }} />
-                    </div>
-                    <Button onClick={() => setAbaSelecionada(2)} disabled={!podeAvancarAba1} className="w-full mt-4 font-bold" style={{ background: SESCON_BLUE }}>Próximo Passo</Button>
-                  </div>
-                  <div className="mt-10 pt-10 border-t border-gray-100">
-                    <h3 className="text-lg font-bold mb-4" style={{ color: SESCON_DARK_BLUE }}>FAQ - Dúvidas Frequentes</h3>
+
                     <div className="space-y-2">
-                      {faqs.map((faq, idx) => (
-                        <div key={idx} className="border rounded-lg">
-                          <button onClick={() => setFaqAberto(faqAberto === idx ? null : idx)} className="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-gray-50">
-                            <span className="text-sm font-bold" style={{ color: SESCON_DARK_BLUE }}>{faq.pergunta}</span>
-                            {faqAberto === idx ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                          </button>
-                          {faqAberto === idx && <div className="px-4 pb-3 text-sm text-gray-600" dangerouslySetInnerHTML={{ __html: faq.resposta }} />}
-                        </div>
-                      ))}
+                      <label className="text-sm font-bold" style={{ color: SESCON_DARK_BLUE }}>Nome do Escritório</label>
+                      <Input value={razaoSocialEscritorio} readOnly className="bg-gray-50 border-2 py-6" />
                     </div>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold" style={{ color: SESCON_DARK_BLUE }}>E-mail para Contato *</label>
+                      <Input
+                        type="email"
+                        placeholder="contato@escritorio.com.br"
+                        value={emailEscritorio}
+                        onChange={(e) => setEmailEscritorio(e.target.value)}
+                        className="border-2 py-6"
+                        style={{ borderColor: SESCON_BLUE }}
+                      />
+                    </div>
+
+                    <Button
+                      onClick={() => setAbaSelecionada(2)}
+                      disabled={!podeAvancarAba1}
+                      className="w-full py-8 text-lg font-bold"
+                      style={{ background: SESCON_BLUE }}
+                    >
+                      Próximo Passo
+                    </Button>
                   </div>
                 </motion.div>
               ) : (
-                <motion.div key="aba2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                  <h2 className="text-xl font-bold mb-6" style={{ color: SESCON_DARK_BLUE }}>Gestão de Clientes</h2>
-                  <div className="space-y-6">
-                    <div className="p-4 rounded-lg bg-blue-50 border border-blue-100">
-                      <label className="text-xs font-bold text-blue-800 mb-2 block">ATIVIDADE PRINCIPAL *</label>
-                      <div className="flex gap-6">
-                        <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer"><input type="radio" name="atv" value="contabilidade" checked={atividadePrincipal === "contabilidade"} onChange={(e) => setAtividadePrincipal(e.target.value)} /> Contabilidade</label>
-                        <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer"><input type="radio" name="atv" value="outros" checked={atividadePrincipal === "outros"} onChange={(e) => setAtividadePrincipal(e.target.value)} /> Outros</label>
+                <motion.div
+                  key="aba2"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="bg-white rounded-2xl shadow-xl border p-8"
+                >
+                  <h2 className="text-2xl font-bold mb-8" style={{ color: SESCON_DARK_BLUE }}>Gestão de Clientes</h2>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    {/* Importação */}
+                    <div className="space-y-4">
+                      <h3 className="font-bold flex items-center gap-2" style={{ color: SESCON_DARK_BLUE }}>
+                        <Upload className="w-5 h-5" /> Importar Planilha
+                      </h3>
+                      <div className="border-2 border-dashed rounded-xl p-6 text-center hover:bg-blue-50 transition-all relative group" style={{ borderColor: SESCON_BLUE }}>
+                        <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
+                        <FileDown className="w-8 h-8 mx-auto mb-2 text-blue-600" />
+                        <p className="text-xs font-bold text-blue-600">Clique ou arraste sua planilha</p>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6">
-                      <div className="space-y-3">
-                        <h3 className="text-sm font-bold flex items-center gap-2"><Upload className="w-4 h-4" /> Importar Planilha</h3>
-                        <div className="border-2 border-dashed rounded-xl p-6 text-center hover:bg-blue-50 transition-colors relative">
-                          <input type="file" accept=".xlsx, .xls, .csv" onChange={handleFileUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
-                          <FileDown className="w-8 h-8 mx-auto text-blue-400 mb-2" />
-                          <p className="text-xs font-bold text-blue-600">Clique para selecionar arquivo</p>
-                        </div>
+                    {/* Adicionar Manual */}
+                    <div className="space-y-3">
+                      <h3 className="font-bold flex items-center gap-2" style={{ color: SESCON_DARK_BLUE }}>
+                        <Plus className="w-5 h-5" /> Adicionar Manualmente
+                      </h3>
+                      <Input
+                        placeholder="CNPJ do Cliente"
+                        value={novoCliente.cnpj}
+                        onChange={(e) => setNovoCliente({ ...novoCliente, cnpj: formatarCNPJ(e.target.value) })}
+                        onBlur={() => buscarCNPJ(novoCliente.cnpj || "", true)}
+                        className="border-2"
+                        style={{ borderColor: SESCON_BLUE }}
+                      />
+                      <Input
+                        placeholder="Razão Social"
+                        value={novoCliente.razaoSocial}
+                        onChange={(e) => setNovoCliente({ ...novoCliente, razaoSocial: e.target.value })}
+                        className="border-2"
+                        style={{ borderColor: SESCON_BLUE }}
+                      />
+                      
+                      {/* Campo de E-mail da Contabilidade Melhorado */}
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-gray-500 uppercase">E-mail do Responsável / Contabilidade</label>
+                        <Input
+                          placeholder="Ex: joao@contabil.com; maria@contabil.com"
+                          value={novoCliente.emailCustomizado}
+                          onChange={(e) => setNovoCliente({ ...novoCliente, emailCustomizado: e.target.value })}
+                          className="border-2"
+                          style={{ borderColor: SESCON_BLUE }}
+                        />
+                        <p className="text-[9px] text-gray-400">Para múltiplos e-mails, separe por ponto e vírgula (;)</p>
                       </div>
-                      <div className="space-y-3">
-                        <h3 className="text-sm font-bold flex items-center gap-2"><Plus className="w-4 h-4" /> Adicionar Manualmente</h3>
-                        <div className="space-y-2">
-                          <Input placeholder="CNPJ do Cliente" value={novoCliente.cnpj} onChange={(e) => setNovoCliente({ ...novoCliente, cnpj: formatarCNPJ(e.target.value) })} onBlur={() => buscarCNPJ(novoCliente.cnpj || "", true)} className="h-9 text-sm" />
-                          <Input placeholder="Razão Social" value={novoCliente.razaoSocial} onChange={(e) => setNovoCliente({ ...novoCliente, razaoSocial: e.target.value })} className="h-9 text-sm" />
-                          <Input placeholder="E-mail do Responsável na Contabilidade" value={novoCliente.emailResponsavel} onChange={(e) => setNovoCliente({ ...novoCliente, emailResponsavel: e.target.value })} className="h-9 text-sm" />
-                          <div className="grid grid-cols-2 gap-2">
-                            <Input placeholder="Faturamento Anual" value={novoCliente.faturamento} onChange={(e) => setNovoCliente({ ...novoCliente, faturamento: formatarMoeda(e.target.value) })} className="h-9 text-sm" />
-                            <Input placeholder="Nº Funcionários" value={novoCliente.funcionarios} onChange={(e) => setNovoCliente({ ...novoCliente, funcionarios: e.target.value.replace(/\D/g, "") })} className="h-9 text-sm" />
-                          </div>
-                          <div className="grid grid-cols-2 gap-2">
-                            <Input placeholder="E-mail da Empresa" value={novoCliente.emailEmpresa} onChange={(e) => setNovoCliente({ ...novoCliente, emailEmpresa: e.target.value })} className="h-9 text-sm" />
-                            <Input placeholder="Telefone da Empresa" value={novoCliente.telefoneEmpresa} onChange={(e) => setNovoCliente({ ...novoCliente, telefoneEmpresa: formatarTelefone(e.target.value) })} className="h-9 text-sm" />
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <label className="flex-1 border-2 border-dashed rounded-lg p-2 text-center cursor-pointer hover:bg-gray-50 transition-colors">
-                              <input type="file" accept=".pdf" onChange={handlePDFUpload} className="hidden" />
-                              <span className="text-[10px] font-bold text-gray-500 flex items-center justify-center gap-1">
-                                <FileUp className="w-3 h-3" /> {novoCliente.contratosocial ? novoCliente.contratosocial.name : "Anexar Contrato (PDF)"}
-                              </span>
-                            </label>
-                            <Button onClick={adicionarCliente} size="sm" className="h-9" style={{ background: SESCON_BLUE }}><Plus className="w-4 h-4" /></Button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
 
-                    <div className="p-4 rounded-xl border-2 bg-white" style={{ borderColor: SESCON_LIGHT_BLUE }}>
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-bold" style={{ color: SESCON_DARK_BLUE }}>Lista de Clientes ({clientes.length})</h3>
-                        <div className="relative w-48">
-                          <Search className="absolute left-2 top-2.5 w-3 h-3 text-gray-400" />
-                          <Input placeholder="Pesquisar..." value={busca} onChange={(e) => setBusca(e.target.value)} className="pl-7 h-8 text-xs" />
-                        </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Input
+                          placeholder="Faturamento"
+                          value={novoCliente.faturamento}
+                          onChange={(e) => setNovoCliente({ ...novoCliente, faturamento: formatarMoeda(e.target.value) })}
+                          className="border-2"
+                        />
+                        <Input
+                          placeholder="Funcionários"
+                          value={novoCliente.funcionarios}
+                          onChange={(e) => setNovoCliente({ ...novoCliente, funcionarios: e.target.value.replace(/\D/g, "") })}
+                          className="border-2"
+                        />
                       </div>
-                      <div className="max-h-48 overflow-y-auto space-y-1 pr-1">
-                        {clientes.filter(c => c.razaoSocial.toLowerCase().includes(busca.toLowerCase())).map((c, idx) => (
-                          <div key={c.id} className="p-2 rounded border flex justify-between items-center bg-gray-50 text-xs">
-                            <div className="truncate flex-1">
-                              <span className="font-bold">{idx + 1}. {c.razaoSocial}</span>
-                              <span className="ml-2 text-gray-500">({c.cnpj})</span>
-                            </div>
-                            <button onClick={() => removerCliente(c.id)} className="text-red-500 hover:bg-red-50 p-1 rounded"><Trash2 className="w-3 h-3" /></button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
 
-                    <div className="space-y-3 pt-4">
-                      {isLoading && (
-                        <div className="space-y-1">
-                          <div className="flex justify-between text-[10px] font-bold" style={{ color: SESCON_BLUE }}><span>Enviando dados...</span><span>{progressoEnvio}%</span></div>
-                          <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden"><div className="h-full bg-green-500 transition-all" style={{ width: `${progressoEnvio}%` }} /></div>
-                        </div>
-                      )}
-                      <div className="flex gap-3">
-                        <Button onClick={() => setAbaSelecionada(1)} variant="outline" className="flex-1 h-10 text-xs font-bold">Voltar</Button>
-                        <Button onClick={exportarExcel} variant="outline" className="flex-1 h-10 text-xs font-bold border-green-600 text-green-600 hover:bg-green-50"><Download className="w-3 h-3 mr-2" /> Exportar Excel</Button>
-                      </div>
-                      <Button onClick={enviarDados} disabled={isLoading || clientes.length === 0} className="w-full h-12 text-white font-bold text-lg" style={{ background: "#4CAF50" }}>
-                        {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Send className="w-5 h-5 mr-2" />}
-                        {isLoading ? "Processando..." : "Enviar Atualização"}
+                      <Button onClick={adicionarCliente} className="w-full" style={{ background: SESCON_BLUE }}>
+                        Adicionar à Lista
                       </Button>
                     </div>
+                  </div>
+
+                  {/* Ações Finais */}
+                  <div className="space-y-4 pt-6 border-t">
+                    {isLoading && (
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-xs font-bold text-blue-600">
+                          <span>Enviando dados...</span>
+                          <span>{progressoEnvio}%</span>
+                        </div>
+                        <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-green-500 transition-all" style={{ width: `${progressoEnvio}%` }} />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex gap-3">
+                      <Button onClick={() => setAbaSelecionada(1)} variant="outline" className="flex-1 border-2">Voltar</Button>
+                      <Button onClick={baixarExcel} className="flex-1 text-white" style={{ background: SESCON_ACCENT }}>
+                        <Download className="w-4 h-4 mr-2" /> Baixar meus Clientes (Excel)
+                      </Button>
+                    </div>
+                    
+                    <Button
+                      onClick={enviarDados}
+                      disabled={isLoading || clientes.length === 0}
+                      className="w-full py-6 text-xl font-bold text-white bg-green-600 hover:bg-green-700"
+                    >
+                      {isLoading ? <Loader2 className="w-6 h-6 animate-spin mr-2" /> : <Send className="w-6 h-6 mr-2" />}
+                      FINALIZAR E ENVIAR AO SESCON
+                    </Button>
                   </div>
                 </motion.div>
               )}
@@ -532,47 +599,5 @@ export default function Home() {
           </div>
         </div>
       </main>
-
-      <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
-        <AlertDialogContent className="bg-white rounded-2xl p-8 max-w-sm mx-auto text-center">
-          <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4"><CheckCircle2 className="w-10 h-10" /></div>
-          <AlertDialogTitle className="text-xl font-bold">Envio Concluído!</AlertDialogTitle>
-          <AlertDialogDescription className="mt-2 text-gray-600">Sua lista foi processada. O recibo foi enviado para <strong>{emailEscritorio}</strong>.</AlertDialogDescription>
-          <AlertDialogAction onClick={resetForm} className="w-full mt-6 h-12 font-bold" style={{ background: SESCON_BLUE }}>Concluir</AlertDialogAction>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <footer className="bg-[#003366] text-white py-10 px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 border-b border-white/20 pb-10 mb-6">
-            <div className="space-y-4">
-              <img src="/pacc-sescon-improved/logo-sescon-branco.png" alt="SESCON-SP" className="h-16 w-auto" />
-              <p className="text-xs leading-relaxed opacity-80">Sindicato das Empresas de Serviços Contábeis e das Empresas de Assessoramento, Perícias, Informações e Pesquisas no Estado de São Paulo.</p>
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-sm font-bold uppercase tracking-wider">Contato</h4>
-              <div className="space-y-2 text-xs opacity-80">
-                <p className="flex items-center gap-2"><Phone className="w-3 h-3" /> (11) 3304-4400</p>
-                <p className="flex items-center gap-2"><Mail className="w-3 h-3" /> cadastro@sescon.org.br</p>
-                <p className="flex items-center gap-2"><Building className="w-3 h-3" /> Av. Tiradentes, 998 - Luz, São Paulo/SP</p>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <h4 className="text-sm font-bold uppercase tracking-wider">Redes Sociais</h4>
-              <div className="flex gap-4">
-                <a href="https://www.instagram.com/sesconsp/" target="_blank" className="hover:text-pink-400 transition-colors"><Instagram className="w-5 h-5" /></a>
-                <a href="https://www.facebook.com/sesconsp" target="_blank" className="hover:text-blue-400 transition-colors"><Facebook className="w-5 h-5" /></a>
-                <a href="https://br.linkedin.com/company/sescon-sp" target="_blank" className="hover:text-blue-300 transition-colors"><Linkedin className="w-5 h-5" /></a>
-                <a href="https://www.youtube.com/channel/UCBjwnyWvusn2PsIT-wRk9MQ" target="_blank" className="hover:text-red-500 transition-colors"><Youtube className="w-5 h-5" /></a>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] opacity-60">
-            <p>© 2026 SESCON-SP - Todos os direitos reservados.</p>
-            <p>CNPJ: 62.638.168/0001-84</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
-}
