@@ -139,6 +139,7 @@ const faqs: FAQ[] = [
 </ul>`
   }
 ];
+
 export default function Home() {
   const [abaSelecionada, setAbaSelecionada] = useState(1);
   const [cnpjEscritorio, setCnpjEscritorio] = useState("");
@@ -339,6 +340,23 @@ export default function Home() {
     toast.success("Lista exportada com sucesso!");
   };
 
+  const baixarModeloExcel = () => {
+    const data = [{
+      "CNPJ": "00.000.000/0000-00",
+      "RazaoSocial": "Exemplo Empresa LTDA",
+      "EmailResponsavel": "responsavel@contabilidade.com",
+      "Faturamento": "R$ 1.000.000,00",
+      "Funcionarios": "10",
+      "EmailEmpresa": "contato@empresa.com.br",
+      "Telefone": "(11) 99999-9999"
+    }];
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Modelo");
+    XLSX.writeFile(wb, "Modelo_Importacao_SESCON.xlsx");
+    toast.success("Modelo baixado com sucesso!");
+  };
+
   const handlePDFUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type === "application/pdf") {
@@ -482,8 +500,9 @@ export default function Home() {
                         <h4 className="text-lg font-bold mb-2" style={{ color: SESCON_DARK_BLUE }}>Importar Lista de Clientes</h4>
                         <p className="text-sm text-gray-600">Aceitamos arquivos <strong>.CSV</strong> ou <strong>.Excel</strong>.</p>
                       </div>
-                      <div className="flex gap-4 justify-center">
-                        <Button onClick={exportarExcel} variant="outline" className="rounded-lg border-2 h-auto py-3 px-6 flex items-center gap-2" style={{ borderColor: SESCON_BLUE, color: SESCON_BLUE }}><DownloadIcon className="w-5 h-5" /> Exportar Excel</Button>
+                      <div className="flex flex-wrap gap-4 justify-center">
+                        <Button onClick={baixarModeloExcel} variant="outline" className="rounded-lg border-2 h-auto py-3 px-6 flex items-center gap-2" style={{ borderColor: SESCON_BLUE, color: SESCON_BLUE }}><FileDown className="w-5 h-5" /> Baixar Modelo</Button>
+                        <Button onClick={exportarExcel} variant="outline" className="rounded-lg border-2 h-auto py-3 px-6 flex items-center gap-2" style={{ borderColor: SESCON_BLUE, color: SESCON_BLUE }}><DownloadIcon className="w-5 h-5" /> Exportar Lista</Button>
                         <label className="cursor-pointer">
                           <input type="file" accept=".csv,.xlsx,.xls" onChange={handleFileUpload} className="hidden" />
                           <div className="rounded-lg font-bold py-3 px-6 text-white shadow-md flex items-center gap-2" style={{ background: SESCON_BLUE }}><Upload className="w-5 h-5" /> Selecionar Arquivo</div>
@@ -586,39 +605,6 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Footer Institucional Completo */}
-      <footer className="text-white py-12 px-8 mt-12" style={{ background: SESCON_BLUE }}>
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
-            <div className="space-y-4">
-              <h4 className="text-xl font-bold">Siga o SESCON-SP</h4>
-              <div className="flex gap-4">
-                <a href="https://www.instagram.com/sesconsp/" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition-colors"><Instagram className="w-6 h-6" /></a>
-                <a href="https://www.facebook.com/sesconsp" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors"><Facebook className="w-6 h-6" /></a>
-                <a href="https://www.youtube.com/channel/UCBjwnyWvusn2PsIT-wRk9MQ" target="_blank" rel="noopener noreferrer" className="hover:text-red-400 transition-colors"><Youtube className="w-6 h-6" /></a>
-                <a href="https://br.linkedin.com/company/sescon-sp" target="_blank" rel="noopener noreferrer" className="hover:text-blue-300 transition-colors"><Linkedin className="w-6 h-6" /></a>
-                <a href="https://api.whatsapp.com/send?phone=551133044416" target="_blank" rel="noopener noreferrer" className="hover:text-green-400 transition-colors"><MessageCircle className="w-6 h-6" /></a>
-              </div>
-            </div>
-            <div className="text-center md:text-left space-y-2">
-              <p className="text-sm font-bold">SESCON-SP | CNPJ 62.638.168/0001-84</p>
-              <p className="text-xs">Av. Tiradentes, 998 - Luz | São Paulo-SP - 01102-000</p>
-              <p className="text-xs">Suporte: <a href="mailto:cadastro@sescon.org.br" className="underline">cadastro@sescon.org.br</a></p>
-            </div>
-            <img src="/pacc-sescon-improved/logo-sescon-branco.png" alt="SESCON-SP" className="h-16 w-auto" />
-          </div>
-          <div className="border-t border-white/20 pt-8 text-xs space-y-4">
-            <div className="flex gap-4">
-              <a href="https://sescon.org.br/canais-de-atendimento/" className="hover:underline">Canais de atendimento</a>
-              <span>|</span>
-              <a href="https://sescon.org.br/wp-content/uploads/2025/05/POLITICA-DE-PRIVACIDADE-E-COOKIES-1.pdf" className="hover:underline">Política de Privacidade</a>
-            </div>
-            <p className="opacity-80">© O Sescon-SP e a Aescon-SP informam que a coleta dos dados pessoais é pautada na LGPD (Lei nº 13.709/18).</p>
-            <p className="font-bold">SESCON-SP Todos os Direitos Reservados.</p>
-          </div>
-        </div>
-      </footer>
-
       {/* Modais */}
       <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
         <AlertDialogContent className="max-w-md rounded-2xl">
@@ -630,6 +616,78 @@ export default function Home() {
           <AlertDialogFooter><Button onClick={resetForm} className="w-full py-6 text-lg font-bold text-white" style={{ background: SESCON_BLUE }}>Concluir</Button></AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AlertDialog open={showLimparDialog} onOpenChange={setShowLimparDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Limpar Rascunho?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação excluirá permanentemente o rascunho salvo para este CNPJ. Você perderá todos os dados preenchidos até agora.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={limparRascunho} className="bg-red-600 hover:bg-red-700">
+              Sim, limpar rascunho
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Footer Original Restaurado */}
+      <footer className="pt-8 pb-6 px-8" style={{ background: "#003366" }}>
+        <div className="max-w-6xl mx-auto text-white">
+          
+          {/* Seção Superior: Redes Sociais + Informações + Logo */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 mb-6 border-b border-white border-opacity-30">
+            
+            {/* Esquerda: Redes Sociais */}
+            <div className="flex flex-col items-start space-y-3 mb-6 md:mb-0">
+              <p className="text-sm font-semibold">Siga o Sescon-SP:</p>
+              <div className="flex items-center gap-4">
+                <a href="https://www.instagram.com/sesconsp/?hl=pt" target="_blank" rel="noopener noreferrer" className="text-white hover:text-pink-300 transition-colors" title="Instagram">
+                  <Instagram className="w-6 h-6" />
+                </a>
+                <a href="https://www.facebook.com/sesconsp" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-300 transition-colors" title="Facebook">
+                  <Facebook className="w-6 h-6" />
+                </a>
+                <a href="https://www.youtube.com/channel/UCBjwnyWvusn2PsIT-wRk9MQ" target="_blank" rel="noopener noreferrer" className="text-white hover:text-red-300 transition-colors" title="YouTube">
+                  <Youtube className="w-6 h-6" />
+                </a>
+                <a href="https://br.linkedin.com/company/sescon-sp" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-300 transition-colors" title="LinkedIn">
+                  <Linkedin className="w-6 h-6" />
+                </a>
+                <a href="https://api.whatsapp.com/send?phone=551133044416&text=Seja%20bem%20vindo%20ao%20atendimento%20do%20SESCON-SP%20e%20AESCON-SP" target="_blank" rel="noopener noreferrer" className="text-white hover:text-green-300 transition-colors" title="WhatsApp">
+                  <MessageCircle className="w-6 h-6" />
+                </a>
+              </div>
+            </div>
+            {/* Centro: Informações Principais */}
+            <div className="flex flex-col items-center space-y-2 mb-6 md:mb-0 flex-1 md:px-8 text-center">
+              <p className="text-sm font-bold">SESCON-SP | CNPJ 62.638.168/0001-84</p>
+              <p className="text-xs">Av. Tiradentes, 998 - Luz | São Paulo-SP - 01102-000 (200m do metrô Armênia)</p>
+              <p className="text-xs font-bold mt-2">SESCON-SP 2025 | Sindicato das Empresas de Serviços Contábeis, Assessoramento, Perícias, Informações e Pesquisas no Estado de São Paulo</p>
+              <p className="text-xs mt-1">Para suporte, entre em contato: <a href="mailto:cadastro@sescon.org.br" className="underline hover:text-blue-200">cadastro@sescon.org.br</a></p>
+            </div>
+            {/* Direita: Logo */}
+            <div className="hidden md:flex justify-end">
+              <img src="/pacc-sescon-improved/logo-sescon-branco.png" alt="SESCON-SP" className="h-20 w-auto" />
+            </div>
+          </div>
+          {/* Seção Inferior: Links e Informações Legais */}
+          <div className="space-y-4">
+            <div className="flex flex-col md:flex-row gap-4 text-xs border-b border-white border-opacity-30 pb-4">
+              <a href="https://sescon.org.br/canais-de-atendimento/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-200 transition-colors">Canais de atendimento</a>
+              <span className="hidden md:inline">|</span>
+              <a href="https://sescon.org.br/wp-content/uploads/2025/05/POLITICA-DE-PRIVACIDADE-E-COOKIES-1.pdf" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-200 transition-colors">Política de Privacidade e Cookies</a>
+            </div>
+            <p className="text-xs leading-relaxed opacity-90">
+              © O Sescon-SP e a Aescon-SP informam que, em respeito aos preceitos elencados no art. 6º da LGPD e, em especial, ao Princípio da Finalidade, a coleta dos dados pessoais dispostos nos formulários de contato, será pautada na hipótese de tratamento prevista no inciso IX do Art. 7º da Lei nº 13.709/18.
+            </p>
+            <p className="text-xs font-semibold">SESCON-SP Todos os Direitos Reservados.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
